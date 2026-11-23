@@ -820,15 +820,27 @@ class SinaisVIPTestCase(unittest.TestCase):
                 output_dir=tmp_out,
                 backend_url="https://heuristika-web-production.up.railway.app",
             )
-            self.assertGreaterEqual(res["files_count"], 11)
+            self.assertGreaterEqual(res["files_count"], 17)
             self.assertTrue((tmp_out / ".nojekyll").is_file())
             self.assertTrue((tmp_out / "index.html").is_file())
+            self.assertTrue((tmp_out / "login" / "index.html").is_file())
+            self.assertTrue((tmp_out / "vip" / "index.html").is_file())
+            self.assertTrue((tmp_out / "admin" / "index.html").is_file())
             self.assertTrue((tmp_out / "carteiras" / "index.html").is_file())
+            self.assertTrue((tmp_out / "carteiras" / "anual.html").is_file())
             self.assertTrue((tmp_out / "academia" / "index.html").is_file())
             self.assertTrue((tmp_out / "academia.html").is_file())
             self.assertTrue((tmp_out / "static" / "style.css").is_file())
             for mod_num in ("01", "02", "03", "04"):
                 self.assertTrue((tmp_out / "static" / "audio" / f"academia_mod_{mod_num}.mp3").is_file())
+
+            cart_demo_html = (tmp_out / "carteiras" / "index.html").read_text(encoding="utf-8")
+            self.assertIn('../login/?next=carteiras', cart_demo_html)
+            self.assertNotIn('href="https://heuristika-web-production.up.railway.app/login"', cart_demo_html)
+
+            cart_anual_html = (tmp_out / "carteiras" / "anual.html").read_text(encoding="utf-8")
+            self.assertIn("ACESSO ANUAL LIBERADO", cart_anual_html)
+            self.assertIn("TESOURO SELIC", cart_anual_html)
 
             acad_sub_html = (tmp_out / "academia" / "index.html").read_text(encoding="utf-8")
             self.assertIn("../static/style.css", acad_sub_html)

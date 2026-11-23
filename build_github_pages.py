@@ -1,7 +1,7 @@
 """Gera o pacote estático 24/7 para GitHub Pages (site_dist/) a partir das rotas
-Flask e dos ativos estáticos (CSS + áudios neurais PT-BR da Academia), mantendo
-integração com o backend Python 24/7 e suporte client-side para cadastro,
-exame quantitativo e emissão de certificado na Academia estática.
+Flask e dos ativos estáticos (CSS + áudios neurais PT-BR da Academia), incluindo
+Login VIP, Terminal VIP, Carteiras Anuais Desbloqueadas, Painel Admin e Academia
+com exame quantitativo e emissão de certificado 100% funcionais no navegador.
 """
 
 from __future__ import annotations
@@ -36,8 +36,13 @@ def _extract_exam_panel(authed_html: str) -> str:
     return authed_html[start:end].strip()
 
 
-def _build_static_runtime_script(backend_url: str, is_academy: bool = False) -> str:
-    """Gera o runtime JS leve para filtros estáticos e Academia interativa no GitHub Pages."""
+def _build_static_runtime_script(
+    depth: int = 0,
+    page_kind: str = "generic",
+) -> str:
+    """Gera o runtime JS para Login VIP, Carteiras, Admin e Academia no GitHub Pages."""
+    prefix = "." if depth == 0 else ".."
+    is_academy = page_kind == "academia"
     questions_payload = [
         {
             "id": q["id"],
@@ -47,21 +52,120 @@ def _build_static_runtime_script(backend_url: str, is_academy: bool = False) -> 
             "opcoes": q["opcoes"],
         }
         for q in academy_data.PROVA_QUESTOES
-    ]
+    ] if is_academy else []
     questions_json = json.dumps(questions_payload, ensure_ascii=False)
 
     return f"""
 <script id="hkStaticPagesRuntime">
 (function() {{
   window.HK_STATIC_PAGES = true;
-  window.HK_BACKEND_URL = {json.dumps(backend_url)};
-  const IS_ACADEMY = {"true" if is_academy else "false"};
-  const QUESTIONS = {questions_json if is_academy else "[]"};
+  const PREFIX = {json.dumps(prefix)};
+  const PAGE_KIND = {json.dumps(page_kind)};
+  const VIP_KEY = "hk_static_vip_v1";
+  const ADMIN_KEY = "hk_static_admin_v1";
   const STUDENT_KEY = "hk_static_student_v1";
   const CERTS_KEY = "hk_static_certs_v1";
+  const QUESTIONS = {questions_json};
 
-  // Filtro client-side de categorias na Vitrine estática
-  document.querySelectorAll('a[href^="/?categoria="], a[href*="?categoria="]').forEach(link => {{
+  function getVipSession() {{
+    try {{ return JSON.parse(localStorage.getItem(VIP_KEY) || "null"); }}
+    catch (e) {{ return null; }}
+  }}
+
+  // Sincroniza botões de topo (Entrar vs Terminal VIP / Sair) e logout VIP
+  const vipSess = getVipSession();
+  document.querySelectorAll('[data-static-vip-logout="1"], a[href$="/logout"]').forEach(btn => {{
+    btn.addEventListener("click", (e) => {{
+      e.preventDefault();
+      try {{ localStorage.removeItem(VIP_KEY); }} catch (err) {{}}
+      window.location.href = PREFIX + "/index.html";
+    }});
+  }});
+
+  if (vipSess) {{
+    document.querySelectorAll('.nav-cta a[href$="/login/"]').forEach(a => {{
+      a.textContent = "Terminal VIP";
+      a.setAttribute("href", PREFIX + "/vip/");
+      a.classList.remove("btn-outline");
+      a.classList.add("btn-electric");
+    }});
+  }}
+
+  // Se estiver na página demo de carteiras mas já logado como VIP/Anual, abre a versão desbloqueada
+  if (PAGE_KIND === "carteiras_demo" && vipSess) {{
+    window.location.replace(PREFIX + "/carteiras/anual.html");
+    return;
+  }}
+
+  // Página de Login VIP (/login/)
+  if (PAGE_KIND === "login") {{
+    document.querySelectorAll('form[action$="/login"], form').forEach(form => {{
+      form.addEventListener("submit", (e) => {{
+        e.preventDefault();
+        const input = form.querySelector('[name="identificador"]');
+        const raw = (input ? input.value : "").trim();
+        if (!raw || raw.length < 3) {{
+          if (window.hkToast) window.hkToast("Informe seu e-mail ou código de acesso VIP.", "warning");
+          return;
+        }}
+        const upper = raw.toUpperCase();
+        const validCodes = ["VIP-DEMO-2026", "ANUAL-2026", "ADMIN123", "VIP-2026", "HEURISTIKA-VIP"];
+        const isEmail = /^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(raw);
+        if (!isEmail && !validCodes.includes(upper) && !upper.startsWith("VIP-")) {{
+          if (window.hkToast) window.hkToast("Código inválido. Use seu e-mail cadastrado ou código VIP (ex: VIP-DEMO-2026).", "warning");
+          return;
+        }}
+        const subObj = {{
+          nome: isEmail ? raw.split("@")[0] : "Assinante VIP Anual",
+          contato: raw,
+          plano: "Anual",
+          codigo_acesso: isEmail ? "VIP-ANUAL-2026" : upper,
+        }};
+        try {{ localStorage.setItem(VIP_KEY, JSON.stringify(subObj)); }} catch (err) {{}}
+        const params = new URLSearchParams(window.location.search);
+        const next = params.get("next") || "";
+        if (next === "carteiras") {{
+          window.location.href = PREFIX + "/carteiras/anual.html";
+        }} else {{
+          window.location.href = PREFIX + "/vip/";
+        }}
+      }});
+    }});
+  }}
+
+  // Página do Painel Admin (/admin/)
+  if (PAGE_KIND === "admin") {{
+    const gate = document.getElementById("staticAdminGate");
+    const content = document.getElementById("staticAdminContent");
+    const form = document.getElementById("staticAdminLoginForm");
+    function checkAdminAuth() {{
+      const ok = sessionStorage.getItem(ADMIN_KEY) === "1";
+      if (gate) gate.style.display = ok ? "none" : "block";
+      if (content) content.style.display = ok ? "block" : "none";
+    }}
+    form?.addEventListener("submit", (e) => {{
+      e.preventDefault();
+      const pwd = (document.getElementById("staticAdminPwd")?.value || "").trim();
+      if (pwd === "admin123") {{
+        sessionStorage.setItem(ADMIN_KEY, "1");
+        checkAdminAuth();
+        if (window.hkToast) window.hkToast("Painel Administrativo desbloqueado!", "success");
+      }} else {{
+        if (window.hkToast) window.hkToast("Senha administrativa incorreta.", "warning");
+      }}
+    }});
+    document.querySelectorAll('form[action$="/admin/logout"]').forEach(f => {{
+      f.addEventListener("submit", (e) => {{
+        e.preventDefault();
+        sessionStorage.removeItem(ADMIN_KEY);
+        window.location.href = PREFIX + "/index.html";
+      }});
+    }});
+    checkAdminAuth();
+  }}
+
+  // Filtro client-side de categorias na Vitrine e no Terminal VIP
+  document.querySelectorAll('a[href*="?categoria="]').forEach(link => {{
     link.addEventListener("click", (e) => {{
       const href = link.getAttribute("href") || "";
       const m = href.match(/categoria=([^&#]+)/);
@@ -71,20 +175,20 @@ def _build_static_runtime_script(backend_url: str, is_academy: bool = False) -> 
       document.querySelectorAll('a[href*="?categoria="]').forEach(a => {{
         a.classList.toggle("active", a === link);
       }});
-      document.querySelectorAll("#operacoes .signal-card").forEach(card => {{
-        const badge = card.querySelector(".badge-cat");
-        const cardCat = badge ? badge.textContent.trim() : "";
-        card.style.display = (cat === "Todos" || !cardCat || cardCat === cat) ? "" : "none";
+      document.querySelectorAll(".signal-card").forEach(card => {{
+        const cardCat = (card.dataset.cat || card.querySelector(".badge-cat")?.textContent || "").trim();
+        if (!cardCat || card.classList.contains("module-card-item")) return;
+        card.style.display = (cat === "Todos" || cardCat.toUpperCase() === cat.toUpperCase()) ? "" : "none";
       }});
-      document.querySelectorAll("#histTable tbody tr").forEach(row => {{
+      document.querySelectorAll("#histTable tbody tr, #vipHistTable tbody tr").forEach(row => {{
         const firstTd = row.querySelector("td");
         const rowCat = firstTd ? firstTd.textContent.trim() : "";
-        row.style.display = (cat === "Todos" || !rowCat || rowCat === cat) ? "" : "none";
+        row.style.display = (cat === "Todos" || !rowCat || rowCat.toUpperCase() === cat.toUpperCase()) ? "" : "none";
       }});
     }});
   }});
 
-  if (!IS_ACADEMY) return;
+  if (PAGE_KIND !== "academia") return;
 
   function esc(s) {{
     return String(s || "")
@@ -212,7 +316,6 @@ def _build_static_runtime_script(backend_url: str, is_academy: bool = False) -> 
     }}
   }}
 
-  // Intercepta cadastro e login no modo GitHub Pages
   document.querySelectorAll('form[action$="/academia/cadastro"]').forEach(form => {{
     form.addEventListener("submit", (e) => {{
       e.preventDefault();
@@ -261,7 +364,6 @@ def _build_static_runtime_script(backend_url: str, is_academy: bool = False) -> 
     if (window.hkToast) window.hkToast("Você saiu da conta de aluno.", "success");
   }});
 
-  // Intercepta correção da prova no modo GitHub Pages
   const examForm = document.getElementById("examForm");
   if (examForm) {{
     examForm.addEventListener("submit", (e) => {{
@@ -357,8 +459,8 @@ def _build_static_runtime_script(backend_url: str, is_academy: bool = False) -> 
 """
 
 
-def _rewrite_links(html: str, depth: int, backend_url: str) -> str:
-    """Converte URLs absolutas do Flask em caminhos relativos compatíveis com GitHub Pages."""
+def _rewrite_links(html: str, depth: int, backend_url: str = "") -> str:
+    """Converte URLs absolutas do Flask em caminhos relativos internos do GitHub Pages."""
     prefix = "." if depth == 0 else ".."
     out = html
     out = out.replace('href="/static/', f'href="{prefix}/static/')
@@ -368,11 +470,14 @@ def _rewrite_links(html: str, depth: int, backend_url: str) -> str:
     out = out.replace('href="/"', f'href="{prefix}/index.html"')
     out = out.replace('href="/#', f'href="{prefix}/index.html#')
     out = re.sub(r'href="/\?categoria=([^"]+)"', rf'href="{prefix}/index.html?categoria=\1"', out)
+    out = re.sub(r'href="/vip\?categoria=([^"]+)"', rf'href="{prefix}/vip/index.html?categoria=\1"', out)
     out = out.replace('href="/carteiras"', f'href="{prefix}/carteiras/"')
     out = out.replace('href="/academia"', f'href="{prefix}/academia/"')
-    out = out.replace('href="/login"', f'href="{backend_url}/login"')
-    out = out.replace('href="/vip"', f'href="{backend_url}/vip"')
-    out = out.replace('href="/admin"', f'href="{backend_url}/admin"')
+    out = out.replace('href="/login"', f'href="{prefix}/login/"')
+    out = out.replace('href="/vip"', f'href="{prefix}/vip/"')
+    out = out.replace('href="/logout"', 'href="#logout" data-static-vip-logout="1"')
+    out = out.replace('href="/admin"', f'href="{prefix}/admin/"')
+    out = out.replace('href="/admin/login"', f'href="{prefix}/admin/"')
     out = out.replace('href="/lang/pt"', 'href="#pt" data-static-lang="pt"')
     out = out.replace('href="/lang/en"', 'href="#en" data-static-lang="en"')
     return out
@@ -400,9 +505,17 @@ def build_static_site(
         client = flask_app.app.test_client()
 
         home_html = client.get("/").data.decode("utf-8")
-        carteiras_html = client.get("/carteiras").data.decode("utf-8")
+        login_html = client.get("/login").data.decode("utf-8")
+        carteiras_demo_html = client.get("/carteiras").data.decode("utf-8")
         academia_guest_html = client.get("/academia").data.decode("utf-8")
 
+        # Cria assinante Anual para renderizar /vip e /carteiras desbloqueado
+        annual_sub = database.create_subscriber(
+            "Assinante VIP Anual",
+            "anual_static@heuristika.com",
+            plano="Anual",
+            dias=365,
+        )
         demo_student = database.register_student(
             "Aluno Certificação",
             "demo_static@heuristika.com",
@@ -410,8 +523,15 @@ def build_static_site(
             "1234",
         )
         with client.session_transaction() as sess:
+            sess["vip_subscriber_id"] = annual_sub["id"]
             sess["academy_student_id"] = demo_student["id"]
+            sess["is_admin"] = True
+            sess["_admin_csrf_token"] = "static-admin-token"
+
+        vip_html = client.get("/vip").data.decode("utf-8")
+        carteiras_anual_html = client.get("/carteiras").data.decode("utf-8")
         academia_authed_html = client.get("/academia").data.decode("utf-8")
+        admin_authed_html = client.get("/admin").data.decode("utf-8")
     finally:
         config.DB_PATH = orig_db_path
         try:
@@ -454,37 +574,113 @@ def build_static_site(
     # 1. Vitrine (raiz)
     home_final = _rewrite_links(home_html, depth=0, backend_url=backend).replace(
         "</body>",
-        _build_static_runtime_script(backend, is_academy=False) + "\n</body>",
+        _build_static_runtime_script(depth=0, page_kind="home") + "\n</body>",
     )
     (out_path / "index.html").write_text(home_final, encoding="utf-8")
     (out_path / "404.html").write_text(home_final, encoding="utf-8")
 
-    # 2. Carteiras (/carteiras/index.html e /carteiras.html)
-    (out_path / "carteiras").mkdir(parents=True, exist_ok=True)
-    cart_sub = _rewrite_links(carteiras_html, depth=1, backend_url=backend).replace(
+    # 2. Login VIP (/login/index.html e /login.html)
+    (out_path / "login").mkdir(parents=True, exist_ok=True)
+    login_sub = _rewrite_links(login_html, depth=1, backend_url=backend).replace(
         "</body>",
-        _build_static_runtime_script(backend, is_academy=False) + "\n</body>",
+        _build_static_runtime_script(depth=1, page_kind="login") + "\n</body>",
     )
-    cart_root = _rewrite_links(carteiras_html, depth=0, backend_url=backend).replace(
+    login_root = _rewrite_links(login_html, depth=0, backend_url=backend).replace(
         "</body>",
-        _build_static_runtime_script(backend, is_academy=False) + "\n</body>",
+        _build_static_runtime_script(depth=0, page_kind="login") + "\n</body>",
+    )
+    (out_path / "login" / "index.html").write_text(login_sub, encoding="utf-8")
+    (out_path / "login.html").write_text(login_root, encoding="utf-8")
+
+    # 3. Terminal VIP (/vip/index.html e /vip.html)
+    (out_path / "vip").mkdir(parents=True, exist_ok=True)
+    vip_sub = _rewrite_links(vip_html, depth=1, backend_url=backend).replace(
+        "</body>",
+        _build_static_runtime_script(depth=1, page_kind="vip") + "\n</body>",
+    )
+    vip_root = _rewrite_links(vip_html, depth=0, backend_url=backend).replace(
+        "</body>",
+        _build_static_runtime_script(depth=0, page_kind="vip") + "\n</body>",
+    )
+    (out_path / "vip" / "index.html").write_text(vip_sub, encoding="utf-8")
+    (out_path / "vip.html").write_text(vip_root, encoding="utf-8")
+
+    # 4. Carteiras (/carteiras/index.html demo + /carteiras/anual.html desbloqueado)
+    (out_path / "carteiras").mkdir(parents=True, exist_ok=True)
+    # No banner "Já sou Assinante Anual", passa ?next=carteiras para voltar direto às carteiras liberadas
+    carteiras_demo_html = carteiras_demo_html.replace(
+        'href="/login" class="btn btn-sm btn-outline">Já sou Assinante Anual',
+        'href="/login?next=carteiras" class="btn btn-sm btn-outline">Já sou Assinante Anual',
+    )
+    cart_sub = _rewrite_links(carteiras_demo_html, depth=1, backend_url=backend).replace(
+        'href="/login?next=carteiras"',
+        'href="../login/?next=carteiras"',
+    ).replace(
+        "</body>",
+        _build_static_runtime_script(depth=1, page_kind="carteiras_demo") + "\n</body>",
+    )
+    cart_root = _rewrite_links(carteiras_demo_html, depth=0, backend_url=backend).replace(
+        'href="/login?next=carteiras"',
+        'href="./login/?next=carteiras"',
+    ).replace(
+        "</body>",
+        _build_static_runtime_script(depth=0, page_kind="carteiras_demo") + "\n</body>",
+    )
+    cart_anual_sub = _rewrite_links(carteiras_anual_html, depth=1, backend_url=backend).replace(
+        "</body>",
+        _build_static_runtime_script(depth=1, page_kind="carteiras_anual") + "\n</body>",
     )
     (out_path / "carteiras" / "index.html").write_text(cart_sub, encoding="utf-8")
+    (out_path / "carteiras" / "anual.html").write_text(cart_anual_sub, encoding="utf-8")
     (out_path / "carteiras.html").write_text(cart_root, encoding="utf-8")
 
-    # 3. Academia (/academia/index.html e /academia.html)
+    # 5. Academia (/academia/index.html e /academia.html)
     (out_path / "academia").mkdir(parents=True, exist_ok=True)
-    acad_runtime = _build_static_runtime_script(backend, is_academy=True)
     acad_sub = _rewrite_links(academia_combined_html, depth=1, backend_url=backend).replace(
         "</body>",
-        acad_runtime + "\n</body>",
+        _build_static_runtime_script(depth=1, page_kind="academia") + "\n</body>",
     )
     acad_root = _rewrite_links(academia_combined_html, depth=0, backend_url=backend).replace(
         "</body>",
-        acad_runtime + "\n</body>",
+        _build_static_runtime_script(depth=0, page_kind="academia") + "\n</body>",
     )
     (out_path / "academia" / "index.html").write_text(acad_sub, encoding="utf-8")
     (out_path / "academia.html").write_text(acad_root, encoding="utf-8")
+
+    # 6. Painel Admin (/admin/index.html protegido por senha no front)
+    (out_path / "admin").mkdir(parents=True, exist_ok=True)
+    admin_gate_html = """
+<div id="staticAdminGate" class="auth-wrap">
+  <div class="panel">
+    <span class="badge badge-cat" style="margin-bottom:10px;">PAINEL ADMINISTRATIVO</span>
+    <h1 style="margin:0 0 8px; font-size:1.45rem;">Acesso Restrito</h1>
+    <p style="margin:0 0 18px; color:var(--muted); font-size:0.9rem;">
+      Informe a senha administrativa do terminal Heurístika.
+    </p>
+    <form id="staticAdminLoginForm">
+      <div class="field">
+        <label for="staticAdminPwd">Senha do Admin</label>
+        <input id="staticAdminPwd" type="password" placeholder="••••••••" required autofocus />
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Entrar no Painel Admin</button>
+    </form>
+  </div>
+</div>
+"""
+    admin_wrapped = admin_authed_html.replace(
+        "<main>",
+        "<main>\n" + admin_gate_html + '\n<div id="staticAdminContent" style="display:none;">',
+        1,
+    ).replace(
+        "</main>",
+        "</div>\n</main>",
+        1,
+    )
+    admin_sub = _rewrite_links(admin_wrapped, depth=1, backend_url=backend).replace(
+        "</body>",
+        _build_static_runtime_script(depth=1, page_kind="admin") + "\n</body>",
+    )
+    (out_path / "admin" / "index.html").write_text(admin_sub, encoding="utf-8")
 
     files_count = sum(1 for p in out_path.rglob("*") if p.is_file())
     return {"files_count": files_count, "output_dir": str(out_path)}
