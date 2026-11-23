@@ -196,16 +196,25 @@ def seed_initial_data(force: bool = False):
             initial_signals,
         )
 
-    sub_count = cur.execute("SELECT COUNT(*) FROM subscribers;").fetchone()[0]
-    if sub_count == 0:
-        exp = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
-        cur.execute(
-            """
-            INSERT INTO subscribers (nome, contato, plano, codigo_acesso, ativo, telegram_invite_link, expira_em, criado_em)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-            """,
-            ("Assinante Demo", "cliente@exemplo.com", "Trimestral", "VIP-DEMO-2026", 1, "", exp, now_str()),
-        )
+    exp = (datetime.now() + timedelta(days=36500)).strftime("%Y-%m-%d")
+    cur.execute(
+        """
+        INSERT OR IGNORE INTO subscribers (nome, contato, plano, codigo_acesso, ativo, telegram_invite_link, expira_em, criado_em)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        """,
+        ("Assinante Demo", "cliente@exemplo.com", "Vitalício", "VIP-DEMO-2026", 1, "", exp, now_str()),
+    )
+    cur.execute(
+        """
+        INSERT OR IGNORE INTO subscribers (nome, contato, plano, codigo_acesso, ativo, telegram_invite_link, expira_em, criado_em)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        """,
+        ("Acesso Master Vitalício", "admin@heuristika.com", "Vitalício", "VIP-VITALICIO", 1, "", exp, now_str()),
+    )
+    cur.execute(
+        "UPDATE subscribers SET plano = 'Vitalício', expira_em = ?, ativo = 1 WHERE codigo_acesso IN ('VIP-DEMO-2026', 'VIP-VITALICIO');",
+        (exp,),
+    )
 
     port_count = cur.execute("SELECT COUNT(*) FROM portfolios;").fetchone()[0]
     if port_count == 0 or force:

@@ -109,17 +109,17 @@ def _build_static_runtime_script(
           return;
         }}
         const upper = raw.toUpperCase();
-        const validCodes = ["VIP-DEMO-2026", "ANUAL-2026", "ADMIN123", "VIP-2026", "HEURISTIKA-VIP"];
+        const validCodes = ["VIP-VITALICIO", "VITALICIO", "VIP-DEMO-2026", "ANUAL-2026", "ADMIN123", "VIP-2026", "HEURISTIKA-VIP", "LSSCHNEIDER24"];
         const isEmail = /^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(raw);
         if (!isEmail && !validCodes.includes(upper) && !upper.startsWith("VIP-")) {{
-          if (window.hkToast) window.hkToast("Código inválido. Use seu e-mail cadastrado ou código VIP (ex: VIP-DEMO-2026).", "warning");
+          if (window.hkToast) window.hkToast("Código inválido. Use seu código Vitalício (VIP-VITALICIO) ou e-mail cadastrado.", "warning");
           return;
         }}
         const subObj = {{
-          nome: isEmail ? raw.split("@")[0] : "Assinante VIP Anual",
+          nome: isEmail ? raw.split("@")[0] : "Acesso Master Vitalício",
           contato: raw,
-          plano: "Anual",
-          codigo_acesso: isEmail ? "VIP-ANUAL-2026" : upper,
+          plano: "Vitalício",
+          codigo_acesso: isEmail ? "VIP-VITALICIO" : upper,
         }};
         try {{ localStorage.setItem(VIP_KEY, JSON.stringify(subObj)); }} catch (err) {{}}
         const params = new URLSearchParams(window.location.search);
