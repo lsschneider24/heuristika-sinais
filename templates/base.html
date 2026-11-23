@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="{{ 'pt-BR' if lang == 'pt' else 'en' }}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}{{ t.site_title }}{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div id="cursorSpotlight" class="cursor-spotlight" aria-hidden="true"></div>
+  <div id="hkToastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- Top Utility Bar -->
+  <div class="utility-bar no-print">
+    <div class="container utility-inner">
+      <div class="utility-left">
+        <span class="util-tag">{{ t.util_desk }}</span>
+        <span class="util-sep">|</span>
+        <span>{{ t.util_audit }}</span>
+        <span class="util-sep">|</span>
+        <span>{{ t.util_tg }}</span>
+      </div>
+      <div class="utility-right">
+        <span class="util-badge">LIVE</span>
+        <span>{{ t.util_mon }}</span>
+        <span class="util-sep">|</span>
+        <a href="{{ url_for('admin_panel') }}">{{ t.util_admin }}</a>
+        <span class="util-sep">|</span>
+        <div class="lang-switch" aria-label="Language">
+          <a href="{{ url_for('set_language', lang='pt') }}" class="{% if lang == 'pt' %}active{% endif %}">PT</a>
+          <a href="{{ url_for('set_language', lang='en') }}" class="{% if lang == 'en' %}active{% endif %}">EN</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Header -->
+  <header class="navbar no-print">
+    <div class="container nav-inner">
+      <a href="{{ url_for('index') }}" class="brand">
+        <span class="brand-hex" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="2" y="2" width="20" height="20" rx="6" fill="rgba(16,185,129,0.14)" stroke="#10b981" stroke-width="1.6"/>
+            <path d="M7 15.5L10.5 11.5L13.5 13.5L17.5 8.5" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="17.5" cy="8.5" r="1.6" fill="#10b981"/>
+          </svg>
+        </span>
+        <span class="brand-name">Heurístika</span>
+        <span class="brand-sub">{{ t.brand_sub1 }}<br/>{{ t.brand_sub2 }}</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Principal">
+        <a href="{{ url_for('index') }}#mercados" class="nav-item">{{ t.nav_markets }}</a>
+        <a href="{{ url_for('index') }}#operacoes" class="nav-item">{{ t.nav_signals }}</a>
+        <a href="{{ url_for('carteiras') }}" class="nav-item {% if request.endpoint == 'carteiras' %}active{% endif %}">{{ t.nav_portfolios }}</a>
+        <a href="{{ url_for('academia') }}" class="nav-item {% if request.endpoint in ('academia', 'certificado') %}active{% endif %}">{{ t.nav_academy }}</a>
+        <a href="{{ url_for('index') }}#historico" class="nav-item">{{ t.nav_audit }}</a>
+        <a href="{{ url_for('index') }}#planos" class="nav-item">{{ t.nav_plans }}</a>
+      </nav>
+
+      <div class="nav-cta">
+        {% if session.get('vip_subscriber_id') %}
+          <a href="{{ url_for('vip_area') }}" class="btn btn-sm btn-electric {% if request.endpoint == 'vip_area' %}nav-btn-active{% endif %}">{{ t.nav_vip_panel }}</a>
+          <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline">{{ t.nav_logout }}</a>
+        {% else %}
+          <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline {% if request.endpoint == 'login' %}nav-btn-active{% endif %}">{{ t.nav_login }}</a>
+          <a href="{{ url_for('index') }}#planos" class="btn btn-sm btn-electric">{{ t.nav_vip_cta }}</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container no-print">
+          <div class="flash-stack">
+            {% for category, msg in messages %}
+              <div class="flash flash-{{ category }}">{{ msg }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer no-print">
+    <div class="container footer-inner">
+      <span>{{ t.footer_text }}</span>
+      <span class="mono" style="font-size:0.75rem;">SQLITE VERIFIED LEDGER • INSTITUTIONAL TERMINAL</span>
+    </div>
+  </footer>
+
+  <script>
+    window.hkToast = function(message, type = "success") {
+      const container = document.getElementById("hkToastContainer");
+      if (!container) return;
+      const el = document.createElement("div");
+      el.className = `hk-toast hk-toast-${type}`;
+      el.innerHTML = `<span class="hk-toast-dot"></span><span></span>`;
+      el.querySelector("span:last-child").textContent = message;
+      container.appendChild(el);
+      requestAnimationFrame(() => el.classList.add("show"));
+      setTimeout(() => {
+        el.classList.remove("show");
+        setTimeout(() => el.remove(), 240);
+      }, 2800);
+    };
+
+    window.hkCopyText = async function(text, okMsg = "Copiado para a área de transferência!") {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+        }
+        window.hkToast(okMsg, "success");
+        return true;
+      } catch (e) {
+        window.hkToast("Não foi possível copiar automaticamente.", "warning");
+        return false;
+      }
+    };
+
+    (function initSubtleCardGlow() {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const spotlight = document.getElementById("cursorSpotlight");
+      window.addEventListener("mousemove", (e) => {
+        const mx = e.clientX;
+        const my = e.clientY;
+        if (spotlight) {
+          spotlight.style.setProperty("--mx", mx + "px");
+          spotlight.style.setProperty("--my", my + "px");
+        }
+        const card = e.target.closest(".source-card, .signal-card, .plan-card, .inst-card, .terminal-window, .term-panel");
+        if (card) {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty("--cx", (mx - rect.left) + "px");
+          card.style.setProperty("--cy", (my - rect.top) + "px");
+        }
+      }, { passive: true });
+    })();
+  </script>
+</body>
+</html>

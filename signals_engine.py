@@ -1,0 +1,278 @@
+import csv
+import io
+import logging
+import random
+import requests
+import config
+import database
+import telegram_sender
+
+logger = logging.getLogger(__name__)
+
+_HTTP_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) SinaisVIP/1.0"
+}
+
+
+def _fetch_binance_candles(binance_symbol: str, limit: int = 60):
+    url = "https://api.binance.com/api/v3/klines"
+    resp = requests.get(
+        url,
+        params={"symbol": binance_symbol, "interval": "1h", "limit": limit},
+        headers=_HTTP_HEADERS,
+        timeout=6,
+    )
+    resp.raise_for_status()
+    rows = resp.json()
+    highs = [float(r[2]) for r in rows]
+    lows = [float(r[3]) for r in rows]
+    closes = [float(r[4]) for r in rows]
+    return highs, lows, closes
+
+
+def _fetch_yahoo_candles(yahoo_symbol: str):
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{yahoo_symbol}"
+    resp = requests.get(
+        url,
+        params={"range": "5d", "interval": "1h"},
+        headers=_HTTP_HEADERS,
+        timeout=6,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    result = data["chart"]["result"][0]
+    quote = result["indicators"]["quote"][0]
+    highs, lows, closes = [], [], []
+    for h, l, c in zip(quote.get("high", []), quote.get("low", []), quote.get("close", [])):
+        if h is not None and l is not None and c is not None:
+            highs.append(float(h))
+            lows.append(float(l))
+            closes.append(float(c))
+    if len(closes) < 25:
+        raise ValueError("Dados insuficientes do Yahoo Finance")
+    return highs[-60:], lows[-60:], closes[-60:]
+
+
+def _fetch_stooq_price(stooq_symbol: str):
+    url = f"https://stooq.com/q/l/?s={stooq_symbol}&f=sd2t2ohlcv&h&e=csv"
+    resp = requests.get(url, headers=_HTTP_HEADERS, timeout=6)
+    resp.raise_for_status()
+    reader = csv.DictReader(io.StringIO(resp.text))
+    for row in reader:
+        close_val = row.get("Close")
+        if close_val and close_val != "N/D":
+            return float(close_val)
+    raise ValueError("Preço indisponível na Stooq")
+
+
+def _generate_simulated_candles(base_price: float, count: int = 60):
+    """Contingência local para garantir continuidade em ambiente offline."""
+    closes = [base_price]
+    highs = [base_price * 1.003]
+    lows = [base_price * 0.997]
+    for _ in range(count - 1):
+        drift = random.uniform(-0.008, 0.008)
+        c = max(0.0001, closes[-1] * (1 + drift))
+        h = c * (1 + random.uniform(0.001, 0.005))
+        l = c * (1 - random.uniform(0.001, 0.005))
+        closes.append(c)
+        highs.append(h)
+        lows.append(l)
+    return highs, lows, closes
+
+
+def get_candles(categoria: str, ativo: str):
+    """Retorna (highs, lows, closes, fonte) para o ativo."""
+    item = config.find_asset_config(categoria, ativo) or {}
+    fallback = float(item.get("fallback_price", 100.0))
+
+    if item.get("binance"):
+        try:
+            h, l, c = _fetch_binance_candles(item["binance"])
+            return h, l, c, "Binance"
+        except Exception as exc:
+            logger.debug("Binance falhou para %s: %s", ativo, exc)
+
+    if item.get("yahoo"):
+        try:
+            h, l, c = _fetch_yahoo_candles(item["yahoo"])
+            return h, l, c, "Yahoo"
+        except Exception as exc:
+            logger.debug("Yahoo falhou para %s: %s", ativo, exc)
+
+    if config.ENABLE_SIMULATION_FALLBACK:
+        h, l, c = _generate_simulated_candles(fallback)
+        return h, l, c, "Contingência Local"
+
+    raise RuntimeError(f"Sem fonte de dados disponível para {ativo}")
+
+
+def get_current_price(categoria: str, ativo: str) -> tuple:
+    """Retorna (preco_atual, fonte)."""
+    item = config.find_asset_config(categoria, ativo) or {}
+    fallback = float(item.get("fallback_price", 100.0))
+
+    if item.get("binance"):
+        try:
+            resp = requests.get(
+                "https://api.binance.com/api/v3/ticker/price",
+                params={"symbol": item["binance"]},
+                headers=_HTTP_HEADERS,
+                timeout=5,
+            )
+            resp.raise_for_status()
+            return float(resp.json()["price"]), "Binance"
+        except Exception:
+            pass
+
+    if item.get("yahoo"):
+        try:
+            _, _, closes = _fetch_yahoo_candles(item["yahoo"])
+            return closes[-1], "Yahoo"
+        except Exception:
+            pass
+
+    if item.get("stooq"):
+        try:
+            return _fetch_stooq_price(item["stooq"]), "Stooq"
+        except Exception:
+            pass
+
+    if config.ENABLE_SIMULATION_FALLBACK:
+        jitter = random.uniform(-0.004, 0.004)
+        return round(fallback * (1 + jitter), item.get("decimals", 2)), "Contingência Local"
+
+    return fallback, "Fallback Estático"
+
+
+def calc_ema(values: list, period: int) -> list:
+    if len(values) < period:
+        return []
+    k = 2 / (period + 1)
+    ema = [sum(values[:period]) / period]
+    for price in values[period:]:
+        ema.append(price * k + ema[-1] * (1 - k))
+    return ema
+
+
+def calc_rsi(closes: list, period: int = 14) -> float:
+    if len(closes) <= period:
+        return 50.0
+    deltas = [closes[i] - closes[i - 1] for i in range(1, len(closes))]
+    gains = [max(d, 0.0) for d in deltas[-period:]]
+    losses = [abs(min(d, 0.0)) for d in deltas[-period:]]
+    avg_gain = sum(gains) / period
+    avg_loss = sum(losses) / period
+    if avg_loss == 0:
+        return 100.0
+    rs = avg_gain / avg_loss
+    return round(100.0 - (100.0 / (1.0 + rs)), 2)
+
+
+def calc_atr(highs: list, lows: list, closes: list, period: int = 14) -> float:
+    if len(closes) <= period:
+        return abs(closes[-1] * 0.01)
+    trs = []
+    for i in range(1, len(closes)):
+        tr = max(
+            highs[i] - lows[i],
+            abs(highs[i] - closes[i - 1]),
+            abs(lows[i] - closes[i - 1]),
+        )
+        trs.append(tr)
+    return sum(trs[-period:]) / period
+
+
+def analyze_asset(categoria: str, asset: dict):
+    """Analisa um ativo com EMA9/EMA21 + RSI + ATR e retorna um dicionário de sinal ou None."""
+    symbol = asset["symbol"]
+    decimals = asset.get("decimals", 2)
+
+    highs, lows, closes, fonte = get_candles(categoria, symbol)
+    if len(closes) < config.EMA_SLOW + 2:
+        return None
+
+    ema_fast = calc_ema(closes, config.EMA_FAST)
+    ema_slow = calc_ema(closes, config.EMA_SLOW)
+
+    # Alinha pelo final das séries
+    fast_curr, fast_prev = ema_fast[-1], ema_fast[-2]
+    slow_curr, slow_prev = ema_slow[-1], ema_slow[-2]
+    rsi = calc_rsi(closes, config.RSI_PERIOD)
+    atr = calc_atr(highs, lows, closes, config.ATR_PERIOD)
+    preco = closes[-1]
+
+    direcao = None
+    motivo = ""
+
+    # Cruzamento de alta ou tendência de alta com RSI saudável
+    if (fast_prev <= slow_prev and fast_curr > slow_curr) or (fast_curr > slow_curr and 45 <= rsi <= config.RSI_OVERBOUGHT):
+        if rsi < config.RSI_OVERBOUGHT:
+            direcao = "COMPRA"
+            motivo = f"EMA{config.EMA_FAST}>{config.EMA_SLOW} | RSI {rsi} | Fonte: {fonte}"
+    elif (fast_prev >= slow_prev and fast_curr < slow_curr) or (fast_curr < slow_curr and config.RSI_OVERSOLD <= rsi <= 55):
+        if rsi > config.RSI_OVERSOLD:
+            direcao = "VENDA"
+            motivo = f"EMA{config.EMA_FAST}<{config.EMA_SLOW} | RSI {rsi} | Fonte: {fonte}"
+
+    if not direcao:
+        return None
+
+    atr_safe = max(atr, preco * 0.004)
+    if direcao == "COMPRA":
+        sl = preco - (1.5 * atr_safe)
+        tp1 = preco + (1.8 * atr_safe)
+        tp2 = preco + (3.2 * atr_safe)
+    else:
+        sl = preco + (1.5 * atr_safe)
+        tp1 = preco - (1.8 * atr_safe)
+        tp2 = preco - (3.2 * atr_safe)
+
+    return {
+        "categoria": categoria,
+        "ativo": symbol,
+        "direcao": direcao,
+        "entrada": round(preco, decimals),
+        "sl": round(sl, decimals),
+        "tp1": round(tp1, decimals),
+        "tp2": round(tp2, decimals),
+        "preco_atual": round(preco, decimals),
+        "destino": "VIP",
+        "origem": "ROBO",
+        "observacao": motivo,
+    }
+
+
+def scan_and_generate_signals(max_new_per_run: int = 2) -> dict:
+    """Varre o catálogo respeitando anti-duplicidade e publica novos sinais."""
+    created = []
+    skipped_dup = 0
+    checked = 0
+
+    for categoria, ativos in config.CATALOGO_ATIVOS.items():
+        for asset in ativos:
+            if len(created) >= max_new_per_run:
+                break
+            checked += 1
+            symbol = asset["symbol"]
+            if database.has_recent_open_or_duplicate_signal(symbol, config.ANTI_DUPLICATE_MINUTES):
+                skipped_dup += 1
+                continue
+
+            try:
+                sig_data = analyze_asset(categoria, asset)
+                if sig_data:
+                    sig_id = database.insert_signal(sig_data)
+                    full_sig = database.get_signal_by_id(sig_id)
+                    telegram_sender.publish_signal_to_telegram(full_sig)
+                    created.append(full_sig)
+            except Exception as exc:
+                logger.warning("Erro ao analisar %s: %s", symbol, exc)
+
+    database.set_setting("last_scan_at", database.now_str())
+    return {
+        "checked": checked,
+        "skipped_duplicate": skipped_dup,
+        "created_count": len(created),
+        "created_signals": created,
+    }

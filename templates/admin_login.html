@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Admin Login — Heurístika{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="panel">
+    <span class="badge badge-cat" style="margin-bottom:10px;">PAINEL ADMINISTRATIVO</span>
+    <h1 style="margin:0 0 8px; font-size:1.45rem;">Acesso Restrito</h1>
+    <p style="margin:0 0 18px; color:var(--muted); font-size:0.9rem;">
+      Informe a senha administrativa do terminal Heurístika.
+    </p>
+    <form method="POST" action="{{ url_for('admin_login') }}">
+      <div class="field">
+        <label for="password">Senha do Admin</label>
+        <input id="password" name="password" type="password" placeholder="••••••••" required autofocus />
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Entrar no Painel Admin</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

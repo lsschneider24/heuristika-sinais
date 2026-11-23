@@ -1,0 +1,941 @@
+{
+  "generated_at": "2026-11-23T02:44:51.054191+00:00",
+  "rate": "-2%",
+  "inter_chapter_pause_frames": 15,
+  "modules": {
+    "01": {
+      "numero": "01",
+      "audio_url": "/static/audio/academia_mod_01.mp3",
+      "audio_file": "static/audio/academia_mod_01.mp3",
+      "audio_voz": "pt-BR-AntonioNeural",
+      "bytes": 1581840,
+      "duracao_segundos": 263.64,
+      "frames": 10985,
+      "capitulos": [
+        {
+          "index": 0,
+          "titulo": "1. O Mito da Alta Taxa de Acerto vs. Convexidade",
+          "tempo_inicio": 0.0,
+          "duracao_segundos": 53.016,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 140,
+          "legendas": [
+            {
+              "inicio": 0.1,
+              "fim": 10.28,
+              "texto": "Olá, eu sou o Rafael Mendes, e vamos abrir o Módulo Um desarmando a maior armadilha do mercado: achar que você precisa acertar quase todas as operações."
+            },
+            {
+              "inicio": 10.23,
+              "fim": 18.992,
+              "texto": "Pensa num motorista de aplicativo que faz dezenove corridas curtas de vinte reais e, na vigésima, leva uma multa de quinhentos reais."
+            },
+            {
+              "inicio": 18.992,
+              "fim": 23.865,
+              "texto": "Noventa e cinco por cento de acerto, mas fechou o dia no vermelho!"
+            },
+            {
+              "inicio": 23.865,
+              "fim": 28.329,
+              "texto": "Quem usa stop largo e alvo curto sofre exatamente assim."
+            },
+            {
+              "inicio": 28.329,
+              "fim": 38.992,
+              "texto": "Na Heurístika, buscamos convexidade: cada perda trava mecanicamente em menos um érre no stop loss, enquanto os alvos de ganho buscam dois e meio a três e meio para um."
+            },
+            {
+              "inicio": 38.992,
+              "fim": 49.579,
+              "texto": "Com quarenta e cinco por cento de acerto e razão dois e meio para um, a expectativa matemática dá mais zero vírgula cinco sete cinco érre por trade, mesmo errando a maioria."
+            },
+            {
+              "inicio": 49.579,
+              "fim": 52.946,
+              "texto": "Agora, quanto apostar em cada sinal?"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "titulo": "2. Derivando o Critério de Kelly na Prática",
+          "tempo_inicio": 53.376,
+          "duracao_segundos": 52.032,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 145,
+          "legendas": [
+            {
+              "inicio": 53.476,
+              "fim": 56.015,
+              "texto": "Olha essa curva aqui na tela."
+            },
+            {
+              "inicio": 55.965,
+              "fim": 59.282,
+              "texto": "Ela mostra o tamanho ideal da sua aposta."
+            },
+            {
+              "inicio": 59.282,
+              "fim": 68.886,
+              "texto": "Imagina descer uma serra cheia de curvas: pisar a cento e oitenta por hora até empolga, mas você sai da pista; ir a vinte não te leva a lugar nenhum."
+            },
+            {
+              "inicio": 68.886,
+              "fim": 75.34,
+              "texto": "O Critério de Kelly calcula exatamente a velocidade máxima segura para o capital crescer no composto."
+            },
+            {
+              "inicio": 75.34,
+              "fim": 83.529,
+              "texto": "A conta é direta: dois e meio vezes quarenta e cinco por cento, menos cinquenta e cinco por cento, dividido por dois e meio."
+            },
+            {
+              "inicio": 83.529,
+              "fim": 90.812,
+              "texto": "Isso dá zero vírgula cinco sete cinco sobre dois e meio, ou seja, vinte e três por cento no éfe estrela."
+            },
+            {
+              "inicio": 90.812,
+              "fim": 99.167,
+              "texto": "Como o pico oscila bastante, na prática usamos o Half-Kelly de onze vírgula cinco por cento, ou um a dois por cento por sinal."
+            },
+            {
+              "inicio": 99.167,
+              "fim": 101.998,
+              "texto": "Mas por que frear abaixo do pico?"
+            },
+            {
+              "inicio": 101.998,
+              "fim": 105.34,
+              "texto": "Porque perder e ganhar não têm o mesmo peso."
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "titulo": "3. Assimetria Matemática do Drawdown (-40% → +66,7%)",
+          "tempo_inicio": 105.768,
+          "duracao_segundos": 53.376,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 141,
+          "legendas": [
+            {
+              "inicio": 105.868,
+              "fim": 110.512,
+              "texto": "Repara nessa rampa vermelha subindo cada vez mais íngreme na tela."
+            },
+            {
+              "inicio": 110.462,
+              "fim": 116.406,
+              "texto": "A matemática do drawdown é traiçoeira porque a sua base de capital encolhe a cada prejuízo."
+            },
+            {
+              "inicio": 116.406,
+              "fim": 122.197,
+              "texto": "Sabe quando uma camisa de cem reais cai quarenta por cento na promoção e vai para sessenta?"
+            },
+            {
+              "inicio": 122.197,
+              "fim": 129.811,
+              "texto": "Se no dia seguinte ela subir só quarenta por cento sobre sessenta, vai para oitenta e quatro, e não volta para cem!"
+            },
+            {
+              "inicio": 129.811,
+              "fim": 136.572,
+              "texto": "Na sua carteira acontece igual: se cem mil reais caem quarenta por cento, sobram sessenta mil."
+            },
+            {
+              "inicio": 136.572,
+              "fim": 145.334,
+              "texto": "Para recuperar quarenta mil em cima de sessenta, você precisa de sessenta e seis vírgula sete por cento de ganho líquido só para voltar ao zero a zero."
+            },
+            {
+              "inicio": 145.334,
+              "fim": 150.717,
+              "texto": "Se cair cinquenta por cento, precisa dobrar, fazendo cem por cento!"
+            },
+            {
+              "inicio": 150.717,
+              "fim": 155.73,
+              "texto": "Por isso, proteger o patrimônio vem sempre antes de buscar retorno."
+            },
+            {
+              "inicio": 155.73,
+              "fim": 159.072,
+              "texto": "E olha o perigo quando alguém ignora esse teto."
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "titulo": "4. O Perigo do Overbetting Mesmo com EV Positivo",
+          "tempo_inicio": 159.504,
+          "duracao_segundos": 53.736,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 139,
+          "legendas": [
+            {
+              "inicio": 159.604,
+              "fim": 167.96,
+              "texto": "Muita gente acha que, se a estratégia tem expectativa matemática positiva, basta apostar pesado que o lucro aparece rápido."
+            },
+            {
+              "inicio": 167.91,
+              "fim": 169.517,
+              "texto": "Cuidado!"
+            },
+            {
+              "inicio": 169.517,
+              "fim": 177.285,
+              "texto": "Imagina jogar cara ou coroa com uma moeda viciada a seu favor, apostando um quarto de tudo o que você tem a cada rodada."
+            },
+            {
+              "inicio": 177.285,
+              "fim": 184.81,
+              "texto": "Mesmo com vantagem estatística, basta uma sequência normal de erros para quebrar antes da convergência no longo prazo."
+            },
+            {
+              "inicio": 184.81,
+              "fim": 191.876,
+              "texto": "Olha na matriz: mesmo acertando cinquenta por cento, cinco stops seguidos são completamente normais."
+            },
+            {
+              "inicio": 191.876,
+              "fim": 202.387,
+              "texto": "Quem arrisca vinte e cinco por cento por operação passa do limite de Kelly e amarga setenta e seis vírgula três por cento de queda em cinco stops: é ruína antes da virada."
+            },
+            {
+              "inicio": 202.387,
+              "fim": 209.683,
+              "texto": "Já quem arrisca dois por cento perde só nove vírgula seis por cento na mesma série e segue inteiro para a próxima pernada."
+            },
+            {
+              "inicio": 209.683,
+              "fim": 213.165,
+              "texto": "Agora falta blindar a nossa própria cabeça."
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "titulo": "5. Eliminando Vieses Comportamentais com Regras Fixas",
+          "tempo_inicio": 213.6,
+          "duracao_segundos": 50.04,
+          "pausa_apos_segundos": 0.0,
+          "palavras": 132,
+          "legendas": [
+            {
+              "inicio": 213.7,
+              "fim": 218.88,
+              "texto": "Sabe por que tanta gente com uma planilha excelente ainda devolve dinheiro no pregão?"
+            },
+            {
+              "inicio": 218.83,
+              "fim": 227.261,
+              "texto": "Decidir com o preço piscando na tela é como entrar no supermercado com fome e sem lista: você compra por impulso e estoura o orçamento."
+            },
+            {
+              "inicio": 227.261,
+              "fim": 234.467,
+              "texto": "Na psicologia econômica, a dor de perder pesa duas vezes mais que o prazer de ganhar — é a aversão à perda."
+            },
+            {
+              "inicio": 234.467,
+              "fim": 241.457,
+              "texto": "Daí nasce o efeito disposição: cortar ganhos cedo demais e segurar perdas tirando o stop na torcida."
+            },
+            {
+              "inicio": 241.457,
+              "fim": 251.074,
+              "texto": "Aqui na mesa, travamos tudo antes do clique: entrada, stop loss, alvo um e alvo dois em ordem automática, sem stop mental."
+            },
+            {
+              "inicio": 251.074,
+              "fim": 256.47,
+              "texto": "E só auditamos o modelo em blocos de vinte ou mais operações, sem emoção."
+            },
+            {
+              "inicio": 256.47,
+              "fim": 263.562,
+              "texto": "No Módulo Dois, vamos descobrir onde cravar esse stop no gráfico usando a volatilidade real de cada ativo."
+            }
+          ]
+        }
+      ]
+    },
+    "02": {
+      "numero": "02",
+      "audio_url": "/static/audio/academia_mod_02.mp3",
+      "audio_file": "static/audio/academia_mod_02.mp3",
+      "audio_voz": "pt-BR-AntonioNeural",
+      "bytes": 1512576,
+      "duracao_segundos": 252.096,
+      "frames": 10504,
+      "capitulos": [
+        {
+          "index": 0,
+          "titulo": "1. Por Que Stops Fixos Falham — Entendendo o ATR",
+          "tempo_inicio": 0.0,
+          "duracao_segundos": 52.152,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 139,
+          "legendas": [
+            {
+              "inicio": 0.1,
+              "fim": 3.532,
+              "texto": "De volta por aqui com você no Módulo Dois."
+            },
+            {
+              "inicio": 3.482,
+              "fim": 10.727,
+              "texto": "Agora que já sabemos quanto arriscar, precisamos definir onde colocar o stop sem virar alvo fácil do ruído."
+            },
+            {
+              "inicio": 10.727,
+              "fim": 22.806,
+              "texto": "Usar stop fixo de um por cento em qualquer ativo é como tentar estacionar um caminhão na vaga de um carro compacto: no câmbio calmo cabe, mas no Bitcoin você é varrido pelo balanço normal do dia."
+            },
+            {
+              "inicio": 22.806,
+              "fim": 31.492,
+              "texto": "Para enxergar esse respiro real, usamos o Á-Tê-Érre de quatorze períodos, que mede a amplitude média dos candles incluindo os gaps."
+            },
+            {
+              "inicio": 31.492,
+              "fim": 38.852,
+              "texto": "Olha na escada de preços: stops abaixo de zero vírgula oito Á-Tê-Érre morrem no ruído aleatório do mercado."
+            },
+            {
+              "inicio": 38.852,
+              "fim": 46.097,
+              "texto": "O stop estrutural mora entre um vírgula dois e um vírgula oito, com referência em um vírgula cinco Á-Tê-Érre."
+            },
+            {
+              "inicio": 46.097,
+              "fim": 52.079,
+              "texto": "Só que alargar o stop traz uma dúvida imediata: o que fazemos com o tamanho do lote?"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "titulo": "2. Matemática do Lote quando a Volatilidade Dobra",
+          "tempo_inicio": 52.512,
+          "duracao_segundos": 53.232,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 136,
+          "legendas": [
+            {
+              "inicio": 52.612,
+              "fim": 56.235,
+              "texto": "Essa regra vale ouro para a sua sobrevivência."
+            },
+            {
+              "inicio": 56.185,
+              "fim": 67.282,
+              "texto": "Imagina dirigir na rodovia quando cai uma tempestade forte: você dobra a distância para o carro da frente e corta a velocidade pela metade para manter a mesma margem de segurança."
+            },
+            {
+              "inicio": 67.282,
+              "fim": 74.821,
+              "texto": "No trade funciona exatamente igual, porque o risco financeiro é o tamanho da posição vezes a distância do stop."
+            },
+            {
+              "inicio": 74.821,
+              "fim": 84.196,
+              "texto": "Numa conta de cinquenta mil reais com risco de um por cento, ou quinhentos reais, um stop de três reais comporta cento e sessenta e seis ações."
+            },
+            {
+              "inicio": 84.196,
+              "fim": 94.77,
+              "texto": "Quando a volatilidade medida pelo Á-Tê-Érre dobra, você dobra a distância do stop para seis reais e reduz o tamanho da posição pela metade, para oitenta e três ações."
+            },
+            {
+              "inicio": 94.77,
+              "fim": 101.377,
+              "texto": "Assim, seu risco em reais ou dólares continua rigorosamente constante em quinhentos reais!"
+            },
+            {
+              "inicio": 101.377,
+              "fim": 105.688,
+              "texto": "Agora, como o livro de ofertas muda essa execução?"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "titulo": "3. Profundidade de Order Book: Forex Majors vs. Altcoins",
+          "tempo_inicio": 106.104,
+          "duracao_segundos": 49.368,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 129,
+          "legendas": [
+            {
+              "inicio": 106.204,
+              "fim": 112.417,
+              "texto": "Calcular o lote perfeito no papel não basta se o livro de ofertas for raso na hora do clique."
+            },
+            {
+              "inicio": 112.367,
+              "fim": 124.203,
+              "texto": "Operar pares principais como Euro-Dólar ou Dólar-Iene é como dirigir numa avenida larga de seis pistas: liquidez institucional profunda e spread fininho, perto de zero vírgula dois pip."
+            },
+            {
+              "inicio": 124.203,
+              "fim": 134.752,
+              "texto": "Já entrar pesado numa altcoin ou ação menor é tentar manobrar numa viela estreita: existem vácuos no livro, e uma ordem grande varre vários degraus de preço de uma vez."
+            },
+            {
+              "inicio": 134.752,
+              "fim": 150.058,
+              "texto": "Essa derrapagem, chamada de slippage, somada ao spread e às taxas, encolhe a sua razão ganho-perda real. Evite também deixar stops em números redondos óbvios, como cinquenta reais, e reduza a mão perto de notícias macro e rollover."
+            },
+            {
+              "inicio": 150.058,
+              "fim": 155.415,
+              "texto": "Com execução limpa, como protegemos o lucro quando o preço anda a nosso favor?"
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "titulo": "4. Escalonamento TP1 (Breakeven) e Captura de TP2",
+          "tempo_inicio": 155.832,
+          "duracao_segundos": 47.736,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 134,
+          "legendas": [
+            {
+              "inicio": 155.932,
+              "fim": 163.382,
+              "texto": "Todo operador já sentiu a frustração de ver um trade bonito quase bater no alvo, voltar tudo e fechar no prejuízo."
+            },
+            {
+              "inicio": 163.332,
+              "fim": 174.595,
+              "texto": "Para equilibrar consistência e assimetria, pense num produtor rural que colhe metade da safra assim que amadurece para garantir o galpão, e deixa a outra metade no pé tentando um preço melhor."
+            },
+            {
+              "inicio": 174.595,
+              "fim": 191.151,
+              "texto": "Aqui no gráfico, ao bater o alvo um — entre um vírgula cinco e dois érre — realizamos quarenta a cinquenta por cento da posição, colocando lucro no bolso, e trazemos o stop loss da parcela restante para o preço de entrada, o zero a zero, chamado de breakeven."
+            },
+            {
+              "inicio": 191.151,
+              "fim": 199.531,
+              "texto": "A partir daí, você conduz uma operação de risco zero até o alvo dois, em três érre ou mais, sem pressão emocional."
+            },
+            {
+              "inicio": 199.531,
+              "fim": 203.498,
+              "texto": "Falta agora ler quando o próprio mercado muda de marcha."
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "titulo": "5. Leitura de Regimes de Compressão e Expansão",
+          "tempo_inicio": 203.928,
+          "duracao_segundos": 48.168,
+          "pausa_apos_segundos": 0.0,
+          "palavras": 124,
+          "legendas": [
+            {
+              "inicio": 204.028,
+              "fim": 207.677,
+              "texto": "Por fim, olha esse gráfico de regimes na tela."
+            },
+            {
+              "inicio": 207.627,
+              "fim": 214.005,
+              "texto": "A volatilidade nunca é estática; ela funciona como uma mola sendo comprimida antes de saltar."
+            },
+            {
+              "inicio": 214.005,
+              "fim": 220.969,
+              "texto": "Quando o preço passa dias quieto e o Á-Tê-Érre cai às mínimas, há energia acumulada para um rompimento forte."
+            },
+            {
+              "inicio": 220.969,
+              "fim": 228.175,
+              "texto": "Na compressão, o stop fica curto, cabendo um lote maior dentro do mesmo limite de um por cento de risco."
+            },
+            {
+              "inicio": 228.175,
+              "fim": 238.698,
+              "texto": "Mas quando vem a expansão, o movimento estica rápido e, depois, entra em exaustão; por isso recalibramos lotes e alvos aos novos múltiplos do Á-Tê-Érre."
+            },
+            {
+              "inicio": 238.698,
+              "fim": 243.839,
+              "texto": "Atualizar essa leitura toda semana evita dirigir no nevoeiro com mapa velho."
+            },
+            {
+              "inicio": 243.839,
+              "fim": 252.04,
+              "texto": "Agora eu passo a palavra para a Camila Duarte, que vai te guiar na engenharia de carteiras por horizonte de tempo no Módulo Três!"
+            }
+          ]
+        }
+      ]
+    },
+    "03": {
+      "numero": "03",
+      "audio_url": "/static/audio/academia_mod_03.mp3",
+      "audio_file": "static/audio/academia_mod_03.mp3",
+      "audio_voz": "pt-BR-ThalitaMultilingualNeural",
+      "bytes": 1517760,
+      "duracao_segundos": 252.96,
+      "frames": 10540,
+      "capitulos": [
+        {
+          "index": 0,
+          "titulo": "1. Índice de Sharpe e Eficiência da Fronteira",
+          "tempo_inicio": 0.0,
+          "duracao_segundos": 53.952,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 146,
+          "legendas": [
+            {
+              "inicio": 0.05,
+              "fim": 2.526,
+              "texto": "Olá, aqui é a Camila Duarte."
+            },
+            {
+              "inicio": 2.526,
+              "fim": 7.959,
+              "texto": "No Módulo Três, saímos da operação isolada para desenhar a sua carteira inteira."
+            },
+            {
+              "inicio": 7.959,
+              "fim": 12.028,
+              "texto": "Escolher ativos olhando só o retorno bruto passado engana muito."
+            },
+            {
+              "inicio": 12.028,
+              "fim": 20.944,
+              "texto": "Pensa em dois carros na mesma viagem: um chacoalha em todo buraco e gasta demais; o outro chega no mesmo horário com suavidade e eficiência."
+            },
+            {
+              "inicio": 20.944,
+              "fim": 31.607,
+              "texto": "Quem mede essa eficiência é o Índice de Sharpe: o retorno excedente da carteira acima da taxa livre de risco, dividido pela volatilidade total, ou seja, o desvio-padrão."
+            },
+            {
+              "inicio": 31.607,
+              "fim": 43.176,
+              "texto": "Olha na fronteira da tela: com Selic a dez vírgula cinco por cento, um portfólio concentrado de dezoito por cento com vinte e seis por cento de volatilidade entrega Sharpe de zero vírgula vinte e nove."
+            },
+            {
+              "inicio": 43.176,
+              "fim": 50.217,
+              "texto": "Diversificando para dezesseis vírgula cinco por cento com doze de risco, o Sharpe salta para zero vírgula cinquenta."
+            },
+            {
+              "inicio": 50.217,
+              "fim": 53.877,
+              "texto": "E o primeiro passo dessa engenharia começa nos dois anos."
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "titulo": "2. Curto Prazo (2 Anos): Por Que o Pós-Fixado Domina",
+          "tempo_inicio": 54.312,
+          "duracao_segundos": 48.888,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 134,
+          "legendas": [
+            {
+              "inicio": 54.362,
+              "fim": 62.029,
+              "texto": "Imagina um plano com data marcada daqui a exatamente vinte e quatro meses — a entrada de um apartamento ou uma reforma importante."
+            },
+            {
+              "inicio": 62.029,
+              "fim": 69.516,
+              "texto": "Você colocaria o dinheiro da escritura na montanha-russa da bolsa ou das criptos torcendo para estar no topo na véspera do pagamento?"
+            },
+            {
+              "inicio": 69.516,
+              "fim": 70.766,
+              "texto": "Claro que não!"
+            },
+            {
+              "inicio": 70.766,
+              "fim": 84.427,
+              "texto": "O grande inimigo no prazo de dois anos se chama risco de sequência de retornos: ativos voláteis como ações e criptomoedas podem estar em ciclo de baixa exatamente na data do resgate, no mês vinte e quatro, sem tempo para recuperação."
+            },
+            {
+              "inicio": 84.427,
+              "fim": 96.493,
+              "texto": "Por isso, uma carteira conservadora de curto prazo concentra maior peso em pós-fixado e liquidez, como o Tesouro Selic, garantindo resgate imediato, baixíssima duration e preservação do principal."
+            },
+            {
+              "inicio": 96.493,
+              "fim": 103.138,
+              "texto": "Já quando ampliamos o horizonte para cinco anos, a carteira ganha fôlego para acionar três motores juntos."
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "titulo": "3. Médio Prazo (5 Anos): Juro Real, FIIs e Dolarização",
+          "tempo_inicio": 103.56,
+          "duracao_segundos": 51.024,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 131,
+          "legendas": [
+            {
+              "inicio": 103.61,
+              "fim": 111.876,
+              "texto": "Quando temos cinco anos de horizonte, não precisamos deixar tudo parado no caixa, nem apostar todas as fichas em um único cenário econômico."
+            },
+            {
+              "inicio": 111.876,
+              "fim": 120.001,
+              "texto": "Pensa numa casa apoiada em três pilares diferentes: se uma tempestade bater forte de um lado, os outros dois seguram o telhado de pé."
+            },
+            {
+              "inicio": 120.001,
+              "fim": 126.175,
+              "texto": "O primeiro pilar traz títulos I-P-C-A mais, travando juro real acima da inflação brasileira."
+            },
+            {
+              "inicio": 126.175,
+              "fim": 133.508,
+              "texto": "O segundo combina fundos imobiliários e ações de dividendos, gerando fluxo mensal que você reinveste em novas cotas."
+            },
+            {
+              "inicio": 133.508,
+              "fim": 142.667,
+              "texto": "E o terceiro coloca uma fatia global em dólar, por meio de ETFs como o I-V-V-B onze, protegendo o patrimônio contra sustos fiscais domésticos."
+            },
+            {
+              "inicio": 142.667,
+              "fim": 147.603,
+              "texto": "Juntos, esses motores equilibram crescimento e renda com estabilidade."
+            },
+            {
+              "inicio": 147.603,
+              "fim": 151.672,
+              "texto": "Agora, o que muda quando destravamos dez anos ou mais?"
+            },
+            {
+              "inicio": 151.672,
+              "fim": 154.504,
+              "texto": "É aí que o tempo vira nosso maior sócio."
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "titulo": "4. Longo Prazo (10+ Anos): Poder dos Juros Compostos",
+          "tempo_inicio": 154.944,
+          "duracao_segundos": 49.104,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 130,
+          "legendas": [
+            {
+              "inicio": 154.994,
+              "fim": 161.806,
+              "texto": "Acima de dez anos, o tempo deixa de ser vilão e vira o grande combustível da multiplicação patrimonial."
+            },
+            {
+              "inicio": 161.806,
+              "fim": 165.467,
+              "texto": "Sabe uma bola de neve descendo uma montanha bem comprida?"
+            },
+            {
+              "inicio": 165.467,
+              "fim": 170.084,
+              "texto": "Nos primeiros metros ela parece lenta e qualquer pedra no caminho assusta."
+            },
+            {
+              "inicio": 170.084,
+              "fim": 179.408,
+              "texto": "Mas, com aportes mensais constantes, cada queda vira promoção para acumular mais cotas, fazendo os juros compostos acelerarem de forma exponencial."
+            },
+            {
+              "inicio": 179.408,
+              "fim": 193.388,
+              "texto": "Nesse horizonte de dez anos ou mais, alocamos maior peso em crescimento global e tecnologia — como o índice Nasdaq cem, com líderes como Nvidia e Apple — somado a uma fatia calibrada de Bitcoin como reserva digital escassa."
+            },
+            {
+              "inicio": 193.388,
+              "fim": 197.393,
+              "texto": "A oscilação curta se dilui diante do CDI e da inflação."
+            },
+            {
+              "inicio": 197.393,
+              "fim": 203.962,
+              "texto": "Mas fica uma pergunta crucial: o que segura essa carteira quando uma crise global derruba ações e cripto juntos?"
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "titulo": "5. O Papel Estrutural do Ouro em Choques Sistêmicos",
+          "tempo_inicio": 204.408,
+          "duracao_segundos": 48.552,
+          "pausa_apos_segundos": 0.0,
+          "palavras": 132,
+          "legendas": [
+            {
+              "inicio": 204.458,
+              "fim": 214.79,
+              "texto": "Muita gente olha para uma carteira de dez anos ou mais com tecnologia — como Nvidia e Nasdaq cem — e Bitcoin, e pergunta por que incluir ouro se ele não paga dividendo mensal."
+            },
+            {
+              "inicio": 214.79,
+              "fim": 220.658,
+              "texto": "Olha, cobrar dividendo do ouro é como reclamar que o airbag do carro não economiza gasolina!"
+            },
+            {
+              "inicio": 220.658,
+              "fim": 225.798,
+              "texto": "Você não instala airbag pensando no passeio calmo; ele salva a viagem na batida."
+            },
+            {
+              "inicio": 225.798,
+              "fim": 233.362,
+              "texto": "Em crises sistêmicas, como dois mil e oito ou dois mil e vinte, ativos de risco e crédito costumam despencar juntos."
+            },
+            {
+              "inicio": 233.362,
+              "fim": 242.443,
+              "texto": "O contrato de ouro mantém correlação historicamente baixa ou negativa nesses momentos, amortecendo o drawdown da carteira e elevando o Índice de Sharpe."
+            },
+            {
+              "inicio": 242.443,
+              "fim": 248.184,
+              "texto": "Com queda menor, você evita vender no pânico e ainda sobra fôlego para rebalancear."
+            },
+            {
+              "inicio": 248.184,
+              "fim": 252.928,
+              "texto": "No Módulo Quatro, fechamos com duration, carry trade e bandas!"
+            }
+          ]
+        }
+      ]
+    },
+    "04": {
+      "numero": "04",
+      "audio_url": "/static/audio/academia_mod_04.mp3",
+      "audio_file": "static/audio/academia_mod_04.mp3",
+      "audio_voz": "pt-BR-ThalitaMultilingualNeural",
+      "bytes": 1387728,
+      "duracao_segundos": 231.288,
+      "frames": 9637,
+      "capitulos": [
+        {
+          "index": 0,
+          "titulo": "1. Duration Modificada e Marcação a Mercado (-9%)",
+          "tempo_inicio": 0.0,
+          "duracao_segundos": 48.864,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 135,
+          "legendas": [
+            {
+              "inicio": 0.05,
+              "fim": 3.827,
+              "texto": "Bem-vindo ao nosso quarto e último módulo da certificação."
+            },
+            {
+              "inicio": 3.827,
+              "fim": 9.859,
+              "texto": "Muita gente acredita que renda fixa nunca cai, mas títulos longos balançam forte na tela."
+            },
+            {
+              "inicio": 9.859,
+              "fim": 22.385,
+              "texto": "Imagina fechar um contrato de aluguel fixo por vinte anos e, logo depois, os aluguéis do bairro inteiro dispararem: para repassar seu contrato hoje para outra pessoa, você precisa dar um bom desconto no valor à vista."
+            },
+            {
+              "inicio": 22.385,
+              "fim": 27.602,
+              "texto": "Na marcação a mercado, quem mede o tamanho dessa gangorra é a Duration Modificada."
+            },
+            {
+              "inicio": 27.602,
+              "fim": 35.038,
+              "texto": "Olha essa curva na tela: pegue um título I-P-C-A mais com duration modificada de nove anos, valendo mil reais."
+            },
+            {
+              "inicio": 35.038,
+              "fim": 46.326,
+              "texto": "Se os juros reais subirem cem pontos-base de repente — um ponto percentual — multiplicamos nove por um e a queda aproximada é de nove por cento no preço, indo para novecentos e dez reais."
+            },
+            {
+              "inicio": 46.326,
+              "fim": 48.801,
+              "texto": "Mas isso destrói a taxa contratada?"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "titulo": "2. Convexidade do Preço vs. Carrego até o Vencimento",
+          "tempo_inicio": 49.224,
+          "duracao_segundos": 45.288,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 130,
+          "legendas": [
+            {
+              "inicio": 49.274,
+              "fim": 53.727,
+              "texto": "Essa resposta separa quem vende no susto de quem entende a curva do título."
+            },
+            {
+              "inicio": 53.727,
+              "fim": 59.938,
+              "texto": "Pense numa passagem de avião com destino garantido versus tentar revender o bilhete no saguão no meio da escala."
+            },
+            {
+              "inicio": 59.938,
+              "fim": 67.82,
+              "texto": "Se você levar o título I-P-C-A mais até o vencimento, recebe exatamente a inflação mais o juro real contratado na compra."
+            },
+            {
+              "inicio": 67.82,
+              "fim": 77.667,
+              "texto": "No meio do trajeto, a curva é convexa: se os juros fecharem cem pontos-base, o ganho supera nove por cento, indo perto de mil e noventa e cinco reais."
+            },
+            {
+              "inicio": 77.667,
+              "fim": 90.512,
+              "texto": "O erro grave está no descasamento de prazos: carteiras de dois anos fogem de duration longa, como um I-P-C-A dois mil e quarenta e cinco, enquanto carteiras de cinco a dez anos aproveitam picos de juros reais."
+            },
+            {
+              "inicio": 90.512,
+              "fim": 94.415,
+              "texto": "Agora vamos ver como diferenças de juros movem o câmbio."
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "titulo": "3. Mecânica do Carry Trade no Mercado de Câmbio",
+          "tempo_inicio": 94.872,
+          "duracao_segundos": 46.128,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 138,
+          "legendas": [
+            {
+              "inicio": 94.922,
+              "fim": 101.275,
+              "texto": "Essa mesma força das taxas de juros movimenta trilhões por dia no mercado de câmbio por meio do Carry Trade."
+            },
+            {
+              "inicio": 101.275,
+              "fim": 107.78,
+              "texto": "Imagina tomar um empréstimo quase sem juros em um país para aplicar o dinheiro em outro que remunera muito bem."
+            },
+            {
+              "inicio": 107.78,
+              "fim": 115.344,
+              "texto": "No Forex, o operador compra a moeda de um país com taxa de juros mais alta financiando-se na moeda de juros mais baixos."
+            },
+            {
+              "inicio": 115.344,
+              "fim": 129.221,
+              "texto": "É o caso clássico de comprar Dólar a quatro vírgula setenta e cinco por cento ao ano — ou Real acima de onze por cento — financiado em Iene japonês a zero vírgula vinte e cinco por cento, embolsando o diferencial no swap diário positivo."
+            },
+            {
+              "inicio": 129.221,
+              "fim": 138.137,
+              "texto": "Mas nunca dispense o calendário dos bancos centrais e o stop: em choques de pânico global, o desmonte dessas posições acontece rápido demais."
+            },
+            {
+              "inicio": 138.137,
+              "fim": 140.918,
+              "texto": "Como blindar a carteira sem liquidar tudo?"
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "titulo": "4. Uso de Ouro e Derivativos como Hedge Macro",
+          "tempo_inicio": 141.36,
+          "duracao_segundos": 43.464,
+          "pausa_apos_segundos": 0.36,
+          "palavras": 127,
+          "legendas": [
+            {
+              "inicio": 141.41,
+              "fim": 150.25,
+              "texto": "Quando a tensão geopolítica ou monetária aperta, muitos investidores zeram a carteira inteira no susto, pagam imposto à toa e ficam de fora da retomada."
+            },
+            {
+              "inicio": 150.25,
+              "fim": 156.781,
+              "texto": "Fazer hedge é como colocar escoras e lona no telhado antes do temporal, em vez de demolir a casa inteira."
+            },
+            {
+              "inicio": 156.781,
+              "fim": 166.959,
+              "texto": "Combinando ouro e contratos futuros líquidos de S&P quinhentos e Nasdaq, reduzimos o beta líquido do portfólio sem precisar desmontar as posições centrais de longo prazo."
+            },
+            {
+              "inicio": 166.959,
+              "fim": 177.814,
+              "texto": "Encare o custo dessa trava como o prêmio de um seguro calibrado ao drawdown que você aceita tolerar: ele blinda eventos de cauda sem cair no erro do sobre-hedge, que anularia os juros compostos."
+            },
+            {
+              "inicio": 177.814,
+              "fim": 184.74,
+              "texto": "Para fechar nossa jornada, falta a regra mecânica que mantém os pesos no lugar e faz você agir ao contrário da manada."
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "titulo": "5. Rebalanceamento Sistemático por Bandas de Peso",
+          "tempo_inicio": 185.184,
+          "duracao_segundos": 46.104,
+          "pausa_apos_segundos": 0.0,
+          "palavras": 130,
+          "legendas": [
+            {
+              "inicio": 185.234,
+              "fim": 190.095,
+              "texto": "Fechamos a certificação com o rebalanceamento sistemático por bandas de peso."
+            },
+            {
+              "inicio": 190.095,
+              "fim": 196.14,
+              "texto": "Na euforia, dá vontade de comprar o que já disparou; na queda, bate o medo de aportar."
+            },
+            {
+              "inicio": 196.14,
+              "fim": 203.895,
+              "texto": "Rebalancear é como podar um jardim: você apara os galhos que cresceram além da conta para dar água e força ao pé que ficou para trás."
+            },
+            {
+              "inicio": 203.895,
+              "fim": 212.735,
+              "texto": "Cada classe recebe um peso-alvo e uma banda — por exemplo, trinta por cento em ações globais, aceitando entre vinte e cinco e trinta e cinco por cento."
+            },
+            {
+              "inicio": 212.735,
+              "fim": 219.329,
+              "texto": "Se subir a trinta e seis, você vende o excesso e compra renda fixa ou ouro descontado abaixo do alvo."
+            },
+            {
+              "inicio": 219.329,
+              "fim": 227.977,
+              "texto": "Assim, mantém o risco dentro do perfil original e captura o rebalancing bonus, vendendo na alta e comprando na baixa automaticamente."
+            },
+            {
+              "inicio": 227.977,
+              "fim": 231.217,
+              "texto": "Respire fundo e faça uma excelente prova!"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

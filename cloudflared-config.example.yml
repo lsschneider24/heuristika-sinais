@@ -1,0 +1,12 @@
+# Renomeie este arquivo para cloudflared-config.yml após rodar:
+#   bin\cloudflared.exe tunnel login
+#   bin\cloudflared.exe tunnel create heuristika
+#   bin\cloudflared.exe tunnel route dns heuristika sinais.seudominio.com.br
+
+tunnel: heuristika
+credentials-file: %USERPROFILE%\.cloudflared\<SEU-TUNNEL-ID>.json
+
+ingress:
+  - hostname: sinais.seudominio.com.br
+    service: http://127.0.0.1:5050
+  - service: http_status:404

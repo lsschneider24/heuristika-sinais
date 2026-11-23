@@ -1,0 +1,2108 @@
+{% extends "base.html" %}
+{% block title %}Academia Heurístika — Estudos, Slides, Vídeos &amp; Certificação Quantitativa{% endblock %}
+
+{% block content %}
+<section class="container section-wrap">
+  <div class="section-head">
+    <div>
+      <div class="hero-pill" style="margin-bottom:10px;">TRILHA QUANTITATIVA • VÍDEO-AULAS + SLIDES + APOSTILA + CERTIFICAÇÃO</div>
+      <h1 style="margin:0; font-size:clamp(1.65rem, 3vw, 2.35rem); letter-spacing:-0.03em;">
+        Academia de Mercado Financeiro &amp; Heurística
+      </h1>
+      <p style="margin:8px 0 0; color:var(--text-soft); max-width:720px;">
+        Assista às vídeo-aulas interativas, revise os decks de slides, domine os estudos numéricos completos e realize a prova de nível avançado (mínimo <strong>70% de acerto</strong>) para emitir seu certificado digital.
+      </p>
+    </div>
+    {% if student %}
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <span class="badge badge-buy">ALUNO: {{ student.nome|upper }}</span>
+        <a href="{{ url_for('academia_logout') }}" class="btn btn-sm btn-outline">Sair da Academia</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Barra de Progresso dos Módulos -->
+  <div class="academy-progress-wrap">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+      <div>
+        <div class="term-kicker">PROGRESSO NA TRILHA QUANTITATIVA</div>
+        <strong style="font-size:1rem;" id="acadProgressLabel">0 de {{ modulos|length }} módulos concluídos (0%)</strong>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <div class="seg-group" id="moduleViewToggle">
+          <button type="button" class="seg-btn btn-xs active" data-mode="all">Todos os Módulos</button>
+          {% for m in modulos %}
+            <button type="button" class="seg-btn btn-xs" data-mode="{{ m.numero }}">Mód. {{ m.numero }}</button>
+          {% endfor %}
+        </div>
+        <a href="{{ '#prova' if student else '#cadastro' }}" class="btn btn-xs btn-electric">Ir para a Prova →</a>
+      </div>
+    </div>
+    <div class="academy-progress-track">
+      <div class="academy-progress-fill" id="acadProgressFill"></div>
+    </div>
+  </div>
+
+  <!-- Grade dos 4 Módulos Selecionáveis -->
+  <div class="academy-modules-grid" id="modulesGrid">
+    {% for m in modulos %}
+      <article class="signal-card module-card-item {% if loop.first %}is-active{% endif %}" data-mod="{{ m.numero }}">
+        <div>
+          <div class="signal-top">
+            <span class="badge badge-buy">MÓDULO {{ m.numero }}</span>
+            <span class="badge badge-cat mod-status-badge" data-mod-badge="{{ m.numero }}">PENDENTE</span>
+          </div>
+          <div class="module-meta-row">
+            <span class="module-meta-chip">{{ m.duracao|default('20 min') }}</span>
+            <span class="module-meta-chip">{{ m.nivel|default('Quant') }}</span>
+            <span class="module-meta-chip">{{ m.slides|length }} slides • vídeo {{ m.video_aula.duracao_segundos|fmt_duration }}</span>
+          </div>
+          <h2 style="margin:0 0 8px; font-size:1.02rem; line-height:1.35;">{{ m.titulo }}</h2>
+          <p style="margin:0 0 12px; font-size:0.82rem; color:var(--text-soft); line-height:1.48;">{{ m.resumo }}</p>
+          <ul class="plan-list" style="margin:0 0 12px; gap:6px; font-size:0.78rem;">
+            {% for top in m.topicos %}
+              <li>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.4" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>{{ top }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="module-card-actions">
+          <button type="button" class="btn btn-sm btn-electric open-studio-btn" data-mod="{{ m.numero }}">
+            Estudar Módulo →
+          </button>
+          <button type="button" class="btn btn-sm btn-outline toggle-mod-btn" data-mod="{{ m.numero }}" title="Alternar conclusão do módulo">
+            Concluir
+          </button>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+
+  <!-- ======================================================================
+       SALA DE AULA QUANTITATIVA (VÍDEO + SLIDES + APOSTILA COMPLETA)
+       ====================================================================== -->
+  <section class="term-panel learning-studio" id="learningStudio" aria-label="Sala de Aula Quantitativa">
+    <div class="studio-head">
+      <div style="max-width:760px;">
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+          <span class="badge badge-buy" id="studioModBadge">MÓDULO 01</span>
+          <span class="module-meta-chip" id="studioModDuracao">18 min</span>
+          <span class="module-meta-chip" id="studioModNivel">Intermediário • Quant</span>
+          <span class="badge badge-cat" id="studioModDoneBadge">PENDENTE</span>
+        </div>
+        <h2 style="margin:0 0 6px; font-size:clamp(1.22rem, 2.2vw, 1.55rem); letter-spacing:-0.02em;" id="studioModTitle">
+          {{ modulos[0].titulo }}
+        </h2>
+        <p style="margin:0; font-size:0.88rem; color:var(--text-soft);" id="studioModSummary">
+          {{ modulos[0].resumo }}
+        </p>
+      </div>
+
+      <div class="studio-nav-actions">
+        <button type="button" class="btn btn-sm btn-ghost" id="prevModuleBtn">← Anterior</button>
+        <button type="button" class="btn btn-sm btn-ghost" id="nextModuleBtn">Próximo →</button>
+        <button type="button" class="btn btn-sm btn-outline" id="studioCompleteBtn">Marcar como Concluído</button>
+      </div>
+    </div>
+
+    <div class="studio-toolbar">
+      <div class="studio-tabs" role="tablist" aria-label="Modos de estudo">
+        <button type="button" class="studio-tab-btn active" role="tab" aria-selected="true" data-studio-tab="video">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span>Vídeo Explicativo</span>
+        </button>
+        <button type="button" class="studio-tab-btn" role="tab" aria-selected="false" data-studio-tab="slides">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span>Slides da Aula (<span id="studioSlidesCount">5</span>)</span>
+        </button>
+        <button type="button" class="studio-tab-btn" role="tab" aria-selected="false" data-studio-tab="study">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <span>Estudo Completo (Apostila)</span>
+        </button>
+      </div>
+
+      <span class="mono" style="font-size:0.74rem; color:var(--muted);" id="studioModeHint">
+        Áudio Neural Estúdio PT-BR • Legendas Sincronizadas &amp; Gráficos Live
+      </span>
+    </div>
+
+    <!-- ABA 1: VÍDEO EXPLICATIVO INTERATIVO -->
+    <div class="studio-pane active" id="pane-video" role="tabpanel">
+      <div class="video-studio-grid">
+        <div class="video-player-card" id="videoPlayerCard">
+          <audio id="academyAudioPlayer" preload="metadata" playsinline></audio>
+          <div class="video-stage" id="videoStage">
+            <canvas id="academyVideoCanvas" class="video-canvas"></canvas>
+            <button type="button" id="videoOverlayPlay" class="video-play-overlay" aria-label="Reproduzir vídeo explicativo">
+              <span class="video-play-circle">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+              </span>
+            </button>
+            <div id="videoSubtitles" class="video-subtitles" aria-live="polite"></div>
+          </div>
+
+          <div class="video-controls-bar">
+            <div class="video-scrubber-wrap" id="videoScrubber" role="slider" aria-label="Linha do tempo da aula" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+              <div class="video-scrubber-track">
+                <div class="video-scrubber-fill" id="videoScrubberFill"></div>
+                <div id="videoMarkers"></div>
+                <div class="video-scrubber-thumb" id="videoScrubberThumb"></div>
+              </div>
+            </div>
+
+            <div class="video-controls-row">
+              <div class="video-controls-left">
+                <button type="button" class="ctrl-btn" id="videoPlayBtn" aria-pressed="false">▶ Reproduzir</button>
+                <span class="mono tabular" style="font-size:0.76rem; color:var(--text-soft);" id="videoTimeDisplay">00:00 / {{ modulos[0].video_aula.duracao_segundos|fmt_duration }}</span>
+              </div>
+
+              <div class="video-controls-right">
+                <div style="display:inline-flex; gap:4px;" aria-label="Velocidade de reprodução">
+                  <button type="button" class="ctrl-btn video-speed-btn" data-speed="0.85">0.85x</button>
+                  <button type="button" class="ctrl-btn video-speed-btn active" data-speed="1">1.0x</button>
+                  <button type="button" class="ctrl-btn video-speed-btn" data-speed="1.25">1.25x</button>
+                  <button type="button" class="ctrl-btn video-speed-btn" data-speed="1.5">1.5x</button>
+                </div>
+                <button type="button" class="ctrl-btn active" id="videoCcBtn" title="Exibir ou ocultar legendas">CC</button>
+                <button type="button" class="ctrl-btn active" id="videoVoiceBtn" title="Silenciar ou ativar Voz Estúdio PT-BR">🔊 Voz Estúdio</button>
+                <div class="video-volume-wrap">
+                  <input type="range" id="videoVolumeSlider" class="video-volume-slider" min="0" max="1" step="0.05" value="0.95" aria-label="Volume da narração" />
+                </div>
+                <button type="button" class="ctrl-btn" id="videoFullscreenBtn" title="Tela cheia">⛶</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="video-chapters-panel">
+          <div>
+            <div class="term-kicker">ROTEIRO &amp; CAPÍTULOS</div>
+            <h3 style="margin:4px 0 2px; font-size:0.96rem; line-height:1.35;" id="videoLessonTitle">
+              {{ modulos[0].video_aula.titulo }}
+            </h3>
+            <span class="mono" style="font-size:0.72rem; color:var(--electric-soft);" id="videoInstructorLabel">
+              {{ modulos[0].video_aula.instrutor }}
+            </span>
+          </div>
+          <div class="video-chapter-list" id="videoChapterList"></div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ABA 2: SLIDES DA AULA -->
+    <div class="studio-pane" id="pane-slides" role="tabpanel">
+      <div class="slide-deck-wrap" id="slideDeckWrap">
+        <div class="slides-toolbar">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span class="badge badge-buy" id="slideCounterBadge">SLIDE 1 / 5</span>
+            <span class="mono" style="font-size:0.78rem; color:var(--muted);" id="slideDeckSubtitle">Use as setas ← / → do teclado para navegar</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-sm btn-outline" id="slidePrevBtn">← Anterior</button>
+            <button type="button" class="btn btn-sm btn-electric" id="slideNextBtn">Próximo →</button>
+            <button type="button" class="btn btn-sm btn-ghost" id="slideFullscreenBtn" title="Apresentar em tela cheia">⛶ Tela Cheia</button>
+          </div>
+        </div>
+
+        <div class="slide-stage" id="slideStage">
+          <div class="slide-content-col">
+            <div>
+              <div class="term-kicker" id="slideKicker">SLIDE 01 • MÓDULO 01</div>
+              <h3 style="margin:6px 0 6px; font-size:clamp(1.2rem, 2.2vw, 1.6rem); line-height:1.2;" id="slideTitle"></h3>
+              <p style="margin:0 0 16px; color:var(--muted); font-size:0.9rem;" id="slideSubtitle"></p>
+              <ul class="slide-bullets" id="slideBullets"></ul>
+            </div>
+            <div class="slide-callout-box" id="slideCallout"></div>
+          </div>
+
+          <div class="slide-visual-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+              <span class="term-kicker">MODELO VISUAL QUANTITATIVO</span>
+              <span class="mono" style="font-size:0.68rem; color:var(--electric-soft);" id="slideVisualTag">DIAGRAMA</span>
+            </div>
+            <svg id="slideDiagramSvg" viewBox="0 0 420 260" style="width:100%; height:auto; display:block;" role="img" aria-label="Diagrama quantitativo do slide"></svg>
+          </div>
+        </div>
+
+        <div class="slide-thumbs" id="slideThumbs"></div>
+      </div>
+    </div>
+
+    <!-- ABA 3: ESTUDO COMPLETO (APOSTILA) -->
+    <div class="studio-pane" id="pane-study" role="tabpanel">
+      <div class="study-layout" id="studyContentHost"></div>
+    </div>
+  </section>
+
+  <!-- Cadastro / Login do Aluno ou Certificados Emitidos -->
+  {% if not student %}
+    <div class="split-2" style="margin-bottom:32px;" id="cadastro">
+      <div class="panel">
+        <span class="badge badge-buy" style="margin-bottom:8px;">PASSO 1 • CADASTRO OBRIGATÓRIO</span>
+        <h2 style="margin:0 0 8px; font-size:1.25rem;">Cadastre-se para Fazer a Prova &amp; Emitir Certificado</h2>
+        <p style="margin:0 0 16px; color:var(--muted); font-size:0.86rem;">
+          Seu nome completo será impresso exatamente como cadastrado no certificado digital verificável.
+        </p>
+        <form method="POST" action="{{ url_for('academia_cadastro') }}">
+          <div class="form-grid">
+            <div class="field">
+              <label for="nome">Nome Completo (para o Certificado)</label>
+              <input id="nome" name="nome" type="text" required placeholder="Ex: Maria Clara Oliveira" />
+            </div>
+            <div class="field">
+              <label for="email">E-mail</label>
+              <input id="email" name="email" type="email" required placeholder="seu@email.com" />
+            </div>
+            <div class="field">
+              <label for="documento">CPF ou Documento (opcional)</label>
+              <input id="documento" name="documento" type="text" placeholder="000.000.000-00" />
+            </div>
+            <div class="field">
+              <label for="pin">Crie um PIN / Senha (mín. 4 dígitos)</label>
+              <input id="pin" name="pin" type="password" minlength="4" required placeholder="••••" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-electric" style="width:100%;">Cadastrar e Liberar Prova</button>
+        </form>
+      </div>
+
+      <div class="panel">
+        <span class="badge badge-cat" style="margin-bottom:8px;">JÁ TEM CADASTRO?</span>
+        <h2 style="margin:0 0 8px; font-size:1.2rem;">Entrar na Academia</h2>
+        <p style="margin:0 0 16px; color:var(--muted); font-size:0.86rem;">
+          Acesse com seu e-mail e PIN para refazer a prova ou baixar seus certificados emitidos.
+        </p>
+        <form method="POST" action="{{ url_for('academia_login') }}">
+          <div class="field">
+            <label for="login_email">E-mail</label>
+            <input id="login_email" name="email" type="email" required placeholder="seu@email.com" />
+          </div>
+          <div class="field">
+            <label for="login_pin">PIN / Senha</label>
+            <input id="login_pin" name="pin" type="password" required placeholder="••••" />
+          </div>
+          <button type="submit" class="btn btn-outline" style="width:100%;">Entrar como Aluno</button>
+        </form>
+      </div>
+    </div>
+  {% else %}
+    {% if certificates %}
+      <div class="panel" style="margin-bottom:28px; border-color:rgba(16,185,129,0.4);">
+        <h2 style="margin:0 0 12px; font-size:1.2rem;">Seus Certificados Emitidos</h2>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          {% for c in certificates %}
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; background:var(--surface-2); padding:12px 14px; border-radius:10px; border:1px solid var(--border);">
+              <div>
+                <strong class="mono text-green">{{ c.codigo }}</strong>
+                <span style="color:var(--muted); font-size:0.84rem; margin-left:8px;">Nota: {{ '%.0f'|format(c.nota_pct) }}% ({{ c.acertos }}/{{ c.total_questoes }}) • Emitido em {{ c.emitido_em|fmt_dt }}</span>
+              </div>
+              <a href="{{ url_for('certificado', codigo=c.codigo) }}" class="btn btn-sm btn-electric">Abrir Certificado ↗</a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Resultado da última tentativa -->
+    {% if exam_result %}
+      <div class="panel" style="margin-bottom:28px; border-color:{{ 'rgba(16,185,129,0.5)' if exam_result.aprovado else 'rgba(255,71,87,0.45)' }};" id="resultado-prova">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+          <div>
+            <span class="badge {{ 'badge-buy' if exam_result.aprovado else 'badge-loss' }}">
+              {{ 'APROVADO NA CERTIFICAÇÃO' if exam_result.aprovado else 'NÃO APROVADO (MÍNIMO 70%)' }}
+            </span>
+            <h2 style="margin:8px 0 0;">Nota Final: {{ '%.0f'|format(exam_result.nota_pct) }}% ({{ exam_result.acertos }}/{{ exam_result.total }})</h2>
+          </div>
+          {% if exam_result.cert_code %}
+            <a href="{{ url_for('certificado', codigo=exam_result.cert_code) }}" class="btn btn-electric">Visualizar Certificado ({{ exam_result.cert_code }})</a>
+          {% endif %}
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          {% for r in exam_result.revisao %}
+            <div style="background:var(--surface-2); padding:10px 12px; border-radius:8px; font-size:0.84rem;">
+              <strong class="{{ 'text-green' if r.acertou else 'text-red' }}">{{ '✓ CORRETA' if r.acertou else '✕ INCORRETA' }}</strong> — {{ r.enunciado }}
+              {% if r.resposta_usuario %}
+                <div class="mono" style="font-size:0.76rem; color:var(--text-soft); margin-top:4px;">
+                  Sua resposta: <strong>{{ r.resposta_usuario }}</strong>{% if not r.acertou and r.correta %} • Correta: <strong class="text-green">{{ r.correta }}</strong>{% endif %}
+                </div>
+              {% endif %}
+              <div style="color:var(--muted); margin-top:4px;">{{ r.explicacao }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Prova de Nível Avançado com Navegador de Questões -->
+    <div class="panel" id="prova">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+        <div>
+          <span class="badge badge-vip">EXAME DE CERTIFICAÇÃO • NÍVEL COMPLEXO</span>
+          <h2 style="margin:6px 0 0;">Avaliação Quantitativa ({{ questoes|length }} Questões • Aprovação &ge; 70%)</h2>
+        </div>
+        <span class="mono" style="font-size:0.8rem; color:var(--muted);">Kelly • Duration • ATR • Sharpe • Carry • Drawdown</span>
+      </div>
+
+      <!-- Sticky Question Navigator -->
+      <div class="exam-nav">
+        <div>
+          <div class="term-kicker">NAVEGADOR DO EXAME</div>
+          <strong class="mono" style="font-size:0.86rem;" id="examAnsweredCounter">0/{{ questoes|length }} respondidas</strong>
+        </div>
+        <div class="exam-dots" id="examDots">
+          {% for q in questoes %}
+            <button type="button" class="exam-dot" data-target="qcard-{{ q.id }}" data-qid="{{ q.id }}" title="Ir para questão {{ loop.index }}">Q{{ loop.index }}</button>
+          {% endfor %}
+        </div>
+      </div>
+
+      <form method="POST" action="{{ url_for('academia_prova') }}" id="examForm" style="display:flex; flex-direction:column; gap:18px;">
+        {% for q in questoes %}
+          <div class="question-block" id="qcard-{{ q.id }}" data-qid="{{ q.id }}" style="background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:18px;">
+            <div style="font-weight:600; margin-bottom:12px; font-size:0.95rem; line-height:1.45;">{{ q.enunciado }}</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              {% for val, label in q.opcoes %}
+                <label class="option-card">
+                  <input type="radio" name="{{ q.id }}" value="{{ val }}" required style="margin-top:3px; accent-color:#10b981;" />
+                  <span><strong>{{ val|upper }})</strong> {{ label }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-electric" style="width:100%;">Finalizar Prova e Corrigir Agora</button>
+      </form>
+    </div>
+  {% endif %}
+</section>
+
+<script id="academyModulesJson" type="application/json">{{ modulos|tojson }}</script>
+
+<script>
+(function initAcademyStudio() {
+  const rawEl = document.getElementById("academyModulesJson");
+  if (!rawEl) return;
+  const MODULES = JSON.parse(rawEl.textContent || "[]");
+  if (!MODULES.length) return;
+
+  const STORAGE_KEY = "hk_academy_done_modules_v1";
+  const totalMods = MODULES.length;
+  let doneSet = new Set();
+  try {
+    doneSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
+  } catch (e) { doneSet = new Set(); }
+
+  const state = {
+    modIdx: 0,
+    tab: "video",
+    slideIdx: 0,
+    videoTime: 0,
+    playing: false,
+    playToken: 0,
+    draggingScrubber: false,
+    speed: 1,
+    ccEnabled: true,
+    voiceEnabled: true,
+    volume: 0.95,
+    pendingSeek: null,
+    audioFailed: false,
+    audioFallbackPlaying: false,
+    lastSubtitleText: "",
+    lastChapterIdx: -1,
+    lastFrameTs: null,
+    rafId: null,
+  };
+
+  function escHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function fmtSec(sec) {
+    const s = Math.max(0, Math.floor(sec || 0));
+    const mm = String(Math.floor(s / 60)).padStart(2, "0");
+    const ss = String(s % 60).padStart(2, "0");
+    return `${mm}:${ss}`;
+  }
+
+  function currentMod() {
+    return MODULES[state.modIdx] || MODULES[0];
+  }
+
+  // =========================================================================
+  // Progress & Module Completion Sync
+  // =========================================================================
+  function renderModProgress() {
+    const count = doneSet.size;
+    const pct = totalMods > 0 ? Math.round((count / totalMods) * 100) : 0;
+    const lbl = document.getElementById("acadProgressLabel");
+    const fill = document.getElementById("acadProgressFill");
+    if (lbl) lbl.textContent = `${count} de ${totalMods} módulos concluídos (${pct}%)`;
+    if (fill) fill.style.width = pct + "%";
+
+    document.querySelectorAll(".toggle-mod-btn").forEach(btn => {
+      const m = btn.dataset.mod;
+      const done = doneSet.has(m);
+      btn.textContent = done ? "✓ Concluído" : "Concluir";
+      btn.className = "btn btn-sm toggle-mod-btn " + (done ? "btn-electric" : "btn-outline");
+      const badge = document.querySelector(`[data-mod-badge="${m}"]`);
+      if (badge) {
+        badge.textContent = done ? "CONCLUÍDO" : "PENDENTE";
+        badge.className = "badge mod-status-badge " + (done ? "badge-buy" : "badge-cat");
+      }
+    });
+
+    const mod = currentMod();
+    const isDone = doneSet.has(mod.numero);
+    const doneBadge = document.getElementById("studioModDoneBadge");
+    const studioBtn = document.getElementById("studioCompleteBtn");
+    const inlineBtn = document.getElementById("studyInlineCompleteBtn");
+    if (doneBadge) {
+      doneBadge.textContent = isDone ? "CONCLUÍDO" : "PENDENTE";
+      doneBadge.className = "badge " + (isDone ? "badge-buy" : "badge-cat");
+    }
+    if (studioBtn) {
+      studioBtn.textContent = isDone ? "✓ Módulo Concluído (Desmarcar)" : "Marcar como Concluído";
+      studioBtn.className = "btn btn-sm " + (isDone ? "btn-electric" : "btn-outline");
+    }
+    if (inlineBtn) {
+      inlineBtn.textContent = isDone ? "✓ Módulo Concluído (Desmarcar)" : "Marcar Módulo como Concluído";
+      inlineBtn.className = "btn btn-sm " + (isDone ? "btn-electric" : "btn-outline");
+    }
+  }
+
+  function toggleModuleDone(modNumero) {
+    if (doneSet.has(modNumero)) {
+      doneSet.delete(modNumero);
+      if (window.hkToast) window.hkToast(`Módulo ${modNumero} marcado como pendente.`, "warning");
+    } else {
+      doneSet.add(modNumero);
+      if (window.hkToast) window.hkToast(`Módulo ${modNumero} concluído!`, "success");
+    }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...doneSet])); } catch (e) {}
+    renderModProgress();
+  }
+
+  document.querySelectorAll(".toggle-mod-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleModuleDone(btn.dataset.mod);
+    });
+  });
+
+  // =========================================================================
+  // Master Studio Audio Engine (PT-BR Neural MP3 + Sentence Sync)
+  // =========================================================================
+  const audioEl = document.getElementById("academyAudioPlayer");
+  const voiceBtn = document.getElementById("videoVoiceBtn");
+  const volumeSlider = document.getElementById("videoVolumeSlider");
+
+  function updateVoiceUi() {
+    if (voiceBtn) {
+      voiceBtn.classList.toggle("active", state.voiceEnabled);
+      voiceBtn.textContent = state.voiceEnabled ? "🔊 Voz Estúdio" : "🔇 Mudo";
+    }
+    if (volumeSlider) {
+      volumeSlider.value = String(state.voiceEnabled ? state.volume : 0);
+    }
+  }
+
+  function applyAudioSettings() {
+    if (!audioEl) return;
+    audioEl.volume = Math.max(0, Math.min(1, state.volume));
+    audioEl.muted = !state.voiceEnabled;
+    audioEl.playbackRate = state.speed;
+    audioEl.preservesPitch = true;
+    audioEl.mozPreservesPitch = true;
+    audioEl.webkitPreservesPitch = true;
+  }
+
+  function loadModuleAudio() {
+    if (!audioEl) return;
+    state.playToken += 1;
+    const mod = currentMod();
+    const audioUrl = (mod.video_aula && mod.video_aula.audio_url) || "";
+    try { audioEl.pause(); } catch (e) {}
+    state.pendingSeek = null;
+    state.audioFailed = false;
+    state.audioFallbackPlaying = false;
+    if (audioUrl) {
+      audioEl.src = audioUrl;
+      audioEl.load();
+      applyAudioSettings();
+    } else {
+      audioEl.removeAttribute("src");
+      audioEl.load();
+    }
+    updateVoiceUi();
+  }
+
+  function seekAudioTo(sec) {
+    const total = Math.max(1, (currentMod().video_aula && currentMod().video_aula.duracao_segundos) || 180);
+    const clamped = Math.max(0, Math.min(total, Number(sec) || 0));
+    state.videoTime = clamped;
+    if (audioEl && audioEl.getAttribute("src") && !state.audioFailed) {
+      if (audioEl.readyState >= 1) {
+        try {
+          const maxDur = Number.isFinite(audioEl.duration) && audioEl.duration > 0 ? audioEl.duration : total;
+          audioEl.currentTime = Math.min(Math.max(0, maxDur - 0.05), clamped);
+          state.pendingSeek = null;
+        } catch (e) {
+          state.pendingSeek = clamped;
+        }
+      } else {
+        state.pendingSeek = clamped;
+      }
+    }
+  }
+
+  if (audioEl) {
+    audioEl.addEventListener("loadedmetadata", () => {
+      applyAudioSettings();
+      if (state.pendingSeek !== null) {
+        try {
+          const maxDur = Number.isFinite(audioEl.duration) && audioEl.duration > 0 ? audioEl.duration : state.pendingSeek + 1;
+          audioEl.currentTime = Math.min(Math.max(0, maxDur - 0.05), Math.max(0, state.pendingSeek));
+        } catch (e) {}
+        state.pendingSeek = null;
+      }
+    });
+    audioEl.addEventListener("ended", () => {
+      const total = Math.max(1, (currentMod().video_aula && currentMod().video_aula.duracao_segundos) || 180);
+      state.videoTime = total;
+      setPlaying(false);
+      if (window.hkToast) {
+        window.hkToast(`Aula do Módulo ${currentMod().numero} finalizada! Revise os slides ou avance para o próximo módulo.`, "success");
+      }
+    });
+    audioEl.addEventListener("error", () => {
+      state.audioFailed = true;
+    });
+  }
+
+  function getActiveSubtitleText(chap, chapProgress, tSec) {
+    const subs = Array.isArray(chap && chap.legendas) ? chap.legendas : [];
+    if (subs.length) {
+      for (let i = 0; i < subs.length; i++) {
+        const nextStart = i + 1 < subs.length ? subs[i + 1].inicio - 0.04 : subs[i].fim + 0.2;
+        const end = Math.min(subs[i].fim + 0.15, nextStart);
+        if (tSec >= subs[i].inicio - 0.05 && tSec <= end) {
+          return subs[i].texto;
+        }
+      }
+      let latestPast = null;
+      let nextUp = null;
+      for (let i = 0; i < subs.length; i++) {
+        if (subs[i].fim <= tSec) latestPast = subs[i];
+        else if (!nextUp && subs[i].inicio > tSec) nextUp = subs[i];
+      }
+      if (nextUp && (nextUp.inicio - tSec) < 0.75) return nextUp.texto;
+      if (latestPast) return latestPast.texto;
+      return subs[0].texto;
+    }
+    const raw = String((chap && chap.roteiro) || "").trim();
+    if (!raw) return "";
+    const parts = raw.split(/(?<=[.!?])\s+/).filter(Boolean);
+    if (!parts.length) return raw.slice(0, 140);
+    const sIdx = Math.min(parts.length - 1, Math.floor(Math.max(0, Math.min(0.999, chapProgress)) * parts.length));
+    return parts[sIdx];
+  }
+
+  // =========================================================================
+  // Video Lesson Engine (Synchronized HTML5 Canvas + Chapters + Scrubber)
+  // =========================================================================
+  const canvas = document.getElementById("academyVideoCanvas");
+  const videoStage = document.getElementById("videoStage");
+  const playOverlay = document.getElementById("videoOverlayPlay");
+  const playBtn = document.getElementById("videoPlayBtn");
+  const subtitlesEl = document.getElementById("videoSubtitles");
+  const scrubberEl = document.getElementById("videoScrubber");
+  const scrubberFill = document.getElementById("videoScrubberFill");
+  const scrubberThumb = document.getElementById("videoScrubberThumb");
+  const markersHost = document.getElementById("videoMarkers");
+  const timeDisplayEl = document.getElementById("videoTimeDisplay");
+  const chapterListEl = document.getElementById("videoChapterList");
+
+  function getActiveChapterInfo() {
+    const video = currentMod().video_aula || { duracao_segundos: 180, capitulos: [] };
+    const chaps = video.capitulos || [];
+    const total = Math.max(1, video.duracao_segundos || 180);
+    let idx = 0;
+    for (let i = 0; i < chaps.length; i++) {
+      if (state.videoTime >= chaps[i].tempo_inicio) idx = i;
+    }
+    const chap = chaps[idx] || { tempo_inicio: 0, titulo: currentMod().titulo, roteiro: "", destaque_visual: "", visual_mode: "payoff_asymmetry", legendas: [] };
+    const nextStart = (chaps[idx + 1] ? chaps[idx + 1].tempo_inicio : total);
+    const span = Math.max(1, nextStart - chap.tempo_inicio);
+    const chapElapsed = Math.max(0, state.videoTime - chap.tempo_inicio);
+    const chapProgress = Math.max(0, Math.min(1, chapElapsed / span));
+    return { video, chaps, total, idx, chap, chapProgress, chapElapsed };
+  }
+
+  function resizeCanvas() {
+    if (!canvas || !videoStage) return;
+    const rect = videoStage.getBoundingClientRect();
+    if (rect.width < 10 || rect.height < 10) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const targetW = Math.round(rect.width * dpr);
+    const targetH = Math.round(rect.height * dpr);
+    if (canvas.width !== targetW || canvas.height !== targetH) {
+      canvas.width = targetW;
+      canvas.height = targetH;
+    }
+  }
+
+  function drawRoundedRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function drawCanvasScene(ctx, W, H, mod, chap, p, nowSec, chapElapsed) {
+    const padX = Math.max(24, W * 0.06);
+    const topY = Math.max(58, H * 0.165);
+    const subReserve = W < 700 ? Math.max(66, H * 0.21) : Math.max(50, H * 0.155);
+    const ribbonY = H - subReserve - 8;
+    const cardH = Math.max(28, Math.round(H * 0.078));
+    const cardY = ribbonY - cardH - 7;
+    const botY = Math.max(topY + 80, cardY - 10);
+    const plotW = W - padX * 2;
+    const plotH = Math.max(80, botY - topY);
+
+    // 1. Dark Terminal Background + Radial Glow
+    const bgGrad = ctx.createRadialGradient(W * 0.65, H * 0.35, 10, W * 0.5, H * 0.5, W * 0.8);
+    bgGrad.addColorStop(0, "#0e1a2d");
+    bgGrad.addColorStop(0.55, "#060b13");
+    bgGrad.addColorStop(1, "#03050a");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // 2. Subtle Grid
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.045)";
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 6; i++) {
+      const y = topY + (plotH * i) / 6;
+      ctx.beginPath(); ctx.moveTo(padX, y); ctx.lineTo(W - padX, y); ctx.stroke();
+    }
+    for (let i = 0; i <= 8; i++) {
+      const x = padX + (plotW * i) / 8;
+      ctx.beginPath(); ctx.moveTo(x, topY); ctx.lineTo(x, botY); ctx.stroke();
+    }
+
+    // 3. Top Telemetry HUD
+    const hudH = Math.max(30, H * 0.085);
+    ctx.fillStyle = "rgba(4, 7, 12, 0.72)";
+    ctx.fillRect(0, 0, W, hudH + 6);
+    ctx.strokeStyle = "rgba(255,255,255,0.08)";
+    ctx.beginPath(); ctx.moveTo(0, hudH + 6); ctx.lineTo(W, hudH + 6); ctx.stroke();
+
+    // Highlighted formula badge top right
+    const formulaBadge = chap.destaque_visual || mod.titulo;
+    ctx.font = `700 ${Math.max(10, Math.round(W * 0.014))}px "JetBrains Mono", monospace`;
+    const badgeW = Math.min(W * 0.48, ctx.measureText(formulaBadge).width + 20);
+    const bx = W - padX - badgeW;
+    const by = 6;
+    const fsHud = Math.max(10, Math.round(W * 0.015));
+    ctx.font = `700 ${fsHud}px "JetBrains Mono", monospace`;
+    ctx.fillStyle = "#34d399";
+    ctx.textAlign = "left";
+    ctx.fillText(`● HEURÍSTIKA QUANT STUDIO • MÓD. ${mod.numero}`, padX, hudH * 0.68, Math.max(60, bx - padX - 10));
+
+    ctx.font = `700 ${Math.max(10, Math.round(W * 0.014))}px "JetBrains Mono", monospace`;
+    ctx.fillStyle = "rgba(16, 185, 129, 0.14)";
+    ctx.strokeStyle = "rgba(52, 211, 153, 0.45)";
+    drawRoundedRect(ctx, bx, by, badgeW, hudH - 4, 6);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#a7f3d0";
+    ctx.textAlign = "right";
+    ctx.fillText(formulaBadge, W - padX - 10, hudH * 0.66, badgeW - 18);
+
+    // Smooth 0.35s chapter cross-fade + subtle upward slide
+    const enterT = Math.max(0, Math.min(1, (chapElapsed || 0) / 0.35));
+    const easeIn = 1 - Math.pow(1 - enterT, 3);
+    ctx.save();
+    ctx.globalAlpha = 0.22 + 0.78 * easeIn;
+    ctx.translate(0, (1 - easeIn) * 8);
+
+    // Chapter title subtitle just below HUD
+    ctx.textAlign = "left";
+    ctx.font = `700 ${Math.max(12, Math.round(W * 0.02))}px "Inter", sans-serif`;
+    ctx.fillStyle = "#f8fafc";
+    ctx.fillText(chap.titulo, padX, topY - 12, plotW);
+
+    // 4. Mode-specific animated quantitative visual
+    const animP = Math.max(0.15, Math.min(1, p * 1.12));
+    const pulse = 0.5 + 0.5 * Math.sin(nowSec * 3.2);
+    const mode = chap.visual_mode || "payoff_asymmetry";
+    const fontSm = Math.max(10, Math.round(W * 0.0145));
+    const fontMd = Math.max(11, Math.round(W * 0.017));
+
+    function drawCurve(fn, color, width, maxT, fillAlpha) {
+      const steps = 64;
+      const limit = Math.max(2, Math.floor(steps * maxT));
+      ctx.beginPath();
+      for (let i = 0; i <= limit; i++) {
+        const u = i / steps;
+        const val = fn(u);
+        const x = padX + u * plotW;
+        const y = botY - val * plotH;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.stroke();
+      if (fillAlpha > 0) {
+        const endX = padX + (limit / steps) * plotW;
+        ctx.lineTo(endX, botY);
+        ctx.lineTo(padX, botY);
+        ctx.closePath();
+        ctx.fillStyle = `rgba(16, 185, 129, ${fillAlpha})`;
+        ctx.fill();
+      }
+    }
+
+    function labelTag(x, y, txt, bg, fg) {
+      ctx.font = `700 ${fontSm}px "JetBrains Mono", monospace`;
+      const tw = Math.min(plotW - 4, ctx.measureText(txt).width + 14);
+      const th = fontSm + 10;
+      const rx = Math.max(padX, Math.min(W - padX - tw, x - tw / 2));
+      const ry = Math.max(topY + 2, Math.min(botY - th - 2, y));
+      ctx.fillStyle = bg;
+      drawRoundedRect(ctx, rx, ry, tw, th, 5);
+      ctx.fill();
+      ctx.fillStyle = fg;
+      ctx.textAlign = "center";
+      ctx.fillText(txt, rx + tw / 2, ry + th - 6, tw - 8);
+    }
+
+    if (mode === "payoff_asymmetry" || mode === "ev_matrix") {
+      // Bar distribution / Monte Carlo R-multiple trades
+      const trades = mode === "payoff_asymmetry"
+        ? [-1, -1, 2.5, -1, 1.5, -1, 3.0, -1, 2.5, 1.5, -1, 2.8]
+        : [-1, 2.5, -1, -1, 2.5, 1.5, -1, 2.5, -1, 3.0, 2.5, -1, 2.5, 1.5];
+      const baseZeroY = topY + plotH * 0.65;
+      ctx.strokeStyle = "rgba(255,255,255,0.22)";
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(padX, baseZeroY); ctx.lineTo(W - padX, baseZeroY); ctx.stroke();
+      ctx.setLineDash([]);
+
+      const barGap = plotW / trades.length;
+      const barW = Math.max(10, barGap * 0.58);
+      const visibleCount = Math.max(1, Math.ceil(trades.length * animP));
+      let cumR = 0;
+      const pts = [[padX, baseZeroY]];
+
+      for (let i = 0; i < trades.length; i++) {
+        const val = trades[i];
+        const x = padX + i * barGap + (barGap - barW) / 2;
+        if (i < visibleCount) {
+          cumR += val;
+          const bh = (Math.abs(val) / 3.5) * (plotH * 0.55);
+          ctx.fillStyle = val >= 0 ? "rgba(16, 185, 129, 0.85)" : "rgba(255, 71, 87, 0.78)";
+          if (val >= 0) {
+            drawRoundedRect(ctx, x, baseZeroY - bh, barW, bh, 4);
+          } else {
+            drawRoundedRect(ctx, x, baseZeroY, barW, bh * 0.72, 4);
+          }
+          ctx.fill();
+          pts.push([x + barW / 2, Math.max(topY + 10, baseZeroY - (cumR / 10) * plotH * 0.55)]);
+        }
+      }
+      // Cumulative Equity Line
+      ctx.beginPath();
+      pts.forEach(([px, py], idx) => idx === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py));
+      ctx.strokeStyle = "#f5b041";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      const last = pts[pts.length - 1];
+      ctx.fillStyle = "#fbbf24";
+      ctx.beginPath(); ctx.arc(last[0], last[1], 5 + pulse * 2, 0, Math.PI * 2); ctx.fill();
+      labelTag(last[0], last[1] - 26, `Equity Acumulada: +${cumR.toFixed(1)}R`, "rgba(245,176,65,0.22)", "#fde68a");
+      labelTag(padX + 75, botY - 24, "Perdas Truncadas (-1R)", "rgba(255,71,87,0.22)", "#fecdd3");
+    } else if (mode === "kelly_curve") {
+      // Logarithmic growth g(f) = p*ln(1+b*f) + q*ln(1-f)
+      const zeroY = botY - plotH * 0.22;
+      ctx.strokeStyle = "rgba(255,255,255,0.18)";
+      ctx.beginPath(); ctx.moveTo(padX, zeroY); ctx.lineTo(W - padX, zeroY); ctx.stroke();
+
+      const kellyFn = (u) => {
+        const f = u * 0.52;
+        const g = 0.45 * Math.log(Math.max(0.01, 1 + 2.5 * f)) + 0.55 * Math.log(Math.max(0.01, 1 - f));
+        return 0.22 + g * 8.2;
+      };
+      drawCurve(kellyFn, "#10b981", 3.2, animP, 0.14);
+
+      const halfX = padX + (0.115 / 0.52) * plotW;
+      const fullX = padX + (0.23 / 0.52) * plotW;
+      const ruinX = padX + (0.45 / 0.52) * plotW;
+      const halfY = botY - kellyFn(0.115 / 0.52) * plotH;
+      const fullY = botY - kellyFn(0.23 / 0.52) * plotH;
+
+      ctx.strokeStyle = "rgba(52,211,153,0.45)";
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(halfX, halfY); ctx.lineTo(halfX, botY); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(fullX, fullY); ctx.lineTo(fullX, botY); ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "#34d399";
+      ctx.beginPath(); ctx.arc(halfX, halfY, 6 + pulse * 1.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#fbbf24";
+      ctx.beginPath(); ctx.arc(fullX, fullY, 6, 0, Math.PI * 2); ctx.fill();
+
+      labelTag(halfX, halfY - 28, "Half-Kelly 11,5%", "rgba(16,185,129,0.25)", "#a7f3d0");
+      labelTag(fullX + 18, fullY - 28, "Full Kelly f*=23%", "rgba(245,176,65,0.25)", "#fde68a");
+      labelTag(ruinX, zeroY + 14, "Overbetting → Ruína", "rgba(255,71,87,0.25)", "#fecdd3");
+    } else if (mode === "drawdown_asymmetry") {
+      // Curve y = 1/(1-dd) - 1
+      const maxDD = 0.65;
+      const ddFn = (u) => {
+        const dd = u * maxDD;
+        const rec = (1 / (1 - dd) - 1);
+        return Math.min(0.95, rec / 1.9);
+      };
+      // Linear reference line
+      ctx.strokeStyle = "rgba(96, 165, 250, 0.45)";
+      ctx.setLineDash([5, 4]);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(padX, botY);
+      ctx.lineTo(padX + plotW, botY - (0.65 / 1.9) * plotH);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      drawCurve(ddFn, "#ff4757", 3.4, animP, 0);
+      const u40 = 0.40 / maxDD;
+      const x40 = padX + u40 * plotW;
+      const y40 = botY - ddFn(u40) * plotH;
+      ctx.fillStyle = "#fbbf24";
+      ctx.beginPath(); ctx.arc(x40, y40, 6 + pulse * 2, 0, Math.PI * 2); ctx.fill();
+      labelTag(x40 - 10, y40 - 30, "DD -40% ⇒ Exige +66,7%", "rgba(255,71,87,0.3)", "#fecdd3");
+      labelTag(padX + plotW * 0.78, botY - plotH * 0.25, "Linha 1:1 (Ilusão Linear)", "rgba(37,99,235,0.25)", "#bfdbfe");
+    } else if (mode === "behavioral_rules") {
+      // Two side-by-side protocol boxes
+      const colW = (plotW - 24) / 2;
+      const maxTxtW = Math.max(60, colW - 28);
+      const boxH = Math.max(96, plotH * 0.82);
+      const by = topY + Math.max(6, (plotH - boxH) / 2);
+      ctx.textAlign = "left";
+      // Left: Emotional Trap
+      ctx.fillStyle = "rgba(255, 71, 87, 0.08)";
+      ctx.strokeStyle = "rgba(255, 71, 87, 0.42)";
+      drawRoundedRect(ctx, padX, by, colW, boxH, 10);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#fecdd3";
+      ctx.font = `700 ${fontMd}px "Inter", sans-serif`;
+      ctx.fillText("✕ Viés Emocional (Sem Regra)", padX + 14, by + boxH * 0.20, maxTxtW);
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = `500 ${fontSm}px "JetBrains Mono", monospace`;
+      ctx.fillText("• Fecha lucro rápido em +0,5R", padX + 14, by + boxH * 0.44, maxTxtW);
+      ctx.fillText("• Remove Stop quando cai", padX + 14, by + boxH * 0.64, maxTxtW);
+      ctx.fillText("• Prejuízo vira -5R (Ruína)", padX + 14, by + boxH * 0.84, maxTxtW);
+
+      // Right: Heurístika Protocol
+      const rx = padX + colW + 24;
+      ctx.fillStyle = "rgba(16, 185, 129, 0.1)";
+      ctx.strokeStyle = `rgba(52, 211, 153, ${0.45 + pulse * 0.35})`;
+      drawRoundedRect(ctx, rx, by, colW, boxH, 10);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#a7f3d0";
+      ctx.font = `700 ${fontMd}px "Inter", sans-serif`;
+      ctx.fillText("✓ Protocolo Quantitativo OCO", rx + 14, by + boxH * 0.20, maxTxtW);
+      ctx.fillStyle = "#cbd5e1";
+      ctx.font = `500 ${fontSm}px "JetBrains Mono", monospace`;
+      ctx.fillText("• Stop fixo -1,0R (Inviolável)", rx + 14, by + boxH * 0.44, maxTxtW);
+      ctx.fillText("• Parcial TP1 (+1,5R) + BE", rx + 14, by + boxH * 0.64, maxTxtW);
+      ctx.fillText("• Alvo TP2 (+2,5R a +3,5R)", rx + 14, by + boxH * 0.84, maxTxtW);
+    } else if (mode === "regime_shift") {
+      // Volatility compression zone transitioning into high-ATR breakout expansion
+      const splitX = padX + plotW * 0.42;
+      ctx.fillStyle = "rgba(96, 165, 250, 0.08)";
+      ctx.fillRect(padX, topY + 12, splitX - padX, plotH - 24);
+      ctx.fillStyle = "rgba(245, 176, 65, 0.08)";
+      ctx.fillRect(splitX, topY + 12, W - padX - splitX, plotH - 24);
+      drawCurve((u) => {
+        if (u < 0.42) return 0.5 + 0.06 * Math.sin(u * 26);
+        return 0.5 + (u - 0.42) * 0.65 * Math.sin((u - 0.42) * 24) + (u - 0.42) * 0.45;
+      }, "#34d399", 3.2, animP, 0);
+      labelTag(padX + (splitX - padX) * 0.5, topY + 28, "Compressão (ATR Baixo)", "rgba(37,99,235,0.25)", "#bfdbfe");
+      labelTag(splitX + (W - padX - splitX) * 0.5, topY + 28, "Expansão pós-Rompimento", "rgba(245,176,65,0.25)", "#fde68a");
+    } else if (mode === "atr_ladder" || mode === "partial_scaling") {
+      // Simulated candlestick price path with ATR envelope & TP1/TP2/SL levels
+      const slY = botY - plotH * 0.16;
+      const entryY = botY - plotH * 0.36;
+      const tp1Y = botY - plotH * 0.65;
+      const tp2Y = botY - plotH * 0.88;
+
+      // Noise band around entry
+      ctx.fillStyle = "rgba(245, 176, 65, 0.08)";
+      ctx.fillRect(padX, entryY - plotH * 0.1, plotW, plotH * 0.2);
+
+      const levels = [
+        [tp2Y, "#10b981", "TP2 (+3,5 ATR)"],
+        [tp1Y, "#34d399", "TP1 (+2,0 ATR • Move SL p/ Entrada)"],
+        [entryY, "#60a5fa", "ENTRADA (0 ATR)"],
+        [slY, "#ff4757", "STOP LOSS (-1,5 ATR • Fora do Ruído)"],
+      ];
+      levels.forEach(([ly, col, txt]) => {
+        ctx.strokeStyle = col;
+        ctx.setLineDash([5, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(padX, ly); ctx.lineTo(W - padX, ly); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = col;
+        ctx.font = `700 ${fontSm}px "JetBrains Mono", monospace`;
+        ctx.textAlign = "right";
+        ctx.fillText(txt, W - padX - 6, ly - 5);
+      });
+      ctx.textAlign = "left";
+
+      const pathY = [0.36, 0.31, 0.27, 0.34, 0.42, 0.38, 0.51, 0.65, 0.58, 0.72, 0.81, 0.88];
+      const count = Math.max(2, Math.ceil(pathY.length * animP));
+      const step = plotW / pathY.length;
+      for (let i = 0; i < count; i++) {
+        const cx = padX + i * step + step * 0.35;
+        const prev = i === 0 ? 0.36 : pathY[i - 1];
+        const cur = pathY[i];
+        const y1 = botY - prev * plotH;
+        const y2 = botY - cur * plotH;
+        const bull = cur >= prev;
+        ctx.strokeStyle = bull ? "#10b981" : "#ff4757";
+        ctx.fillStyle = bull ? "#10b981" : "#ff4757";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(cx, Math.min(y1, y2) - 10);
+        ctx.lineTo(cx, Math.max(y1, y2) + 10);
+        ctx.stroke();
+        ctx.fillRect(cx - 5, Math.min(y1, y2), 10, Math.max(5, Math.abs(y2 - y1)));
+      }
+    } else if (mode === "volatility_sizing") {
+      // Comparison: Regime Calmo (ATR 2, Lot 166) vs Volátil (ATR 4, Lot 83) -> Same Risk R$ 500
+      const cols = [
+        { title: "Regime Normal (ATR R$ 2)", stop: "Stop = R$ 3,00", lot: "Lote = 166 un", lotPct: 0.85, stopPct: 0.42, col: "#10b981" },
+        { title: "Volatilidade 2× (ATR R$ 4)", stop: "Stop = R$ 6,00", lot: "Lote = 83 un", lotPct: 0.425, stopPct: 0.84, col: "#f5b041" },
+      ];
+      const cardW = (plotW - 24) / 2;
+      const boxTop = topY + 8;
+      const boxH = Math.max(110, plotH - 16);
+      const barH = Math.max(9, Math.min(16, Math.round(boxH * 0.085)));
+      cols.forEach((c, idx) => {
+        const x = padX + idx * (cardW + 24);
+        const maxTxtW = Math.max(60, cardW - 28);
+        ctx.fillStyle = "rgba(11, 16, 25, 0.9)";
+        ctx.strokeStyle = "rgba(255,255,255,0.12)";
+        drawRoundedRect(ctx, x, boxTop, cardW, boxH, 10);
+        ctx.fill(); ctx.stroke();
+
+        ctx.textAlign = "left";
+        ctx.fillStyle = "#fff";
+        ctx.font = `700 ${fontMd}px "Inter", sans-serif`;
+        ctx.fillText(c.title, x + 14, boxTop + boxH * 0.16, maxTxtW);
+
+        // Bar 1: Stop Distance
+        ctx.fillStyle = "#94a3b8";
+        ctx.font = `600 ${fontSm}px "JetBrains Mono", monospace`;
+        ctx.fillText(c.stop, x + 14, boxTop + boxH * 0.34, maxTxtW);
+        const bar1Y = boxTop + boxH * 0.39;
+        ctx.fillStyle = "rgba(255,71,87,0.22)";
+        drawRoundedRect(ctx, x + 14, bar1Y, maxTxtW, barH, 5);
+        ctx.fill();
+        ctx.fillStyle = "#ff4757";
+        drawRoundedRect(ctx, x + 14, bar1Y, maxTxtW * c.stopPct * animP, barH, 5);
+        ctx.fill();
+
+        // Bar 2: Lot Size
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillText(c.lot, x + 14, boxTop + boxH * 0.59, maxTxtW);
+        const bar2Y = boxTop + boxH * 0.64;
+        ctx.fillStyle = "rgba(16,185,129,0.15)";
+        drawRoundedRect(ctx, x + 14, bar2Y, maxTxtW, barH, 5);
+        ctx.fill();
+        ctx.fillStyle = c.col;
+        drawRoundedRect(ctx, x + 14, bar2Y, maxTxtW * c.lotPct * animP, barH, 5);
+        ctx.fill();
+
+        labelTag(x + cardW / 2, boxTop + boxH - (fontSm + 14), "RISCO TRAVADO = R$ 500 (1%)", "rgba(16,185,129,0.2)", "#a7f3d0");
+      });
+    } else if (mode === "orderbook_liquidity") {
+      // Depth bars comparison
+      const halfW = (plotW - 24) / 2;
+      const maxColTxt = Math.max(60, halfW - 6);
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#a7f3d0";
+      ctx.font = `700 ${fontMd}px "Inter", sans-serif`;
+      ctx.fillText("FX Major / BTC (Book Profundo)", padX, topY + 22, maxColTxt);
+      ctx.fillStyle = "#fde68a";
+      ctx.fillText("Altcoin / Small Cap (Book Raso)", padX + halfW + 24, topY + 22, maxColTxt);
+
+      const barH = Math.max(8, Math.min(18, (plotH - 72) / 9));
+      const rowStep = Math.max(barH + 4, (plotH - 72) / 6);
+      for (let i = 0; i < 6; i++) {
+        const y = topY + 38 + i * rowStep;
+        const bw1 = (halfW * (0.45 + 0.09 * i)) * animP;
+        const bw2 = (halfW * (0.14 + 0.05 * i)) * animP;
+        ctx.fillStyle = i < 3 ? "rgba(16,185,129,0.68)" : "rgba(255,71,87,0.68)";
+        drawRoundedRect(ctx, padX, y, bw1, barH, 4); ctx.fill();
+        drawRoundedRect(ctx, padX + halfW + 24, y, bw2, barH, 4); ctx.fill();
+      }
+      labelTag(padX + halfW * 0.5, botY - 26, "Spread 0,2 pip • Baixo Slippage", "rgba(16,185,129,0.2)", "#a7f3d0");
+      labelTag(padX + halfW + 24 + halfW * 0.5, botY - 26, "Vácuos de Liquidez • Alto Slippage", "rgba(255,71,87,0.22)", "#fecdd3");
+    } else if (mode === "horizon_frontier") {
+      // Efficient Frontier + Capital Market Line
+      drawCurve((u) => 0.18 + Math.sqrt(Math.max(0, u)) * 0.68, "#10b981", 3.2, animP, 0.08);
+      // CML tangent
+      ctx.strokeStyle = "#60a5fa";
+      ctx.setLineDash([5, 4]);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(padX, botY - plotH * 0.25);
+      ctx.lineTo(padX + plotW * 0.9, botY - plotH * 0.92);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const optX = padX + plotW * 0.42;
+      const optY = botY - (0.18 + Math.sqrt(0.42) * 0.68) * plotH;
+      const badX = padX + plotW * 0.82;
+      const badY = botY - plotH * 0.68;
+
+      ctx.fillStyle = "#34d399";
+      ctx.beginPath(); ctx.arc(optX, optY, 7 + pulse * 2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#ff4757";
+      ctx.beginPath(); ctx.arc(badX, badY, 6, 0, Math.PI * 2); ctx.fill();
+
+      labelTag(optX, optY - 28, "Multi-Ativos • Sharpe 0,50", "rgba(16,185,129,0.25)", "#a7f3d0");
+      labelTag(badX - 20, badY + 14, "Concentrado • Sharpe 0,29", "rgba(255,71,87,0.25)", "#fecdd3");
+    } else if (mode === "short_horizon_2y" || mode === "medium_horizon_5y" || mode === "long_horizon_10y") {
+      // Multi-curve trajectory
+      drawCurve((u) => 0.14 + u * 0.36, "#60a5fa", 2.4, animP, 0); // CDI / Selic smooth
+      if (mode === "short_horizon_2y") {
+        drawCurve((u) => 0.14 + u * 0.52 - Math.sin(u * Math.PI * 1.4) * 0.28, "#ff4757", 2.8, animP, 0);
+        labelTag(padX + plotW * 0.55, botY - plotH * 0.65, "Tesouro Selic: Liquidez & Estabilidade", "rgba(37,99,235,0.25)", "#bfdbfe");
+        labelTag(padX + plotW * 0.72, botY - plotH * 0.25, "Risco de Saque no Fundo (Mês 24)", "rgba(255,71,87,0.25)", "#fecdd3");
+      } else {
+        drawCurve((u) => 0.14 + Math.pow(u, 1.45) * 0.76, "#10b981", 3.4, animP, 0.16);
+        const endY = botY - (0.14 + Math.pow(animP, 1.45) * 0.76) * plotH;
+        const endX = padX + animP * plotW;
+        ctx.fillStyle = "#34d399";
+        ctx.beginPath(); ctx.arc(endX, endY, 6, 0, Math.PI * 2); ctx.fill();
+        labelTag(padX + plotW * 0.62, topY + 26, mode === "long_horizon_10y" ? "10+ Anos: Juros Compostos Exponenciais" : "5 Anos: IPCA+ + FIIs + Global", "rgba(16,185,129,0.25)", "#a7f3d0");
+        labelTag(padX + plotW * 0.72, botY - plotH * 0.28, "CDI Benchmark", "rgba(37,99,235,0.25)", "#bfdbfe");
+      }
+    } else if (mode === "correlation_hedge" || mode === "hedge_derivatives") {
+      // Shock drawdown comparison: Equities drop while Gold / Hedge rises
+      drawCurve((u) => u < 0.45 ? 0.62 + u * 0.2 : (u < 0.7 ? 0.71 - (u - 0.45) * 1.85 : 0.25 + (u - 0.7) * 0.6), "#ff4757", 2.6, animP, 0);
+      drawCurve((u) => u < 0.45 ? 0.52 + u * 0.1 : (u < 0.7 ? 0.56 + (u - 0.45) * 1.15 : 0.85 - (u - 0.7) * 0.2), "#f5b041", 2.8, animP, 0);
+      drawCurve((u) => u < 0.45 ? 0.58 + u * 0.18 : (u < 0.7 ? 0.66 - (u - 0.45) * 0.45 : 0.55 + (u - 0.7) * 0.55), "#10b981", 3.4, animP, 0.12);
+      labelTag(padX + plotW * 0.68, topY + 22, "Ouro (GC=F) / Hedge Sobe no Choque", "rgba(245,176,65,0.25)", "#fde68a");
+      labelTag(padX + plotW * 0.68, botY - plotH * 0.52, "Carteira Blindada (Menor DD)", "rgba(16,185,129,0.25)", "#a7f3d0");
+      labelTag(padX + plotW * 0.68, botY - 24, "Sem Hedge (Queda Severa)", "rgba(255,71,87,0.25)", "#fecdd3");
+    } else if (mode === "duration_curve" || mode === "ipca_convexity") {
+      // Convex Bond Price vs Yield curve
+      const bondFn = (u) => 0.88 - u * 0.74 + 0.14 * Math.pow(u - 0.5, 2);
+      drawCurve(bondFn, "#10b981", 3.4, animP, 0.13);
+      const u0 = 0.35;
+      const u1 = 0.65;
+      const x0 = padX + u0 * plotW; const y0 = botY - bondFn(u0) * plotH;
+      const x1 = padX + u1 * plotW; const y1 = botY - bondFn(u1) * plotH;
+      ctx.strokeStyle = "#f5b041";
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y0); ctx.lineTo(x1, y1); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#ff4757";
+      ctx.beginPath(); ctx.arc(x1, y1, 6 + pulse * 1.5, 0, Math.PI * 2); ctx.fill();
+      labelTag(x1 - 24, y1 - 30, "Δy = +100 bps ⇒ ΔP ≈ -9,0%", "rgba(255,71,87,0.28)", "#fecdd3");
+      labelTag(x0 + 10, y0 - 26, "D_mod = 9 anos (IPCA+)", "rgba(16,185,129,0.25)", "#a7f3d0");
+    } else if (mode === "carry_trade") {
+      // Interest rate spread bars + cumulative carry curve
+      drawCurve((u) => u < 0.78 ? 0.22 + u * 0.66 : 0.73 - (u - 0.78) * 1.6, "#10b981", 3.2, animP, 0.12);
+      labelTag(padX + plotW * 0.4, topY + 26, "Swap Positivo Diário (+4,5% a.a. USD vs JPY)", "rgba(16,185,129,0.25)", "#a7f3d0");
+      labelTag(padX + plotW * 0.82, botY - 34, "Risco: Carry Unwind (Stop Obrigatório)", "rgba(255,71,87,0.25)", "#fecdd3");
+    } else {
+      // rebalancing_bands
+      const upperY = topY + plotH * 0.22;
+      const targetY = topY + plotH * 0.5;
+      const lowerY = topY + plotH * 0.78;
+      ctx.strokeStyle = "rgba(245, 176, 65, 0.6)";
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath(); ctx.moveTo(padX, upperY); ctx.lineTo(W - padX, upperY); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padX, lowerY); ctx.lineTo(W - padX, lowerY); ctx.stroke();
+      ctx.strokeStyle = "rgba(96, 165, 250, 0.55)";
+      ctx.beginPath(); ctx.moveTo(padX, targetY); ctx.lineTo(W - padX, targetY); ctx.stroke();
+      ctx.setLineDash([]);
+
+      drawCurve((u) => 0.5 + 0.34 * Math.sin(u * Math.PI * 2.5), "#10b981", 3.2, animP, 0);
+      labelTag(padX + plotW * 0.28, upperY - 12, "Banda +5%: Vende Excesso", "rgba(245,176,65,0.25)", "#fde68a");
+      labelTag(padX + plotW * 0.62, lowerY + 6, "Banda -5%: Compra Desconto", "rgba(16,185,129,0.25)", "#a7f3d0");
+    }
+
+    ctx.restore();
+
+    // 5. Presenter Lower-Third Card (Lower-Left) & Live Voice Equalizer Pill (Lower-Right)
+    const eqW = Math.max(94, Math.round(W * 0.145));
+    const maxCardW = Math.max(150, plotW - eqW - 14);
+
+    // Presenter Lower-Third Card
+    const instrText = (mod.video_aula && mod.video_aula.instrutor) || "Mesa Quantitativa Heurístika";
+    const voiceTagText = state.voiceEnabled ? "🎙️ Voz Neural PT-BR" : "🔇 Voz Silenciada";
+    const fsInst = Math.max(9, Math.round(W * 0.0135));
+    const fsTag = Math.max(8, Math.round(W * 0.011));
+    ctx.font = `700 ${fsInst}px "Inter", sans-serif`;
+    const wInst = ctx.measureText(instrText).width;
+    ctx.font = `600 ${fsTag}px "JetBrains Mono", monospace`;
+    const wTag = ctx.measureText(voiceTagText).width;
+    const cardW = Math.min(maxCardW, Math.max(wInst, wTag) + 28);
+
+    ctx.fillStyle = "rgba(4, 8, 16, 0.84)";
+    ctx.strokeStyle = "rgba(52, 211, 153, 0.28)";
+    ctx.lineWidth = 1;
+    drawRoundedRect(ctx, padX, cardY, cardW, cardH, 7);
+    ctx.fill(); ctx.stroke();
+
+    // Left emerald accent bar
+    ctx.fillStyle = state.voiceEnabled ? "#10b981" : "#64748b";
+    drawRoundedRect(ctx, padX + 3, cardY + 4, 3.5, cardH - 8, 2);
+    ctx.fill();
+
+    ctx.textAlign = "left";
+    ctx.font = `700 ${fsInst}px "Inter", sans-serif`;
+    ctx.fillStyle = "#f8fafc";
+    ctx.fillText(instrText, padX + 13, cardY + cardH * 0.44, cardW - 20);
+    ctx.font = `600 ${fsTag}px "JetBrains Mono", monospace`;
+    ctx.fillStyle = state.voiceEnabled ? "#6ee7b7" : "#94a3b8";
+    ctx.fillText(voiceTagText, padX + 13, cardY + cardH * 0.82, cardW - 20);
+
+    // Live Audio Voice Equalizer Pill (Lower-Right)
+    const eqX = W - padX - eqW;
+    const isAudioActive = state.playing && state.voiceEnabled && !state.audioFailed;
+    ctx.fillStyle = "rgba(4, 8, 16, 0.84)";
+    ctx.strokeStyle = isAudioActive ? "rgba(52, 211, 153, 0.42)" : "rgba(255, 255, 255, 0.14)";
+    drawRoundedRect(ctx, eqX, cardY, eqW, cardH, 7);
+    ctx.fill(); ctx.stroke();
+
+    const barCount = 7;
+    const barW = Math.max(2, Math.round(eqW * 0.032));
+    const barGap = Math.max(2, Math.round(barW * 0.8));
+    const barsStartX = eqX + 10;
+    const maxBarH = cardH - 12;
+    for (let i = 0; i < barCount; i++) {
+      const wave = isAudioActive
+        ? (0.24 + 0.74 * Math.abs(Math.sin(nowSec * (5.4 + i * 1.15) + i * 0.85)))
+        : 0.16;
+      const bh = Math.max(3, maxBarH * wave);
+      const bxBar = barsStartX + i * (barW + barGap);
+      const byBar = cardY + (cardH - bh) / 2;
+      ctx.fillStyle = isAudioActive ? (wave > 0.68 ? "#6ee7b7" : "#10b981") : "rgba(148, 163, 184, 0.48)";
+      drawRoundedRect(ctx, bxBar, byBar, barW, bh, 1.5);
+      ctx.fill();
+    }
+    ctx.font = `700 ${Math.max(8, Math.round(W * 0.0108))}px "JetBrains Mono", monospace`;
+    ctx.textAlign = "right";
+    ctx.fillStyle = isAudioActive ? "#a7f3d0" : "#94a3b8";
+    const eqLabel = !state.voiceEnabled ? "MUDO" : (state.playing ? "VOZ ON" : "PRONTO");
+    ctx.fillText(eqLabel, eqX + eqW - 9, cardY + cardH * 0.64);
+    ctx.textAlign = "left";
+
+    // Bottom subtle chapter progress ribbon
+    ctx.fillStyle = "rgba(255,255,255,0.08)";
+    ctx.fillRect(padX, ribbonY, plotW, 4);
+    ctx.fillStyle = "#10b981";
+    ctx.fillRect(padX, ribbonY, plotW * p, 4);
+  }
+
+  function renderVideoFrame(nowMs) {
+    resizeCanvas();
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const { video, chaps, total, idx, chap, chapProgress, chapElapsed } = getActiveChapterInfo();
+
+    // Update scrubber UI
+    const pct = Math.max(0, Math.min(100, (state.videoTime / total) * 100));
+    if (scrubberFill) scrubberFill.style.width = pct.toFixed(2) + "%";
+    if (scrubberThumb) scrubberThumb.style.left = pct.toFixed(2) + "%";
+    if (scrubberEl) scrubberEl.setAttribute("aria-valuenow", String(Math.round(pct)));
+    if (timeDisplayEl) timeDisplayEl.textContent = `${fmtSec(state.videoTime)} / ${fmtSec(total)}`;
+
+    // Sync active chapter highlight if changed
+    if (idx !== state.lastChapterIdx) {
+      state.lastChapterIdx = idx;
+      document.querySelectorAll(".video-chapter-item").forEach((el, cIdx) => {
+        el.classList.toggle("active", cIdx === idx);
+      });
+    }
+
+    // Sentence-synced Lower-Third Captions
+    const subText = getActiveSubtitleText(chap, chapProgress, state.videoTime);
+    if (subtitlesEl && subText !== state.lastSubtitleText) {
+      state.lastSubtitleText = subText;
+      subtitlesEl.textContent = subText;
+    }
+
+    drawCanvasScene(ctx, canvas.width, canvas.height, currentMod(), chap, chapProgress, (nowMs || performance.now()) / 1000, chapElapsed);
+  }
+
+  function buildVideoChapterUI() {
+    const mod = currentMod();
+    const video = mod.video_aula || { titulo: mod.titulo, instrutor: "Heurístika", duracao_segundos: 180, capitulos: [] };
+    const chaps = video.capitulos || [];
+    const total = Math.max(1, video.duracao_segundos || 180);
+
+    const titleEl = document.getElementById("videoLessonTitle");
+    const instEl = document.getElementById("videoInstructorLabel");
+    if (titleEl) titleEl.textContent = video.titulo;
+    if (instEl) instEl.textContent = video.instrutor || "Mesa Quantitativa Heurístika";
+
+    if (markersHost) {
+      markersHost.innerHTML = chaps.map((c, i) => {
+        const leftPct = (c.tempo_inicio / total) * 100;
+        return `<span class="video-marker-dot" data-chap-idx="${i}" style="left:${leftPct.toFixed(2)}%;" title="${escHtml(c.titulo)} (${fmtSec(c.tempo_inicio)})"></span>`;
+      }).join("");
+    }
+
+    if (chapterListEl) {
+      chapterListEl.innerHTML = chaps.map((c, i) => `
+        <button type="button" class="video-chapter-item ${i === 0 ? "active" : ""}" data-chap-idx="${i}">
+          <div class="video-chapter-top">
+            <span class="badge badge-cat">${fmtSec(c.tempo_inicio)}</span>
+            <span style="color:var(--electric-soft);">${escHtml(c.destaque_visual || "")}</span>
+          </div>
+          <div style="font-weight:600; font-size:0.84rem; line-height:1.35;">${escHtml(c.titulo)}</div>
+        </button>
+      `).join("");
+
+      chapterListEl.querySelectorAll(".video-chapter-item").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const cIdx = Number(btn.dataset.chapIdx || 0);
+          jumpToChapter(cIdx, true);
+        });
+      });
+    }
+
+    state.lastChapterIdx = -1;
+    state.lastSubtitleText = "";
+    renderVideoFrame(performance.now());
+  }
+
+  function setPlaying(shouldPlay) {
+    state.playing = Boolean(shouldPlay);
+    const token = ++state.playToken;
+    if (playOverlay) playOverlay.classList.toggle("hidden", state.playing);
+    if (playBtn) {
+      playBtn.textContent = state.playing ? "⏸ Pausar" : "▶ Reproduzir";
+      playBtn.classList.toggle("active", state.playing);
+      playBtn.setAttribute("aria-pressed", state.playing ? "true" : "false");
+    }
+
+    if (state.playing) {
+      const video = currentMod().video_aula || { duracao_segundos: 180 };
+      const total = Math.max(1, video.duracao_segundos || 180);
+      if (state.videoTime >= total - 0.3) {
+        seekAudioTo(0);
+        state.lastChapterIdx = -1;
+      }
+      state.lastFrameTs = performance.now();
+      state.audioFallbackPlaying = false;
+
+      if (audioEl && audioEl.getAttribute("src") && !state.audioFailed) {
+        applyAudioSettings();
+        if (audioEl.readyState >= 1 && Math.abs((audioEl.currentTime || 0) - state.videoTime) > 0.25) {
+          seekAudioTo(state.videoTime);
+        }
+        try {
+          const playPromise = audioEl.play();
+          if (playPromise && typeof playPromise.then === "function") {
+            playPromise
+              .then(() => {
+                if (token !== state.playToken || !state.playing) {
+                  try { audioEl.pause(); } catch (e) {}
+                }
+              })
+              .catch((err) => {
+                if (token !== state.playToken) return;
+                state.audioFallbackPlaying = true;
+                if (err && err.name === "NotAllowedError" && window.hkToast) {
+                  window.hkToast("Áudio bloqueado pelo navegador — clique em Reproduzir ou ative o som.", "warning");
+                }
+              });
+          }
+        } catch (e) {
+          state.audioFallbackPlaying = true;
+        }
+      } else {
+        state.audioFallbackPlaying = true;
+      }
+
+      if (!state.rafId) state.rafId = requestAnimationFrame(tickVideo);
+    } else {
+      state.audioFallbackPlaying = false;
+      if (audioEl && !audioEl.paused) {
+        try { audioEl.pause(); } catch (e) {}
+      }
+      if (state.rafId) {
+        cancelAnimationFrame(state.rafId);
+        state.rafId = null;
+      }
+      renderVideoFrame(performance.now());
+    }
+  }
+
+  function tickVideo(ts) {
+    if (!state.playing) {
+      state.rafId = null;
+      return;
+    }
+    const dt = state.lastFrameTs ? Math.min(0.1, (ts - state.lastFrameTs) / 1000) : 0.016;
+    state.lastFrameTs = ts;
+    const total = Math.max(1, (currentMod().video_aula && currentMod().video_aula.duracao_segundos) || 180);
+
+    if (!state.draggingScrubber) {
+      if (audioEl && audioEl.getAttribute("src") && !state.audioFailed && !state.audioFallbackPlaying) {
+        if (!audioEl.paused && !audioEl.ended && state.pendingSeek === null) {
+          state.videoTime = Math.min(total, audioEl.currentTime || 0);
+        }
+      } else {
+        state.videoTime = Math.min(total, state.videoTime + dt * state.speed);
+      }
+    }
+
+    renderVideoFrame(ts);
+    if (state.videoTime >= total && (state.audioFailed || state.audioFallbackPlaying || !audioEl || !audioEl.getAttribute("src") || audioEl.ended)) {
+      setPlaying(false);
+      return;
+    }
+    state.rafId = requestAnimationFrame(tickVideo);
+  }
+
+  function jumpToChapter(chapIdx, autoPlay = false) {
+    const chaps = (currentMod().video_aula && currentMod().video_aula.capitulos) || [];
+    const target = chaps[chapIdx];
+    if (!target) return;
+    seekAudioTo(target.tempo_inicio + 0.02);
+    state.lastChapterIdx = -1;
+    state.lastSubtitleText = "";
+    renderVideoFrame(performance.now());
+    if (autoPlay && !state.playing) setPlaying(true);
+  }
+
+  function seekAbsoluteAndRender(targetSec, commitAudio = true) {
+    const total = Math.max(1, (currentMod().video_aula && currentMod().video_aula.duracao_segundos) || 180);
+    const clamped = Math.max(0, Math.min(total, Number(targetSec) || 0));
+    if (commitAudio) {
+      seekAudioTo(clamped);
+    } else {
+      state.videoTime = clamped;
+    }
+    state.lastChapterIdx = -1;
+    state.lastSubtitleText = "";
+    renderVideoFrame(performance.now());
+  }
+
+  function seekByDelta(deltaSec) {
+    seekAbsoluteAndRender(state.videoTime + deltaSec, true);
+  }
+
+  if (playOverlay) playOverlay.addEventListener("click", () => setPlaying(!state.playing));
+  if (playBtn) playBtn.addEventListener("click", () => setPlaying(!state.playing));
+  if (videoStage) {
+    videoStage.addEventListener("click", (e) => {
+      if (e.target.closest("#videoOverlayPlay") || e.target.closest("#videoSubtitles")) return;
+      setPlaying(!state.playing);
+    });
+  }
+
+  if (scrubberEl) {
+    function getScrubberRatio(clientX) {
+      const rect = scrubberEl.getBoundingClientRect();
+      return Math.max(0, Math.min(1, (clientX - rect.left) / Math.max(1, rect.width)));
+    }
+
+    scrubberEl.addEventListener("pointerdown", (e) => {
+      const marker = e.target.closest(".video-marker-dot");
+      if (marker) {
+        jumpToChapter(Number(marker.dataset.chapIdx || 0), state.playing);
+        return;
+      }
+      state.draggingScrubber = true;
+      try { scrubberEl.setPointerCapture(e.pointerId); } catch (err) {}
+      const total = Math.max(1, (currentMod().video_aula && currentMod().video_aula.duracao_segundos) || 180);
+      seekAbsoluteAndRender(getScrubberRatio(e.clientX) * total, true);
+    });
+
+    scrubberEl.addEventListener("pointermove", (e) => {
+      if (!state.draggingScrubber) return;
+      const total = Math.max(1, (currentMod().video_aula && currentMod().video_aula.duracao_segundos) || 180);
+      seekAbsoluteAndRender(getScrubberRatio(e.clientX) * total, false);
+    });
+
+    function finishScrub(e) {
+      if (!state.draggingScrubber) return;
+      state.draggingScrubber = false;
+      try { scrubberEl.releasePointerCapture(e.pointerId); } catch (err) {}
+      const total = Math.max(1, (currentMod().video_aula && currentMod().video_aula.duracao_segundos) || 180);
+      seekAbsoluteAndRender(getScrubberRatio(e.clientX) * total, true);
+    }
+
+    scrubberEl.addEventListener("pointerup", finishScrub);
+    scrubberEl.addEventListener("pointercancel", finishScrub);
+    scrubberEl.addEventListener("keydown", (e) => {
+      const total = Math.max(1, (currentMod().video_aula && currentMod().video_aula.duracao_segundos) || 180);
+      if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+        e.preventDefault();
+        seekByDelta(-5);
+      } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+        e.preventDefault();
+        seekByDelta(5);
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        seekAbsoluteAndRender(0, true);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        seekAbsoluteAndRender(total, true);
+      }
+    });
+  }
+
+  document.querySelectorAll(".video-speed-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.speed = parseFloat(btn.dataset.speed || "1") || 1;
+      document.querySelectorAll(".video-speed-btn").forEach(b => b.classList.toggle("active", b === btn));
+      applyAudioSettings();
+    });
+  });
+
+  const ccBtn = document.getElementById("videoCcBtn");
+  if (ccBtn && subtitlesEl) {
+    ccBtn.addEventListener("click", () => {
+      state.ccEnabled = !state.ccEnabled;
+      ccBtn.classList.toggle("active", state.ccEnabled);
+      subtitlesEl.classList.toggle("is-hidden", !state.ccEnabled);
+    });
+  }
+
+  if (voiceBtn) {
+    voiceBtn.addEventListener("click", () => {
+      state.voiceEnabled = !state.voiceEnabled;
+      if (state.voiceEnabled && state.volume <= 0) {
+        state.volume = 0.9;
+      }
+      updateVoiceUi();
+      applyAudioSettings();
+      renderVideoFrame(performance.now());
+    });
+  }
+
+  if (volumeSlider) {
+    volumeSlider.addEventListener("input", () => {
+      const val = Math.max(0, Math.min(1, parseFloat(volumeSlider.value) || 0));
+      state.volume = val;
+      if (val === 0 && state.voiceEnabled) {
+        state.voiceEnabled = false;
+      } else if (val > 0 && !state.voiceEnabled) {
+        state.voiceEnabled = true;
+      }
+      updateVoiceUi();
+      applyAudioSettings();
+      renderVideoFrame(performance.now());
+    });
+  }
+
+  const fsVideoBtn = document.getElementById("videoFullscreenBtn");
+  const videoCard = document.getElementById("videoPlayerCard");
+  if (fsVideoBtn && videoCard) {
+    fsVideoBtn.addEventListener("click", () => {
+      try {
+        if (document.fullscreenElement) document.exitFullscreen();
+        else if (videoCard.requestFullscreen) videoCard.requestFullscreen();
+      } catch (e) {}
+    });
+  }
+
+  document.addEventListener("fullscreenchange", () => {
+    const fsEl = document.fullscreenElement;
+    if (fsVideoBtn && videoCard) {
+      const active = fsEl === videoCard;
+      fsVideoBtn.classList.toggle("active", active);
+      fsVideoBtn.setAttribute("aria-pressed", active ? "true" : "false");
+    }
+    const fsSlideBtn = document.getElementById("slideFullscreenBtn");
+    const slideWrap = document.getElementById("slideDeckWrap");
+    if (fsSlideBtn && slideWrap) {
+      const active = fsEl === slideWrap;
+      fsSlideBtn.classList.toggle("active", active);
+      fsSlideBtn.setAttribute("aria-pressed", active ? "true" : "false");
+    }
+    if (state.tab === "video") {
+      requestAnimationFrame(() => renderVideoFrame(performance.now()));
+    }
+  });
+
+  // =========================================================================
+  // Slide Deck Engine + 20 Custom Quantitative SVG Diagrams
+  // =========================================================================
+  function renderVisualDiagramSVG(visualType) {
+    const grid = [40, 85, 130, 175, 220].map(y =>
+      `<line x1="36" y1="${y}" x2="400" y2="${y}" stroke="rgba(255,255,255,0.07)" stroke-dasharray="3,3" />`
+    ).join("");
+    const axes = `<line x1="36" y1="22" x2="36" y2="225" stroke="rgba(255,255,255,0.22)" />
+      <line x1="36" y1="225" x2="404" y2="225" stroke="rgba(255,255,255,0.22)" />`;
+
+    const tag = (x, y, txt, color = "#34d399") =>
+      `<text x="${x}" y="${y}" fill="${color}" font-size="10.5" font-weight="700" font-family="JetBrains Mono, monospace">${txt}</text>`;
+
+    switch (visualType) {
+      case "payoff_asymmetry":
+        return `${grid}${axes}
+          <line x1="36" y1="150" x2="400" y2="150" stroke="rgba(255,255,255,0.2)" stroke-dasharray="4,3"/>
+          <rect x="60" y="150" width="38" height="36" rx="4" fill="#ff4757" opacity="0.82"/>
+          <rect x="122" y="150" width="38" height="36" rx="4" fill="#ff4757" opacity="0.82"/>
+          <rect x="184" y="60" width="38" height="90" rx="4" fill="#10b981" opacity="0.88"/>
+          <rect x="246" y="150" width="38" height="36" rx="4" fill="#ff4757" opacity="0.82"/>
+          <rect x="308" y="38" width="44" height="112" rx="4" fill="#34d399"/>
+          ${tag(62, 202, "-1R", "#fecdd3")}${tag(124, 202, "-1R", "#fecdd3")}${tag(180, 50, "+2,5R", "#a7f3d0")}
+          ${tag(248, 202, "-1R", "#fecdd3")}${tag(308, 28, "+3,0R", "#a7f3d0")}
+          ${tag(44, 245, "Stop Truncado (-1R) vs Caudas Positivas (+2,5R / +3,0R)", "#cbd5e1")}`;
+
+      case "kelly_curve":
+        return `${grid}${axes}
+          <path d="M36,195 Q135,34 215,52 T385,232" fill="none" stroke="#10b981" stroke-width="3.2"/>
+          <line x1="125" y1="68" x2="125" y2="225" stroke="#34d399" stroke-dasharray="4,3"/>
+          <line x1="190" y1="45" x2="190" y2="225" stroke="#f5b041" stroke-dasharray="4,3"/>
+          <circle cx="125" cy="78" r="5.5" fill="#34d399"/>
+          <circle cx="190" cy="48" r="5.5" fill="#fbbf24"/>
+          <circle cx="355" cy="196" r="5.5" fill="#ff4757"/>
+          ${tag(62, 244, "Half-Kelly 11,5%", "#34d399")}
+          ${tag(170, 36, "Full f*=23%", "#fbbf24")}
+          ${tag(285, 185, "Ruína (>46%)", "#fecdd3")}`;
+
+      case "drawdown_asymmetry":
+        return `${grid}${axes}
+          <line x1="36" y1="225" x2="385" y2="115" stroke="#60a5fa" stroke-width="2" stroke-dasharray="5,4"/>
+          <path d="M36,225 Q185,180 265,112 T382,24" fill="none" stroke="#ff4757" stroke-width="3.2"/>
+          <circle cx="255" cy="122" r="6" fill="#fbbf24"/>
+          ${tag(145, 112, "DD -40% ⇒ +66,7%", "#fecdd3")}
+          ${tag(265, 38, "-50% ⇒ +100%", "#fde68a")}
+          ${tag(250, 178, "Ilusão Linear 1:1", "#93c5fd")}`;
+
+      case "ev_matrix":
+        return `${grid}${axes}
+          <path d="M36,170 L95,185 L155,140 L215,155 L275,92 L335,105 L395,38" fill="none" stroke="#10b981" stroke-width="3.2"/>
+          <path d="M36,170 L95,198 L155,212 L215,190 L275,216 L335,222 L395,225" fill="none" stroke="#ff4757" stroke-width="2.4" stroke-dasharray="5,3"/>
+          ${tag(210, 62, "Risco 2%: Convergência (+EV)", "#34d399")}
+          ${tag(170, 244, "Risco 25%: Overbetting (-76% em 5 stops)", "#fecdd3")}`;
+
+      case "behavioral_rules":
+        return `<rect x="24" y="24" width="176" height="205" rx="10" fill="rgba(255,71,87,0.08)" stroke="rgba(255,71,87,0.42)"/>
+          <rect x="220" y="24" width="176" height="205" rx="10" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.5)"/>
+          ${tag(38, 52, "✕ VIÉS EMOCIONAL", "#fecdd3")}
+          ${tag(38, 92, "• Corta ganhos +0,5R", "#cbd5e1")}
+          ${tag(38, 128, "• Move Stop p/ baixo", "#cbd5e1")}
+          ${tag(38, 164, "• Perda vira -5,0R", "#ff4757")}
+          ${tag(234, 52, "✓ REGRA HEURÍSTIKA", "#a7f3d0")}
+          ${tag(234, 92, "• SL fixo -1,0R", "#cbd5e1")}
+          ${tag(234, 128, "• Parcial em TP1", "#cbd5e1")}
+          ${tag(234, 164, "• Conduz até TP2", "#34d399")}`;
+
+      case "atr_ladder":
+        return `${grid}
+          <rect x="36" y="132" width="364" height="36" fill="rgba(245,176,65,0.09)"/>
+          <line x1="36" y1="44" x2="400" y2="44" stroke="#10b981" stroke-dasharray="4,3"/>
+          <line x1="36" y1="90" x2="400" y2="90" stroke="#34d399" stroke-dasharray="4,3"/>
+          <line x1="36" y1="150" x2="400" y2="150" stroke="#60a5fa" stroke-width="1.8"/>
+          <line x1="36" y1="205" x2="400" y2="205" stroke="#ff4757" stroke-width="2"/>
+          <polyline points="48,150 96,162 142,140 190,158 242,115 292,90 342,66 385,44" fill="none" stroke="#fff" stroke-width="2.4"/>
+          ${tag(245, 38, "TP2 (+3,5 ATR)", "#34d399")}${tag(245, 84, "TP1 (+2,0 ATR)", "#a7f3d0")}
+          ${tag(44, 144, "Zona de Ruído (±0,8 ATR)", "#fde68a")}${tag(195, 222, "Stop Estrutural (-1,5 ATR)", "#fecdd3")}`;
+
+      case "volatility_sizing":
+        return `<rect x="28" y="34" width="364" height="80" rx="9" fill="#0b1019" stroke="rgba(255,255,255,0.12)"/>
+          <rect x="28" y="132" width="364" height="80" rx="9" fill="#0b1019" stroke="rgba(255,255,255,0.12)"/>
+          ${tag(44, 58, "ATR = R$ 2,00  |  Stop = R$ 3,00  |  Lote = 166 un", "#a7f3d0")}
+          <rect x="44" y="72" width="290" height="16" rx="5" fill="#10b981"/>
+          ${tag(44, 156, "ATR = R$ 4,00  |  Stop = R$ 6,00  |  Lote = 83 un", "#fde68a")}
+          <rect x="44" y="170" width="145" height="16" rx="5" fill="#f5b041"/>
+          ${tag(110, 238, "Risco ($) Constante = R$ 500 em ambos os regimes", "#cbd5e1")}`;
+
+      case "orderbook_liquidity":
+        return `${grid}
+          ${tag(36, 36, "MAJORS FX / BTC (Book Denso)", "#a7f3d0")}
+          ${tag(226, 36, "ALTCOINS (Book Raso)", "#fecdd3")}
+          <rect x="36" y="54" width="150" height="18" rx="4" fill="#10b981" opacity="0.8"/>
+          <rect x="36" y="80" width="166" height="18" rx="4" fill="#10b981" opacity="0.7"/>
+          <rect x="36" y="114" width="158" height="18" rx="4" fill="#ff4757" opacity="0.8"/>
+          <rect x="36" y="140" width="168" height="18" rx="4" fill="#ff4757" opacity="0.7"/>
+          <rect x="226" y="54" width="52" height="18" rx="4" fill="#10b981" opacity="0.8"/>
+          <rect x="226" y="80" width="38" height="18" rx="4" fill="#10b981" opacity="0.7"/>
+          <rect x="226" y="128" width="46" height="18" rx="4" fill="#ff4757" opacity="0.8"/>
+          <rect x="226" y="156" width="62" height="18" rx="4" fill="#ff4757" opacity="0.7"/>
+          ${tag(36, 198, "Spread 0,2 pip", "#34d399")}
+          ${tag(226, 198, "Vácuo → Slippage!", "#ff4757")}`;
+
+      case "partial_scaling":
+        return `${grid}${axes}
+          <line x1="36" y1="168" x2="400" y2="168" stroke="#60a5fa" stroke-dasharray="4,3"/>
+          <line x1="36" y1="102" x2="400" y2="102" stroke="#34d399" stroke-dasharray="4,3"/>
+          <line x1="36" y1="45" x2="400" y2="45" stroke="#10b981" stroke-dasharray="4,3"/>
+          <path d="M40,168 L115,146 L175,102 L235,126 L310,74 L385,45" fill="none" stroke="#fff" stroke-width="2.8"/>
+          <circle cx="175" cy="102" r="6" fill="#fbbf24"/>
+          <circle cx="385" cy="45" r="6" fill="#34d399"/>
+          ${tag(112, 92, "TP1: Realiza 50% + SL→Entrada", "#fde68a")}
+          ${tag(265, 36, "TP2: Alvo Final Livre", "#a7f3d0")}
+          ${tag(44, 184, "Breakeven Blindado", "#93c5fd")}`;
+
+      case "regime_shift":
+        return `${grid}${axes}
+          <rect x="44" y="40" width="140" height="180" rx="6" fill="rgba(96,165,250,0.08)" stroke="rgba(96,165,250,0.3)"/>
+          <rect x="200" y="40" width="190" height="180" rx="6" fill="rgba(245,176,65,0.08)" stroke="rgba(245,176,65,0.3)"/>
+          <path d="M44,142 Q90,130 135,145 T185,138 L240,86 L295,175 L350,65 L390,110" fill="none" stroke="#34d399" stroke-width="2.8"/>
+          ${tag(56, 58, "Compressão ATR", "#93c5fd")}
+          ${tag(220, 58, "Expansão pós-Rompimento", "#fde68a")}`;
+
+      case "horizon_frontier":
+        return `${grid}${axes}
+          <path d="M55,198 Q135,55 375,46" fill="none" stroke="#10b981" stroke-width="3.2"/>
+          <line x1="36" y1="185" x2="365" y2="36" stroke="#60a5fa" stroke-width="2" stroke-dasharray="5,4"/>
+          <circle cx="172" cy="95" r="6.5" fill="#34d399"/>
+          <circle cx="310" cy="130" r="6" fill="#ff4757"/>
+          ${tag(130, 78, "Portfólio Ótimo (Sharpe 0,50)", "#a7f3d0")}
+          ${tag(238, 152, "Concentrado (0,29)", "#fecdd3")}
+          ${tag(260, 244, "Volatilidade (σp) →", "#94a3b8")}`;
+
+      case "short_horizon_2y":
+        return `${grid}${axes}
+          <line x1="36" y1="195" x2="395" y2="110" stroke="#10b981" stroke-width="3.2"/>
+          <path d="M36,195 Q150,70 265,165 T395,188" fill="none" stroke="#ff4757" stroke-width="2.6" stroke-dasharray="4,3"/>
+          <circle cx="395" cy="110" r="5.5" fill="#34d399"/>
+          <circle cx="395" cy="188" r="5.5" fill="#ff4757"/>
+          ${tag(180, 108, "Tesouro Selic / Pós-Fixado", "#a7f3d0")}
+          ${tag(225, 208, "Risco de Sequência no Mês 24", "#fecdd3")}`;
+
+      case "medium_horizon_5y":
+        return `${grid}
+          <rect x="40" y="45" width="340" height="44" rx="8" fill="rgba(16,185,129,0.14)" stroke="#10b981"/>
+          <rect x="40" y="106" width="340" height="44" rx="8" fill="rgba(96,165,250,0.14)" stroke="#60a5fa"/>
+          <rect x="40" y="167" width="340" height="44" rx="8" fill="rgba(245,176,65,0.14)" stroke="#f5b041"/>
+          ${tag(58, 72, "1. Renda Fixa IPCA+  →  Proteção Real (Inflação+)", "#a7f3d0")}
+          ${tag(58, 133, "2. FIIs & Dividendos  →  Fluxo Mensal Reinvestido", "#bfdbfe")}
+          ${tag(58, 194, "3. ETF Global (USD)   →  Proteção Cambial + Cresc.", "#fde68a")}`;
+
+      case "long_horizon_10y":
+        return `${grid}${axes}
+          <path d="M36,210 L395,135" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-dasharray="5,4"/>
+          <path d="M36,210 Q210,192 395,34" fill="none" stroke="#10b981" stroke-width="3.4"/>
+          <circle cx="395" cy="34" r="6" fill="#34d399"/>
+          ${tag(200, 62, "10+ Anos: NDX100 + Tech + BTC", "#a7f3d0")}
+          ${tag(265, 168, "CDI Benchmark", "#93c5fd")}`;
+
+      case "correlation_hedge":
+      case "hedge_derivatives":
+        return `${grid}${axes}
+          <path d="M36,120 L150,95 L235,198 L395,148" fill="none" stroke="#ff4757" stroke-width="2.4" stroke-dasharray="4,3"/>
+          <path d="M36,145 L150,140 L235,62 L395,88" fill="none" stroke="#f5b041" stroke-width="2.8"/>
+          <path d="M36,132 L150,115 L235,128 L395,78" fill="none" stroke="#10b981" stroke-width="3.2"/>
+          ${tag(212, 48, "Ouro (GC=F) / Hedge Sobe", "#fde68a")}
+          ${tag(250, 118, "Portfólio Amortecido", "#a7f3d0")}
+          ${tag(210, 214, "Ativos de Risco na Crise", "#fecdd3")}`;
+
+      case "duration_curve":
+      case "ipca_convexity":
+        return `${grid}${axes}
+          <path d="M46,40 Q180,152 388,208" fill="none" stroke="#10b981" stroke-width="3.4"/>
+          <line x1="158" y1="118" x2="275" y2="118" stroke="#f5b041" stroke-dasharray="4,3"/>
+          <line x1="275" y1="118" x2="275" y2="168" stroke="#ff4757" stroke-dasharray="4,3"/>
+          <circle cx="158" cy="118" r="5.5" fill="#34d399"/>
+          <circle cx="275" cy="168" r="6" fill="#ff4757"/>
+          ${tag(145, 98, "D_mod = 9 anos", "#a7f3d0")}
+          ${tag(238, 194, "+100 bps ⇒ ΔP ≈ -9,0%", "#fecdd3")}`;
+
+      case "carry_trade":
+        return `${grid}${axes}
+          <rect x="64" y="65" width="76" height="160" rx="6" fill="#10b981" opacity="0.82"/>
+          <rect x="176" y="205" width="76" height="20" rx="4" fill="#60a5fa" opacity="0.85"/>
+          <path d="M276,178 L335,112 L365,122 L392,192" fill="none" stroke="#f5b041" stroke-width="3"/>
+          ${tag(58, 52, "Juros Altos (USD)", "#a7f3d0")}
+          ${tag(170, 192, "Funding (JPY)", "#bfdbfe")}
+          ${tag(280, 92, "Swap + Risco Unwind", "#fde68a")}`;
+
+      default:
+        // rebalancing_bands
+        return `${grid}${axes}
+          <line x1="36" y1="68" x2="400" y2="68" stroke="#f5b041" stroke-dasharray="5,4"/>
+          <line x1="36" y1="130" x2="400" y2="130" stroke="#60a5fa" stroke-dasharray="3,3"/>
+          <line x1="36" y1="192" x2="400" y2="192" stroke="#34d399" stroke-dasharray="5,4"/>
+          <path d="M36,130 Q95,55 150,68 T270,192 T395,122" fill="none" stroke="#10b981" stroke-width="3.2"/>
+          ${tag(78, 54, "Banda +5% (Vende Excesso)", "#fde68a")}
+          ${tag(195, 212, "Banda -5% (Compra Desconto)", "#a7f3d0")}`;
+    }
+  }
+
+  function renderSlides() {
+    const mod = currentMod();
+    const slides = mod.slides || [];
+    if (!slides.length) return;
+    state.slideIdx = Math.max(0, Math.min(slides.length - 1, state.slideIdx));
+    const s = slides[state.slideIdx];
+
+    const cntBadge = document.getElementById("slideCounterBadge");
+    const kickerEl = document.getElementById("slideKicker");
+    const titleEl = document.getElementById("slideTitle");
+    const subEl = document.getElementById("slideSubtitle");
+    const bulletsEl = document.getElementById("slideBullets");
+    const calloutEl = document.getElementById("slideCallout");
+    const svgEl = document.getElementById("slideDiagramSvg");
+    const visualTagEl = document.getElementById("slideVisualTag");
+    const thumbsEl = document.getElementById("slideThumbs");
+
+    if (cntBadge) cntBadge.textContent = `SLIDE ${state.slideIdx + 1} / ${slides.length}`;
+    if (kickerEl) kickerEl.textContent = `SLIDE ${String(state.slideIdx + 1).padStart(2, "0")} • MÓDULO ${mod.numero}`;
+    if (titleEl) titleEl.textContent = s.titulo || "";
+    if (subEl) subEl.textContent = s.subtitulo || "";
+    if (bulletsEl) {
+      bulletsEl.innerHTML = (s.bullets || []).map(b =>
+        `<li><span class="slide-bullet-dot"></span><span>${escHtml(b)}</span></li>`
+      ).join("");
+    }
+    if (calloutEl) calloutEl.textContent = s.destaque || "";
+    if (visualTagEl) visualTagEl.textContent = (s.visual_type || "quant").toUpperCase();
+    if (svgEl) svgEl.innerHTML = renderVisualDiagramSVG(s.visual_type);
+
+    if (thumbsEl) {
+      thumbsEl.innerHTML = slides.map((sl, idx) => `
+        <button type="button" class="slide-thumb-btn ${idx === state.slideIdx ? "active" : ""}" data-slide-idx="${idx}">
+          <span class="mono" style="font-size:0.68rem; color:var(--electric-soft);">SLIDE 0${idx + 1}</span>
+          <span class="slide-thumb-title">${escHtml(sl.titulo)}</span>
+        </button>
+      `).join("");
+      thumbsEl.querySelectorAll(".slide-thumb-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.slideIdx = Number(btn.dataset.slideIdx || 0);
+          renderSlides();
+        });
+      });
+    }
+  }
+
+  document.getElementById("slidePrevBtn")?.addEventListener("click", () => {
+    const len = (currentMod().slides || []).length || 1;
+    state.slideIdx = (state.slideIdx - 1 + len) % len;
+    renderSlides();
+  });
+  document.getElementById("slideNextBtn")?.addEventListener("click", () => {
+    const len = (currentMod().slides || []).length || 1;
+    state.slideIdx = (state.slideIdx + 1) % len;
+    renderSlides();
+  });
+  document.getElementById("slideFullscreenBtn")?.addEventListener("click", () => {
+    const wrap = document.getElementById("slideDeckWrap");
+    try {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (wrap && wrap.requestFullscreen) wrap.requestFullscreen();
+    } catch (e) {}
+  });
+
+  // =========================================================================
+  // Full Written Study (Apostila Quantitativa) Renderer
+  // =========================================================================
+  function renderStudy() {
+    const mod = currentMod();
+    const st = mod.estudo_completo || {};
+    const host = document.getElementById("studyContentHost");
+    if (!host) return;
+
+    const paragraphs = String(st.introducao || "").split(/\n\s*\n/).filter(Boolean);
+    const introHtml = paragraphs.map(p => `<p>${escHtml(p)}</p>`).join("");
+    const fp = st.formula_principal || {};
+    const ex = st.exemplo_resolvido || {};
+    const stepsHtml = (ex.passos || []).map((step, idx) => `
+      <div class="study-step-item">
+        <div class="mono" style="font-size:0.7rem; color:var(--electric-soft); margin-bottom:4px;">PASSO 0${idx + 1}</div>
+        <div>${escHtml(step)}</div>
+      </div>
+    `).join("");
+
+    const errorsHtml = (st.erros_comuns || []).map(err => `
+      <li>
+        <span style="color:var(--red); font-weight:700; flex-shrink:0;">✕</span>
+        <span>${escHtml(err)}</span>
+      </li>
+    `).join("");
+
+    const checkHtml = (st.checklist_pratico || []).map(chk => `
+      <li>
+        <span style="color:var(--green); font-weight:700; flex-shrink:0;">✓</span>
+        <span>${escHtml(chk)}</span>
+      </li>
+    `).join("");
+
+    const isDone = doneSet.has(mod.numero);
+
+    host.innerHTML = `
+      <div class="study-intro-box">
+        <div class="term-kicker" style="margin-bottom:8px;">1. FUNDAMENTAÇÃO QUANTITATIVA</div>
+        ${introHtml}
+      </div>
+
+      <div class="study-formula-card">
+        <div class="term-kicker" style="color:var(--electric-soft);">2. FÓRMULA CENTRAL DO MÓDULO</div>
+        <h3 style="margin:4px 0 0; font-size:1.05rem;">${escHtml(fp.titulo || "")}</h3>
+        <div class="study-equation">${escHtml(fp.equacao || "")}</div>
+        <p style="margin:0; font-size:0.86rem; color:var(--text-soft);">${escHtml(fp.interpretacao || "")}</p>
+      </div>
+
+      <div class="study-example-card">
+        <div class="term-kicker" style="margin-bottom:4px;">3. EXEMPLO NUMÉRICO RESOLVIDO</div>
+        <h3 style="margin:0 0 6px; font-size:1.05rem;">${escHtml(ex.titulo || "")}</h3>
+        <p style="margin:0; font-size:0.88rem; color:var(--text-soft);">${escHtml(ex.cenario || "")}</p>
+        <div class="study-steps">${stepsHtml}</div>
+        <div class="study-conclusion">
+          <strong>Conclusão de Mesa:</strong> ${escHtml(ex.conclusao || "")}
+        </div>
+      </div>
+
+      <div class="study-dual-grid">
+        <div class="study-list-card" style="border-color:rgba(255,71,87,0.28);">
+          <div class="term-kicker" style="color:#fda4af;">4. ERROS COMUNS A EVITAR</div>
+          <ul>${errorsHtml}</ul>
+        </div>
+        <div class="study-list-card" style="border-color:rgba(16,185,129,0.28);">
+          <div class="term-kicker" style="color:var(--electric-soft);">5. CHECKLIST PRÁTICO ANTES DE OPERAR</div>
+          <ul>${checkHtml}</ul>
+        </div>
+      </div>
+
+      <div class="study-footer-bar">
+        <button type="button" id="studyInlineCompleteBtn" class="btn btn-sm ${isDone ? "btn-electric" : "btn-outline"}">
+          ${isDone ? "✓ Módulo Concluído (Desmarcar)" : "Marcar Módulo como Concluído"}
+        </button>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn btn-sm btn-ghost" id="studyGoVideoBtn">▶ Assistir Vídeo Explicativo</button>
+          <button type="button" class="btn btn-sm btn-electric" id="studyNextModBtn">Próximo Módulo →</button>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("studyInlineCompleteBtn")?.addEventListener("click", () => toggleModuleDone(mod.numero));
+    document.getElementById("studyGoVideoBtn")?.addEventListener("click", () => switchStudioTab("video"));
+    document.getElementById("studyNextModBtn")?.addEventListener("click", () => selectModule((state.modIdx + 1) % MODULES.length, true));
+  }
+
+  // =========================================================================
+  // Module & Studio Tab Switching
+  // =========================================================================
+  function switchStudioTab(tabName) {
+    state.tab = tabName;
+    if (tabName !== "video" && state.playing) setPlaying(false);
+
+    document.querySelectorAll(".studio-tab-btn").forEach(btn => {
+      const active = btn.dataset.studioTab === tabName;
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    document.querySelectorAll(".studio-pane").forEach(pane => {
+      pane.classList.toggle("active", pane.id === `pane-${tabName}`);
+    });
+
+    const hintEl = document.getElementById("studioModeHint");
+    if (hintEl) {
+      if (tabName === "video") hintEl.textContent = "Áudio Neural Estúdio PT-BR • Legendas Sincronizadas & Gráficos Live";
+      else if (tabName === "slides") hintEl.textContent = "Deck Executivo • Use ← / → no teclado para avançar slides";
+      else hintEl.textContent = "Apostila Completa • Fórmula, Cálculo Resolvido & Checklist";
+    }
+
+    if (tabName === "video") {
+      requestAnimationFrame(() => renderVideoFrame(performance.now()));
+    }
+  }
+
+  function selectModule(idx, scrollToStudio = false) {
+    state.modIdx = Math.max(0, Math.min(MODULES.length - 1, idx));
+    state.slideIdx = 0;
+    state.videoTime = 0;
+    state.lastChapterIdx = -1;
+    state.lastSubtitleText = "";
+    setPlaying(false);
+    loadModuleAudio();
+
+    const mod = currentMod();
+    document.querySelectorAll(".module-card-item").forEach(card => {
+      card.classList.toggle("is-active", card.dataset.mod === mod.numero);
+    });
+
+    const activeFilterBtn = document.querySelector("#moduleViewToggle .seg-btn.active");
+    const activeMode = activeFilterBtn ? activeFilterBtn.dataset.mode : "all";
+    if (activeMode !== "all" && activeMode !== mod.numero) {
+      document.querySelectorAll("#moduleViewToggle .seg-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === mod.numero);
+      });
+      document.querySelectorAll(".module-card-item").forEach(card => {
+        card.style.display = card.dataset.mod === mod.numero ? "flex" : "none";
+      });
+    }
+
+    const badge = document.getElementById("studioModBadge");
+    const dur = document.getElementById("studioModDuracao");
+    const niv = document.getElementById("studioModNivel");
+    const title = document.getElementById("studioModTitle");
+    const sum = document.getElementById("studioModSummary");
+    const slidesCnt = document.getElementById("studioSlidesCount");
+
+    if (badge) badge.textContent = `MÓDULO ${mod.numero}`;
+    if (dur) dur.textContent = mod.duracao || "20 min";
+    if (niv) niv.textContent = mod.nivel || "Quant";
+    if (title) title.textContent = mod.titulo;
+    if (sum) sum.textContent = mod.resumo;
+    if (slidesCnt) slidesCnt.textContent = String((mod.slides || []).length || 5);
+
+    buildVideoChapterUI();
+    renderSlides();
+    renderStudy();
+    renderModProgress();
+
+    if (scrollToStudio) {
+      document.getElementById("learningStudio")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  document.querySelectorAll(".studio-tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => switchStudioTab(btn.dataset.studioTab));
+  });
+
+  document.querySelectorAll(".module-card-item").forEach((card, idx) => {
+    card.addEventListener("click", (e) => {
+      if (e.target.closest(".toggle-mod-btn")) return;
+      selectModule(idx, Boolean(e.target.closest(".open-studio-btn")));
+    });
+  });
+
+  document.getElementById("prevModuleBtn")?.addEventListener("click", () => {
+    selectModule((state.modIdx - 1 + MODULES.length) % MODULES.length);
+  });
+  document.getElementById("nextModuleBtn")?.addEventListener("click", () => {
+    selectModule((state.modIdx + 1) % MODULES.length);
+  });
+  document.getElementById("studioCompleteBtn")?.addEventListener("click", () => {
+    toggleModuleDone(currentMod().numero);
+  });
+
+  // Top Module Filter Pills
+  document.querySelectorAll("#moduleViewToggle .seg-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const mode = btn.dataset.mode;
+      document.querySelectorAll("#moduleViewToggle .seg-btn").forEach(b => b.classList.toggle("active", b === btn));
+      document.querySelectorAll(".module-card-item").forEach(card => {
+        card.style.display = (mode === "all" || card.dataset.mod === mode) ? "flex" : "none";
+      });
+      if (mode !== "all") {
+        const foundIdx = MODULES.findIndex(m => m.numero === mode);
+        if (foundIdx >= 0) selectModule(foundIdx);
+      }
+    });
+  });
+
+  // Keyboard shortcuts for Slides & Video Studio
+  document.addEventListener("keydown", (e) => {
+    const activeEl = document.activeElement;
+    const tag = (activeEl && activeEl.tagName) || "";
+    if (["INPUT", "TEXTAREA", "SELECT"].includes(tag)) return;
+    if (state.tab === "slides") {
+      const len = (currentMod().slides || []).length || 1;
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        state.slideIdx = (state.slideIdx + 1) % len;
+        renderSlides();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        state.slideIdx = (state.slideIdx - 1 + len) % len;
+        renderSlides();
+      }
+    } else if (state.tab === "video") {
+      const key = e.key.toLowerCase();
+      if ((e.code === "Space" && !["BUTTON", "A"].includes(tag)) || key === "k") {
+        e.preventDefault();
+        setPlaying(!state.playing);
+      } else if (key === "m") {
+        e.preventDefault();
+        voiceBtn?.click();
+      } else if (key === "c") {
+        e.preventDefault();
+        ccBtn?.click();
+      } else if (e.key === "ArrowLeft" && activeEl !== scrubberEl) {
+        e.preventDefault();
+        seekByDelta(-5);
+      } else if (e.key === "ArrowRight" && activeEl !== scrubberEl) {
+        e.preventDefault();
+        seekByDelta(5);
+      }
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    if (state.tab === "video") renderVideoFrame(performance.now());
+  });
+  window.addEventListener("beforeunload", () => {
+    if (audioEl) {
+      try { audioEl.pause(); } catch (e) {}
+    }
+  });
+
+  // Initialize Studio
+  selectModule(0, false);
+
+  // Exam Navigator & Option Card Highlighting
+  const examForm = document.getElementById("examForm");
+  if (examForm) {
+    const totalQ = document.querySelectorAll(".question-block").length;
+    const counterEl = document.getElementById("examAnsweredCounter");
+
+    function updateExamStatus() {
+      let answered = 0;
+      document.querySelectorAll(".question-block").forEach(block => {
+        const qid = block.dataset.qid;
+        const checked = block.querySelector(`input[name="${qid}"]:checked`);
+        const dot = document.querySelector(`.exam-dot[data-qid="${qid}"]`);
+        if (checked) {
+          answered++;
+          if (dot) dot.classList.add("answered");
+        } else if (dot) {
+          dot.classList.remove("answered");
+        }
+        block.querySelectorAll(".option-card").forEach(lbl => {
+          const inp = lbl.querySelector("input");
+          lbl.classList.toggle("selected", Boolean(inp && inp.checked));
+        });
+      });
+      if (counterEl) counterEl.textContent = `${answered}/${totalQ} respondidas`;
+    }
+
+    examForm.addEventListener("change", updateExamStatus);
+    examForm.addEventListener("submit", (e) => {
+      const firstUnanswered = Array.from(document.querySelectorAll(".question-block")).find(block => {
+        const qid = block.dataset.qid;
+        return !block.querySelector(`input[name="${qid}"]:checked`);
+      });
+      if (firstUnanswered) {
+        e.preventDefault();
+        firstUnanswered.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (window.hkToast) {
+          window.hkToast("Responda todas as questões antes de finalizar a prova.", "warning");
+        }
+      }
+    });
+    document.querySelectorAll(".exam-dot").forEach(dot => {
+      dot.addEventListener("click", () => {
+        const target = document.getElementById(dot.dataset.target);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    });
+    updateExamStatus();
+  }
+})();
+</script>
+{% endblock %}

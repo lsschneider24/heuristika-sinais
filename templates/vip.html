@@ -1,0 +1,494 @@
+{% extends "base.html" %}
+{% block title %}Terminal VIP — Heurístika{% endblock %}
+
+{% block content %}
+<section class="container section-wrap">
+  <!-- Header Institucional do Terminal VIP -->
+  <div class="section-head" style="margin-bottom:20px;">
+    <div>
+      <div class="hero-pill" style="margin-bottom:10px;">
+        <span class="live-dot-pulse" style="display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--electric);"></span>
+        <span>ASSINANTE ATIVO • PLANO {{ subscriber.plano|upper }} • VÁLIDO ATÉ {{ subscriber.expira_em }}</span>
+      </div>
+      <h1 style="margin:0; font-size:clamp(1.65rem, 3vw, 2.3rem); letter-spacing:-0.03em;">Painel VIP em Tempo Real</h1>
+      <p style="margin:6px 0 0; color:var(--text-soft); font-size:0.94rem;">
+        Olá, <strong>{{ subscriber.nome }}</strong>. Terminal completo com sinais auditados, cálculo de posição e histórico verificado.
+      </p>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+      <a href="{{ url_for('carteiras') }}" class="btn btn-sm btn-outline">Carteiras Gerenciadas</a>
+      <a href="{{ telegram_link }}" target="_blank" rel="noopener" class="btn btn-sm btn-electric">Canal VIP Telegram ↗</a>
+      <a href="{{ suporte_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline">Suporte</a>
+    </div>
+  </div>
+
+  <!-- Filtro por Categoria -->
+  <div class="filter-bar" style="justify-content:flex-start; margin-bottom:20px;">
+    {% for cat in categorias %}
+      <a href="{{ url_for('vip_area', categoria=cat) }}" class="pill {% if categoria_ativa == cat %}active{% endif %}">{{ cat }}</a>
+    {% endfor %}
+  </div>
+
+  <!-- KPIs -->
+  <section class="kpi-grid" style="margin-top:0;">
+    <div class="kpi-card">
+      <div class="kpi-label">Taxa de Acerto ({{ categoria_ativa }})</div>
+      <div class="kpi-value text-green tabular">{{ stats.taxa_acerto }}%</div>
+      <div class="kpi-sub">{{ stats.encerrados }} sinais encerrados</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Acertos (TP1 / TP2)</div>
+      <div class="kpi-value text-green tabular">{{ stats.total_acertos }}</div>
+      <div class="kpi-sub mono">TP1: {{ stats.total_tp1 }} • TP2: {{ stats.total_tp2 }}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Stops &amp; Retorno Acumulado</div>
+      <div class="kpi-value {% if stats.retorno_acumulado >= 0 %}text-green{% else %}text-red{% endif %} tabular">
+        {{ '+' if stats.retorno_acumulado >= 0 else '' }}{{ stats.retorno_acumulado }}%
+      </div>
+      <div class="kpi-sub mono text-red">{{ stats.total_erros }} stop(s) registrado(s)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Sinais em Aberto</div>
+      <div class="kpi-value text-amber tabular">{{ open_signals|length }}</div>
+      <div class="kpi-sub">100% desbloqueados em tempo real</div>
+    </div>
+  </section>
+
+  <!-- Calculadora Interativa de Lote & Gestão de Risco -->
+  <div class="term-panel calc-grid" id="riskCalcSection">
+    <div>
+      <div class="term-panel-head" style="margin-bottom:12px;">
+        <div>
+          <div class="term-kicker">GESTÃO DE RISCO QUANTITATIVA</div>
+          <h2 class="term-title">Calculadora de Lote &amp; Posição</h2>
+        </div>
+        <span class="badge badge-buy mono" id="calcRRBadge">R:R —</span>
+      </div>
+
+      <div class="field" style="margin-bottom:12px;">
+        <label for="calcSignalSelect">Operação / Sinal de Referência</label>
+        <select id="calcSignalSelect">
+          {% for s in open_signals %}
+            <option value="{{ s.id }}"
+                    data-ativo="{{ s.ativo }}"
+                    data-dir="{{ s.direcao }}"
+                    data-entry="{{ s.entrada }}"
+                    data-sl="{{ s.sl }}"
+                    data-tp1="{{ s.tp1 }}"
+                    data-tp2="{{ s.tp2 }}">
+              #{{ s.id }} • {{ s.ativo }} ({{ s.direcao }}) — Entrada {{ s.entrada|fmt_price(s.categoria, s.ativo) }}
+            </option>
+          {% endfor %}
+          <option value="custom">Parâmetros Manuais (Personalizado)</option>
+        </select>
+      </div>
+
+      <div class="form-grid" style="gap:12px;">
+
+        <div class="field" style="margin-bottom:0;">
+          <label for="calcCapital">Banca / Capital</label>
+          <div style="display:flex; gap:6px;">
+            <select id="calcCurrency" style="width:76px; flex-shrink:0;">
+              <option value="BRL">R$</option>
+              <option value="USD">US$</option>
+            </select>
+            <input id="calcCapital" type="number" min="1" step="100" value="10000" class="mono" />
+          </div>
+          <div class="preset-chips" style="margin-top:5px;">
+            <button type="button" class="preset-chip calc-cap-preset" data-v="1000">1k</button>
+            <button type="button" class="preset-chip calc-cap-preset" data-v="10000">10k</button>
+            <button type="button" class="preset-chip calc-cap-preset" data-v="50000">50k</button>
+            <button type="button" class="preset-chip calc-cap-preset" data-v="100000">100k</button>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <label for="calcRiskPct">Risco por Operação (%)</label>
+          <input id="calcRiskPct" type="number" min="0.1" max="25" step="0.1" value="1.0" class="mono" />
+          <div class="preset-chips" style="margin-top:5px;">
+            <button type="button" class="preset-chip calc-risk-preset" data-v="0.5">0.5%</button>
+            <button type="button" class="preset-chip calc-risk-preset" data-v="1.0">1.0%</button>
+            <button type="button" class="preset-chip calc-risk-preset" data-v="2.0">2.0%</button>
+            <button type="button" class="preset-chip calc-risk-preset" data-v="3.0">3.0%</button>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <label for="calcEntryInput">Entrada</label>
+          <input id="calcEntryInput" type="number" step="any" class="mono" value="100" />
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <label for="calcSlInput">Stop Loss (SL)</label>
+          <input id="calcSlInput" type="number" step="any" class="mono" value="95" />
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; justify-content:space-between; gap:12px;">
+      <div class="calc-out-grid">
+        <div class="calc-stat">
+          <div class="calc-stat-lbl">Risco Financeiro Máx.</div>
+          <div class="calc-stat-val text-red tabular" id="outRiskMoney">R$ 100,00</div>
+        </div>
+        <div class="calc-stat">
+          <div class="calc-stat-lbl">Distância até o Stop</div>
+          <div class="calc-stat-val text-amber tabular" id="outStopDist">5,00%</div>
+        </div>
+        <div class="calc-stat">
+          <div class="calc-stat-lbl">Tamanho da Posição (Nocional)</div>
+          <div class="calc-stat-val text-green tabular" id="outPosSize">R$ 2.000,00</div>
+        </div>
+        <div class="calc-stat">
+          <div class="calc-stat-lbl">Qtd. / Unidades do Ativo</div>
+          <div class="calc-stat-val tabular" id="outUnits">20,0000</div>
+        </div>
+        <div class="calc-stat">
+          <div class="calc-stat-lbl">Alavancagem Implícita</div>
+          <div class="calc-stat-val tabular" id="outLeverage">0,20x</div>
+        </div>
+        <div class="calc-stat">
+          <div class="calc-stat-lbl">Retorno Alvo (TP1 / TP2)</div>
+          <div class="calc-stat-val text-green tabular" id="outTargetsMoney" style="font-size:0.95rem;">—</div>
+        </div>
+      </div>
+      <div class="mono" style="font-size:0.73rem; color:var(--muted);">
+        Fórmula: <span style="color:var(--text-soft);">Posição = (Banca × Risco%) ÷ |Entrada - SL| / Entrada</span>. Limite de ruína protegido.
+      </div>
+    </div>
+  </div>
+
+  <!-- Sinais em Aberto 100% Liberados -->
+  <div class="filter-toolbar">
+    <div>
+      <h2 style="margin:0; font-size:1.35rem; letter-spacing:-0.02em;">Sinais em Aberto (100% Liberados)</h2>
+      <span class="section-sub mono" id="openCountSub">{{ open_signals|length }} ativos monitorados</span>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <input type="search" id="vipSearchInput" class="search-input" placeholder="Buscar ativo (ex: SOL, BTC)..." />
+      <div class="seg-group" id="vipDirFilter">
+        <button type="button" class="seg-btn btn-xs active" data-dir="ALL">Todas</button>
+        <button type="button" class="seg-btn btn-xs" data-dir="COMPRA">Compra</button>
+        <button type="button" class="seg-btn btn-xs" data-dir="VENDA">Venda</button>
+      </div>
+    </div>
+  </div>
+
+  {% if not open_signals %}
+    <div class="panel" style="color:var(--muted); margin-bottom:32px;">Nenhum sinal em aberto para esta categoria no momento.</div>
+  {% else %}
+    <div class="signals-grid" id="vipOpenGrid" style="margin-bottom:34px;">
+      {% for s in open_signals %}
+        {% set risk_dist = (s.entrada - s.sl)|abs %}
+        {% set rew2_dist = (s.tp2 - s.entrada)|abs %}
+        {% set rr_val = (rew2_dist / risk_dist) if risk_dist > 0 else 0 %}
+        {% set total_span = (s.tp2 - s.sl) if s.direcao == 'COMPRA' else (s.sl - s.tp2) %}
+        {% if total_span > 0 %}
+          {% set raw_entry_pct = (((s.entrada - s.sl) / total_span) * 100) if s.direcao == 'COMPRA' else (((s.sl - s.entrada) / total_span) * 100) %}
+          {% set raw_tp1_pct = (((s.tp1 - s.sl) / total_span) * 100) if s.direcao == 'COMPRA' else (((s.sl - s.tp1) / total_span) * 100) %}
+          {% set raw_live_pct = (((s.preco_atual - s.sl) / total_span) * 100) if s.direcao == 'COMPRA' else (((s.sl - s.preco_atual) / total_span) * 100) %}
+        {% else %}
+          {% set raw_entry_pct = 30 %}
+          {% set raw_tp1_pct = 65 %}
+          {% set raw_live_pct = 35 %}
+        {% endif %}
+        {% set entry_pct = [8, [82, raw_entry_pct]|min]|max %}
+        {% set tp1_pct = [entry_pct + 6, [95, raw_tp1_pct]|min]|max %}
+        {% set live_pct = [2, [98, raw_live_pct]|min]|max %}
+        {% set live_pnl = ((((s.preco_atual - s.entrada) / s.entrada) * 100) if s.direcao == 'COMPRA' else (((s.entrada - s.preco_atual) / s.entrada) * 100)) if s.entrada else 0 %}
+
+        <article class="signal-card vip-signal-item"
+                 data-ativo="{{ s.ativo|upper }}"
+                 data-cat="{{ s.categoria|upper }}"
+                 data-dir="{{ s.direcao }}">
+          <div class="signal-top">
+            <span class="badge badge-cat">{{ s.categoria|upper }}</span>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <span class="badge {% if s.direcao == 'COMPRA' %}badge-buy{% else %}badge-sell{% endif %}">{{ s.direcao }}</span>
+              <span class="badge badge-open mono">R:R 1:{{ '%.1f'|format(rr_val) }}</span>
+              <span class="badge badge-vip">{{ s.destino }}</span>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px;">
+            <h3 class="asset-title" style="margin-bottom:10px;">{{ s.ativo }}</h3>
+            <span class="mono {% if live_pnl >= 0 %}text-green{% else %}text-red{% endif %}" style="font-size:0.82rem; font-weight:700;">
+              {{ '+' if live_pnl >= 0 else '' }}{{ '%.2f'|format(live_pnl) }}% agora
+            </span>
+          </div>
+
+          <div class="levels-grid">
+            <div class="level-box"><span>Entrada</span>{{ s.entrada|fmt_price(s.categoria, s.ativo) }}</div>
+            <div class="level-box"><span>Stop Loss</span><strong class="text-red">{{ s.sl|fmt_price(s.categoria, s.ativo) }}</strong></div>
+            <div class="level-box"><span>Alvo 1 (TP1)</span><strong class="text-green">{{ s.tp1|fmt_price(s.categoria, s.ativo) }}</strong></div>
+            <div class="level-box"><span>Alvo 2 (TP2)</span><strong class="text-green">{{ s.tp2|fmt_price(s.categoria, s.ativo) }}</strong></div>
+          </div>
+
+          <!-- Visual Risk/Reward Ladder -->
+          <div class="ladder-wrap">
+            <div class="ladder-head">
+              <span class="text-red">STOP</span>
+              <span style="color:var(--text-soft);">Atual: <strong>{{ s.preco_atual|fmt_price(s.categoria, s.ativo) }}</strong></span>
+              <span class="text-green">ALVO TP2</span>
+            </div>
+            <div class="ladder-track">
+              <div class="ladder-risk-fill" style="width:{{ '%.1f'|format(entry_pct) }}%;"></div>
+              <div class="ladder-gain-fill" style="left:{{ '%.1f'|format(entry_pct) }}%; width:{{ '%.1f'|format(100 - entry_pct) }}%;"></div>
+              <div class="ladder-pin" style="left:{{ '%.1f'|format(entry_pct) }}%;" title="Entrada"></div>
+              <div class="ladder-pin" style="left:{{ '%.1f'|format(tp1_pct) }}%; background:#34d399;" title="TP1"></div>
+              <div class="ladder-pin-live" style="left:{{ '%.1f'|format(live_pct) }}%;" title="Preço Atual"></div>
+            </div>
+            <div class="ladder-labels">
+              <span>SL</span>
+              <span>Entrada</span>
+              <span>TP1</span>
+              <span>TP2</span>
+            </div>
+          </div>
+
+          {% if s.observacao %}
+            <p style="margin:10px 0 0; font-size:0.81rem; color:#cbd5e1; line-height:1.45;">{{ s.observacao }}</p>
+          {% endif %}
+
+          <div style="margin-top:10px; font-size:0.74rem; color:var(--muted); display:flex; justify-content:space-between;" class="mono">
+            <span>#{{ s.id }} • {{ s.origem }}</span>
+            <span>{{ s.criado_em|fmt_dt }}</span>
+          </div>
+
+          <div class="signal-actions">
+            <button type="button"
+                    class="btn btn-xs btn-ghost copy-signal-btn"
+                    style="flex:1;"
+                    data-copy="HEURÍSTIKA VIP | #{{ s.id }} {{ s.ativo }} ({{ s.direcao }})&#10;Entrada: {{ s.entrada|fmt_price(s.categoria, s.ativo) }} | SL: {{ s.sl|fmt_price(s.categoria, s.ativo) }}&#10;TP1: {{ s.tp1|fmt_price(s.categoria, s.ativo) }} | TP2: {{ s.tp2|fmt_price(s.categoria, s.ativo) }} | R:R 1:{{ '%.1f'|format(rr_val) }}">
+              Copiar Sinal
+            </button>
+            <button type="button"
+                    class="btn btn-xs btn-electric load-calc-btn"
+                    style="flex:1;"
+                    data-id="{{ s.id }}"
+                    data-entry="{{ s.entrada }}"
+                    data-sl="{{ s.sl }}"
+                    data-tp1="{{ s.tp1 }}"
+                    data-tp2="{{ s.tp2 }}">
+              Calcular Lote
+            </button>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Histórico Completo -->
+  <div class="filter-toolbar" style="margin-top:10px;">
+    <div>
+      <h2 style="margin:0; font-size:1.35rem; letter-spacing:-0.02em;">Histórico Completo de Acertos e Erros</h2>
+      <span class="section-sub">Auditoria imutável com filtros instantâneos</span>
+    </div>
+    <div class="seg-group" id="vipHistStatusFilter">
+      <button type="button" class="seg-btn btn-xs active" data-status="ALL">Todos</button>
+      <button type="button" class="seg-btn btn-xs" data-status="GAIN">Apenas Gains</button>
+      <button type="button" class="seg-btn btn-xs" data-status="LOSS">Apenas Stops</button>
+    </div>
+  </div>
+
+  <div class="table-wrap" style="margin-bottom:36px;">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Categoria</th>
+          <th>Ativo</th>
+          <th>Direção</th>
+          <th>Entrada</th>
+          <th>Fechamento</th>
+          <th>Status</th>
+          <th>Resultado</th>
+          <th>Encerrado em</th>
+        </tr>
+      </thead>
+      <tbody id="vipHistTbody">
+        {% for h in closed_history %}
+          {% set is_gain = h.status in ('ACERTO_TP1', 'ACERTO_TP2') %}
+          <tr class="vip-hist-row"
+              data-ativo="{{ h.ativo|upper }}"
+              data-dir="{{ h.direcao }}"
+              data-outcome="{{ 'GAIN' if is_gain else 'LOSS' }}">
+            <td class="mono">#{{ h.id }}</td>
+            <td><span class="badge badge-cat">{{ h.categoria }}</span></td>
+            <td class="mono"><strong>{{ h.ativo }}</strong></td>
+            <td><span class="badge {% if h.direcao == 'COMPRA' %}badge-buy{% else %}badge-sell{% endif %}">{{ h.direcao }}</span></td>
+            <td class="mono">{{ h.entrada|fmt_price(h.categoria, h.ativo) }}</td>
+            <td class="mono">{{ h.preco_atual|fmt_price(h.categoria, h.ativo) }}</td>
+            <td>
+              {% if is_gain %}
+                <span class="badge badge-win">GAIN {{ h.status.replace('ACERTO_', '') }}</span>
+              {% else %}
+                <span class="badge badge-loss">STOP LOSS</span>
+              {% endif %}
+            </td>
+            <td class="mono {% if h.resultado_pct >= 0 %}text-green{% else %}text-red{% endif %}">
+              {{ '+' if h.resultado_pct >= 0 else '' }}{{ '%.2f'|format(h.resultado_pct) }}%
+            </td>
+            <td class="mono" style="color:var(--muted); font-size:0.78rem;">{{ h.encerrado_em|fmt_dt if h.encerrado_em else '-' }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="9" style="text-align:center; color:var(--muted);">Nenhum histórico registrado nesta categoria.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+(function initVipTerminal() {
+  // Position Size & Risk Calculator
+  const sigSelect = document.getElementById("calcSignalSelect");
+  const currSel = document.getElementById("calcCurrency");
+  const capInp = document.getElementById("calcCapital");
+  const riskInp = document.getElementById("calcRiskPct");
+  const entryInp = document.getElementById("calcEntryInput");
+  const slInp = document.getElementById("calcSlInput");
+
+  let activeTp1 = 0, activeTp2 = 0;
+
+  function fmtMoney(v) {
+    const cur = currSel.value;
+    const n = Number(v) || 0;
+    if (cur === "USD") {
+      return n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+    }
+    return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  }
+
+  function loadSignalIntoInputs(opt) {
+    if (!opt || opt.value === "custom") return;
+    entryInp.value = opt.dataset.entry || "";
+    slInp.value = opt.dataset.sl || "";
+    activeTp1 = parseFloat(opt.dataset.tp1 || "0") || 0;
+    activeTp2 = parseFloat(opt.dataset.tp2 || "0") || 0;
+  }
+
+  function computeRisk() {
+    const capital = Math.max(0, parseFloat(capInp.value) || 0);
+    const riskPct = Math.max(0, parseFloat(riskInp.value) || 0);
+    const entry = parseFloat(entryInp.value) || 0;
+    const sl = parseFloat(slInp.value) || 0;
+
+    const riskMoney = capital * (riskPct / 100);
+    const stopDiff = Math.abs(entry - sl);
+    const stopPct = entry > 0 ? (stopDiff / entry) * 100 : 0;
+    const posSize = stopPct > 0 ? riskMoney / (stopPct / 100) : 0;
+    const units = entry > 0 ? posSize / entry : 0;
+    const leverage = capital > 0 ? posSize / capital : 0;
+
+    document.getElementById("outRiskMoney").textContent = fmtMoney(riskMoney);
+    document.getElementById("outStopDist").textContent = stopPct.toFixed(2).replace(".", ",") + "%";
+    document.getElementById("outPosSize").textContent = fmtMoney(posSize);
+    document.getElementById("outUnits").textContent = units >= 100 ? units.toFixed(2).replace(".", ",") : units.toFixed(4).replace(".", ",");
+    const levEl = document.getElementById("outLeverage");
+    levEl.textContent = leverage.toFixed(2).replace(".", ",") + "x";
+    levEl.className = "calc-stat-val tabular " + (leverage > 3 ? "text-amber" : "text-blue");
+
+    const rrBadge = document.getElementById("calcRRBadge");
+    const targetsEl = document.getElementById("outTargetsMoney");
+    if (sigSelect.value !== "custom" && stopDiff > 0 && activeTp1 > 0 && activeTp2 > 0) {
+      const r1 = Math.abs(activeTp1 - entry) / stopDiff;
+      const r2 = Math.abs(activeTp2 - entry) / stopDiff;
+      rrBadge.textContent = `R:R 1:${r2.toFixed(1)}`;
+      targetsEl.textContent = `+${fmtMoney(riskMoney * r1)} / +${fmtMoney(riskMoney * r2)}`;
+    } else {
+      rrBadge.textContent = "R:R Custom";
+      targetsEl.textContent = `+${fmtMoney(riskMoney * 1.5)} / +${fmtMoney(riskMoney * 2.5)}`;
+    }
+  }
+
+  if (sigSelect.options.length > 0 && sigSelect.options[0].value !== "custom") {
+    loadSignalIntoInputs(sigSelect.options[0]);
+  }
+  computeRisk();
+
+  sigSelect.addEventListener("change", () => {
+    loadSignalIntoInputs(sigSelect.selectedOptions[0]);
+    computeRisk();
+  });
+
+  [entryInp, slInp].forEach(el => {
+    el.addEventListener("input", () => {
+      sigSelect.value = "custom";
+      computeRisk();
+    });
+  });
+
+  [currSel, capInp, riskInp].forEach(el => el.addEventListener("input", computeRisk));
+  currSel.addEventListener("change", computeRisk);
+
+  document.querySelectorAll(".calc-cap-preset").forEach(b => {
+    b.addEventListener("click", () => { capInp.value = b.dataset.v; computeRisk(); });
+  });
+  document.querySelectorAll(".calc-risk-preset").forEach(b => {
+    b.addEventListener("click", () => { riskInp.value = b.dataset.v; computeRisk(); });
+  });
+
+  document.querySelectorAll(".load-calc-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      sigSelect.value = btn.dataset.id;
+      loadSignalIntoInputs(sigSelect.selectedOptions[0]);
+      computeRisk();
+      document.getElementById("riskCalcSection").scrollIntoView({ behavior: "smooth", block: "center" });
+      window.hkToast("Sinal carregado na calculadora de risco!", "success");
+    });
+  });
+
+  document.querySelectorAll(".copy-signal-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      window.hkCopyText(btn.dataset.copy, "Parâmetros do sinal copiados!");
+    });
+  });
+
+  // Search + Direction + History Status Filters
+  const searchInp = document.getElementById("vipSearchInput");
+  let activeDir = "ALL";
+  let activeStatus = "ALL";
+
+  function applyFilters() {
+    const q = (searchInp.value || "").trim().toUpperCase();
+    let visibleOpen = 0;
+    document.querySelectorAll(".vip-signal-item").forEach(card => {
+      const matchQ = !q || card.dataset.ativo.includes(q) || card.dataset.cat.includes(q);
+      const matchDir = activeDir === "ALL" || card.dataset.dir === activeDir;
+      const show = matchQ && matchDir;
+      card.style.display = show ? "" : "none";
+      if (show) visibleOpen++;
+    });
+    const subEl = document.getElementById("openCountSub");
+    if (subEl) subEl.textContent = `${visibleOpen} ativo(s) exibido(s)`;
+
+    document.querySelectorAll(".vip-hist-row").forEach(row => {
+      const matchQ = !q || row.dataset.ativo.includes(q);
+      const matchDir = activeDir === "ALL" || row.dataset.dir === activeDir;
+      const matchSt = activeStatus === "ALL" || row.dataset.outcome === activeStatus;
+      row.style.display = (matchQ && matchDir && matchSt) ? "" : "none";
+    });
+  }
+
+  searchInp.addEventListener("input", applyFilters);
+
+  document.querySelectorAll("#vipDirFilter .seg-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeDir = btn.dataset.dir;
+      document.querySelectorAll("#vipDirFilter .seg-btn").forEach(b => b.classList.toggle("active", b === btn));
+      applyFilters();
+    });
+  });
+
+  document.querySelectorAll("#vipHistStatusFilter .seg-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeStatus = btn.dataset.status;
+      document.querySelectorAll("#vipHistStatusFilter .seg-btn").forEach(b => b.classList.toggle("active", b === btn));
+      applyFilters();
+    });
+  });
+})();
+</script>
+{% endblock %}

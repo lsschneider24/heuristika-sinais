@@ -1,0 +1,950 @@
+{% extends "base.html" %}
+{% block title %}Admin — Heurístika{% endblock %}
+
+{% block content %}
+<section class="container section-wrap">
+<div class="section-head" style="margin-top:8px;">
+  <div>
+    <h1 style="margin:0; font-size:1.6rem;">Painel Administrativo</h1>
+    <span style="font-size:0.85rem; color:var(--muted);">Controle de Sinais, Auditoria Automática, Robô, Assinantes &amp; Carteiras</span>
+    <div class="admin-status-row">
+      <span class="badge {% if telegram_vip_ok %}badge-win{% else %}badge-warn{% endif %}">
+        TG VIP: {{ 'Conectado' if telegram_vip_ok else 'Não configurado' }}
+      </span>
+      <span class="badge {% if telegram_free_ok %}badge-win{% else %}badge-warn{% endif %}">
+        TG Gratuito: {{ 'Conectado' if telegram_free_ok else 'Não configurado' }}
+      </span>
+      <span class="badge {% if settings.auto_audit_enabled == '1' %}badge-win{% else %}badge-warn{% endif %}">
+        Auditoria: {{ 'ATIVA' if settings.auto_audit_enabled == '1' else 'PAUSADA' }}
+      </span>
+      <span class="badge {% if settings.auto_scan_enabled == '1' %}badge-win{% else %}badge-warn{% endif %}">
+        Robô: {{ 'ATIVO' if settings.auto_scan_enabled == '1' else 'PAUSADO' }}
+      </span>
+    </div>
+  </div>
+  <form method="POST" action="{{ url_for('admin_logout') }}" style="margin:0;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <button type="submit" class="btn btn-sm">Sair do Admin</button>
+  </form>
+</div>
+
+<!-- Navegação por Abas -->
+<div class="tabs">
+  <a href="{{ url_for('admin_panel', tab='disparo') }}" class="tab-link {% if active_tab == 'disparo' %}active{% endif %}">
+    1. Disparo Rápido (Site + Telegram)
+  </a>
+  <a href="{{ url_for('admin_panel', tab='auditoria') }}" class="tab-link {% if active_tab == 'auditoria' %}active{% endif %}">
+    2. Auditoria, Erros &amp; Acertos / Robô
+    <span class="badge badge-open" style="margin-left:6px;">{{ stats.abertos }} abertos</span>
+  </a>
+  <a href="{{ url_for('admin_panel', tab='assinantes') }}" class="tab-link {% if active_tab == 'assinantes' %}active{% endif %}">
+    3. Assinantes &amp; Acessos
+    <span class="badge badge-cat" style="margin-left:6px;">{{ subscribers|length }}</span>
+  </a>
+  <a href="{{ url_for('admin_panel', tab='carteiras') }}" class="tab-link {% if active_tab == 'carteiras' %}active{% endif %}">
+    4. Carteiras (Anual)
+    {% if portfolio_invalid_count > 0 %}
+      <span class="badge badge-warn" style="margin-left:6px;">{{ portfolio_invalid_count }} alerta(s)</span>
+    {% else %}
+      <span class="badge badge-win" style="margin-left:6px;">9/9 100%</span>
+    {% endif %}
+  </a>
+</div>
+
+{% if active_tab == 'disparo' %}
+<!-- ABA 1: DISPARO RÁPIDO -->
+<div class="split-2" style="margin-bottom:36px;">
+  <div class="panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+      <h2 style="margin:0;">Novo Sinal (Site + Telegram)</h2>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" id="btnFetchQuote" class="btn btn-sm btn-outline">📡 Puxar Cotação</button>
+        <button type="button" id="btnAutoLevels" class="btn btn-sm btn-primary">⚡ Auto SL/TP</button>
+      </div>
+    </div>
+    <p id="quoteStatusHint" class="mono" style="margin:0 0 14px; font-size:0.76rem; color:var(--muted);">
+      Use "Puxar Cotação" para preencher o preço atual do mercado e "Auto SL/TP" para sugerir alvos proporcionais.
+    </p>
+
+    <form method="POST" action="{{ url_for('admin_publish') }}" id="signalForm">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+      <div class="form-grid">
+        <div class="field">
+          <label for="categoria">Categoria</label>
+          <select id="categoria" name="categoria" required>
+            {% for cat in categorias %}
+              <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label for="ativo">Ativo do Catálogo</label>
+          <select id="ativo" name="ativo"></select>
+        </div>
+        <div class="field">
+          <label for="ativo_custom">Ou Ativo Customizado (opcional)</label>
+          <input id="ativo_custom" name="ativo_custom" type="text" placeholder="Ex: XRP/USD" />
+        </div>
+        <div class="field">
+          <label for="direcao">Direção</label>
+          <select id="direcao" name="direcao" required>
+            <option value="COMPRA">COMPRA</option>
+            <option value="VENDA">VENDA</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="entrada">Preço de Entrada</label>
+          <input id="entrada" name="entrada" type="number" step="any" required placeholder="0.00" />
+        </div>
+        <div class="field">
+          <label for="sl">Stop Loss (SL)</label>
+          <input id="sl" name="sl" type="number" step="any" required placeholder="0.00" />
+        </div>
+        <div class="field">
+          <label for="tp1">Alvo 1 (TP1)</label>
+          <input id="tp1" name="tp1" type="number" step="any" required placeholder="0.00" />
+        </div>
+        <div class="field">
+          <label for="tp2">Alvo 2 (TP2)</label>
+          <input id="tp2" name="tp2" type="number" step="any" required placeholder="0.00" />
+        </div>
+        <div class="field">
+          <label for="destino">Destino</label>
+          <select id="destino" name="destino" required>
+            <option value="VIP">Somente VIP</option>
+            <option value="FREE">Somente Gratuito / Vitrine</option>
+            <option value="AMBOS">Ambos (VIP + Gratuito)</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="observacao">Observação / Contexto Técnico</label>
+        <input id="observacao" name="observacao" type="text" placeholder="Ex: Rompimento de resistência com volume acima da média." />
+      </div>
+
+      <div id="signalValidationBox" class="validation-banner" style="margin-bottom:14px;">
+        Informe Entrada, Stop Loss, TP1 e TP2 para validar a coerência do sinal e o Risco/Retorno.
+      </div>
+
+      <button type="submit" id="publishSubmitBtn" class="btn btn-vip" style="width:100%;">🚀 Publicar no Site + Telegram</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h2 style="margin-top:0;">Prévia Limpa (Telegram HTML)</h2>
+    <div id="tgConfigWarn" class="validation-banner is-warn" style="display:none; margin-bottom:12px;"></div>
+    <div id="previewBox" class="preview-box">Preencha os campos ao lado para visualizar a mensagem...</div>
+    <p style="font-size:0.8rem; color:var(--muted); margin-top:12px;">
+      Os botões nativos (<em>InlineKeyboardMarkup</em>) serão anexados automaticamente abaixo da mensagem sem poluir o texto.
+    </p>
+  </div>
+</div>
+
+<script>
+  const CATALOGO = {{ catalogo|tojson }};
+  const TG_STATUS = {
+    vip: {{ 'true' if telegram_vip_ok else 'false' }},
+    free: {{ 'true' if telegram_free_ok else 'false' }}
+  };
+  const signalForm = document.getElementById("signalForm");
+  const catSel = document.getElementById("categoria");
+  const ativoSel = document.getElementById("ativo");
+  const customInp = document.getElementById("ativo_custom");
+  const dirSel = document.getElementById("direcao");
+  const entInp = document.getElementById("entrada");
+  const slInp = document.getElementById("sl");
+  const tp1Inp = document.getElementById("tp1");
+  const tp2Inp = document.getElementById("tp2");
+  const destSel = document.getElementById("destino");
+  const obsInp = document.getElementById("observacao");
+  const previewBox = document.getElementById("previewBox");
+  const validationBox = document.getElementById("signalValidationBox");
+  const tgConfigWarn = document.getElementById("tgConfigWarn");
+  const quoteHint = document.getElementById("quoteStatusHint");
+  const btnFetchQuote = document.getElementById("btnFetchQuote");
+  const btnAutoLevels = document.getElementById("btnAutoLevels");
+
+  function populateAssets() {
+    const cat = catSel.value;
+    const items = CATALOGO[cat] || [];
+    ativoSel.innerHTML = "";
+    items.forEach(item => {
+      const opt = document.createElement("option");
+      opt.value = item.symbol;
+      opt.textContent = item.symbol;
+      ativoSel.appendChild(opt);
+    });
+    updatePreview();
+  }
+
+  function validateLevels() {
+    const dir = dirSel.value;
+    const ent = parseFloat(entInp.value);
+    const sl = parseFloat(slInp.value);
+    const tp1 = parseFloat(tp1Inp.value);
+    const tp2 = parseFloat(tp2Inp.value);
+
+    if (![ent, sl, tp1, tp2].every(v => Number.isFinite(v))) {
+      return { state: "neutral", rr: "0.00", message: "Informe Entrada, Stop Loss, TP1 e TP2 para validar a coerência do sinal e o Risco/Retorno." };
+    }
+    if (Math.min(ent, sl, tp1, tp2) <= 0) {
+      return { state: "error", rr: "0.00", message: "Todos os níveis de preço precisam ser maiores que zero." };
+    }
+    if (dir === "COMPRA" && !(sl < ent && ent < tp1 && tp1 < tp2)) {
+      return { state: "error", rr: "0.00", message: "Para COMPRA, os níveis devem respeitar: Stop Loss < Entrada < TP1 < TP2." };
+    }
+    if (dir === "VENDA" && !(tp2 < tp1 && tp1 < ent && ent < sl)) {
+      return { state: "error", rr: "0.00", message: "Para VENDA, os níveis devem respeitar: TP2 < TP1 < Entrada < Stop Loss." };
+    }
+    const risco = Math.abs(ent - sl);
+    const retorno = Math.abs(tp2 - ent);
+    const rrNum = risco > 0 ? retorno / risco : 0;
+    const rr = rrNum.toFixed(2);
+    if (rrNum < 1.2) {
+      return { state: "warn", rr, message: `Níveis válidos, mas Risco/Retorno baixo (1:${rr}). Recomendado acima de 1:1.20.` };
+    }
+    return { state: "ok", rr, message: `Níveis validados • Risco/Retorno 1:${rr} • Pronto para publicar.` };
+  }
+
+  function updateTelegramBanner() {
+    const dest = destSel.value;
+    const missing = [];
+    if ((dest === "VIP" || dest === "AMBOS") && !TG_STATUS.vip) missing.push("Canal VIP");
+    if ((dest === "FREE" || dest === "AMBOS") && !TG_STATUS.free) missing.push("Canal Gratuito");
+    if (missing.length > 0) {
+      tgConfigWarn.style.display = "block";
+      tgConfigWarn.textContent = `Aviso: ${missing.join(" e ")} sem BOT_TOKEN/CHAT_ID configurado. O sinal será salvo no Site, mas o disparo automático no Telegram para esse destino será ignorado.`;
+    } else {
+      tgConfigWarn.style.display = "none";
+      tgConfigWarn.textContent = "";
+    }
+  }
+
+  function updatePreview() {
+    const cat = catSel.value.toUpperCase();
+    const ativo = (customInp.value.trim() || ativoSel.value || "ATIVO").toUpperCase();
+    const dir = dirSel.value;
+    const emoji = dir === "COMPRA" ? "🟢 COMPRA" : "🔴 VENDA";
+    const ent = entInp.value || "0.00";
+    const sl = slInp.value || "0.00";
+    const tp1 = tp1Inp.value || "0.00";
+    const tp2 = tp2Inp.value || "0.00";
+    const dest = destSel.value;
+    const obs = obsInp.value.trim();
+
+    const v = validateLevels();
+    validationBox.className = "validation-banner" + (v.state !== "neutral" ? ` is-${v.state}` : "");
+    validationBox.textContent = v.message;
+
+    updateTelegramBanner();
+
+    let lines = [
+      dest === "FREE" ? "🎁 SINAL VITRINE" : (dest === "AMBOS" ? "📡 VIP + 🎁 SINAL VITRINE" : ""),
+      `[${cat}] ${ativo} — ${emoji}`,
+      "",
+      `📍 Entrada: ${ent}`,
+      `🛡 Stop Loss: ${sl}`,
+      `🎯 Alvo 1 (TP1): ${tp1}`,
+      `🚀 Alvo 2 (TP2): ${tp2}`,
+      `⚖️ Risco/Retorno: 1:${v.rr}`,
+      obs ? `\n📝 ${obs}` : "",
+      `\n🆔 Sinal #NOVO • Auditoria Automática Ativa`,
+      `Destino: ${dest} • Botões Inline anexados`
+    ].filter((l, idx) => !(idx === 0 && l === ""));
+
+    previewBox.textContent = lines.join("\n");
+  }
+
+  async function fetchQuote(applyLevels) {
+    const cat = catSel.value;
+    const ativo = (customInp.value.trim() || ativoSel.value || "").trim();
+    if (!ativo) {
+      if (window.hkToast) window.hkToast("Selecione ou informe um ativo primeiro.", "warning");
+      return;
+    }
+    btnFetchQuote.disabled = true;
+    btnAutoLevels.disabled = true;
+    try {
+      const resp = await fetch(`{{ url_for('admin_api_quote') }}?categoria=${encodeURIComponent(cat)}&ativo=${encodeURIComponent(ativo)}`);
+      const data = await resp.json();
+      if (!data.ok) {
+        throw new Error(data.error || "Falha ao obter cotação.");
+      }
+      entInp.value = data.preco;
+      if (applyLevels && data.sugestao && data.sugestao[dirSel.value]) {
+        const sug = data.sugestao[dirSel.value];
+        slInp.value = sug.sl;
+        tp1Inp.value = sug.tp1;
+        tp2Inp.value = sug.tp2;
+      }
+      quoteHint.textContent = `Cotação ao vivo (${data.fonte}): ${ativo} = ${data.preco}`;
+      if (window.hkToast) window.hkToast(`${ativo}: ${data.preco} (${data.fonte})`, "success");
+      updatePreview();
+    } catch (err) {
+      if (window.hkToast) window.hkToast(err.message || "Erro ao consultar cotação.", "warning");
+    } finally {
+      btnFetchQuote.disabled = false;
+      btnAutoLevels.disabled = false;
+    }
+  }
+
+  function applyAutoLevels() {
+    const ent = parseFloat(entInp.value);
+    if (!Number.isFinite(ent) || ent <= 0) {
+      fetchQuote(true);
+      return;
+    }
+    const dir = dirSel.value;
+    const cat = catSel.value;
+    const items = CATALOGO[cat] || [];
+    const found = items.find(i => i.symbol.toUpperCase() === (customInp.value.trim() || ativoSel.value || "").toUpperCase());
+    let dec = found ? found.decimals : (cat === "Forex" ? 4 : 2);
+    while (dec < 8 && (ent * 0.012) < Math.pow(10, -dec)) {
+      dec += 1;
+    }
+    const step = Math.pow(10, -dec);
+
+    if (dir === "COMPRA") {
+      let sl = Number((ent * 0.988).toFixed(dec));
+      if (sl >= ent) sl = Number(Math.max(step, ent - step).toFixed(dec));
+      let tp1 = Number((ent * 1.018).toFixed(dec));
+      if (tp1 <= ent) tp1 = Number((ent + step).toFixed(dec));
+      let tp2 = Number((ent * 1.032).toFixed(dec));
+      if (tp2 <= tp1) tp2 = Number((tp1 + step).toFixed(dec));
+      slInp.value = sl;
+      tp1Inp.value = tp1;
+      tp2Inp.value = tp2;
+    } else {
+      let sl = Number((ent * 1.012).toFixed(dec));
+      if (sl <= ent) sl = Number((ent + step).toFixed(dec));
+      let tp1 = Number((ent * 0.982).toFixed(dec));
+      if (tp1 >= ent) tp1 = Number(Math.max(step * 2, ent - step).toFixed(dec));
+      let tp2 = Number((ent * 0.968).toFixed(dec));
+      if (tp2 >= tp1) tp2 = Number(Math.max(step, tp1 - step).toFixed(dec));
+      slInp.value = sl;
+      tp1Inp.value = tp1;
+      tp2Inp.value = tp2;
+    }
+    updatePreview();
+  }
+
+  btnFetchQuote.addEventListener("click", () => fetchQuote(false));
+  btnAutoLevels.addEventListener("click", applyAutoLevels);
+
+  signalForm.addEventListener("submit", (e) => {
+    const v = validateLevels();
+    if (v.state === "error") {
+      e.preventDefault();
+      if (window.hkToast) window.hkToast(v.message, "warning");
+      validationBox.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  });
+
+  catSel.addEventListener("change", populateAssets);
+  [ativoSel, customInp, dirSel, entInp, slInp, tp1Inp, tp2Inp, destSel, obsInp].forEach(el => {
+    el.addEventListener("input", updatePreview);
+    el.addEventListener("change", updatePreview);
+  });
+  populateAssets();
+</script>
+
+{% elif active_tab == 'auditoria' %}
+<!-- ABA 2: AUDITORIA & ROBÔ -->
+<section class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-label">Placar Geral</div>
+    <div class="kpi-value text-green">{{ stats.taxa_acerto|fmt_pct(1) }}</div>
+    <div class="kpi-sub">{{ stats.total_acertos }} acertos / {{ stats.total_erros }} stops • {{ stats.retorno_acumulado|fmt_pct(2, signed=True) }}</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Auditoria Automática</div>
+    <div class="kpi-value" style="font-size:1.25rem;">
+      {% if settings.auto_audit_enabled == '1' %}<span class="text-green">● ATIVA</span>{% else %}<span class="text-amber">❚❚ PAUSADA</span>{% endif %}
+    </div>
+    <div class="kpi-sub">Última: {{ settings.last_audit_at|fmt_dt }}</div>
+    <form method="POST" action="{{ url_for('admin_toggle_setting') }}" style="margin-top:10px;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+      <input type="hidden" name="chave" value="auto_audit_enabled" />
+      <button type="submit" class="btn btn-sm">{{ 'Pausar Auditoria' if settings.auto_audit_enabled == '1' else 'Ligar Auditoria' }}</button>
+    </form>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Robô de Varredura</div>
+    <div class="kpi-value" style="font-size:1.25rem;">
+      {% if settings.auto_scan_enabled == '1' %}<span class="text-green">● ATIVO</span>{% else %}<span class="text-amber">❚❚ PAUSADO</span>{% endif %}
+    </div>
+    <div class="kpi-sub">Última: {{ settings.last_scan_at|fmt_dt }}</div>
+    <form method="POST" action="{{ url_for('admin_toggle_setting') }}" style="margin-top:10px;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+      <input type="hidden" name="chave" value="auto_scan_enabled" />
+      <button type="submit" class="btn btn-sm">{{ 'Pausar Robô' if settings.auto_scan_enabled == '1' else 'Ligar Robô' }}</button>
+    </form>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Ações Imediatas</div>
+    <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
+      <form method="POST" action="{{ url_for('admin_audit_now') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+        <button type="submit" class="btn btn-sm btn-primary" style="width:100%;">⚡ Forçar Checagem Agora</button>
+      </form>
+      <form method="POST" action="{{ url_for('admin_scan_now') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+        <button type="submit" class="btn btn-sm btn-vip" style="width:100%;">🤖 Executar Varredura Robô</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Placar por Categoria -->
+<div class="section-head"><h2>Placar por Categoria</h2></div>
+<div class="table-wrap" style="margin-bottom:28px;">
+  <table>
+    <thead>
+      <tr>
+        <th>Categoria</th>
+        <th>Taxa de Acerto</th>
+        <th>Acertos (TP1/TP2)</th>
+        <th>Erros (SL)</th>
+        <th>Abertos</th>
+        <th>Retorno</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in stats_by_cat %}
+        <tr>
+          <td><strong>{{ c.categoria }}</strong></td>
+          <td class="mono text-green">{{ c.taxa_acerto|fmt_pct(1) }}</td>
+          <td class="mono">{{ c.total_acertos }} ({{ c.total_tp1 }} / {{ c.total_tp2 }})</td>
+          <td class="mono text-red">{{ c.total_erros }}</td>
+          <td class="mono text-amber">{{ c.abertos }}</td>
+          <td class="mono {% if c.retorno_acumulado >= 0 %}text-green{% else %}text-red{% endif %}">
+            {{ c.retorno_acumulado|fmt_pct(2, signed=True) }}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Controle Manual de Sinais -->
+<div class="section-head">
+  <div>
+    <h2>Sinais &amp; Encerramento Manual</h2>
+    <span class="section-sub">Evita encerramentos duplicados acidentais e permite reabrir ou excluir registros de teste</span>
+  </div>
+</div>
+
+<div class="admin-toolbar">
+  <div class="filter-pills" id="sigFilterPills">
+    <button type="button" class="pill active" data-sig-filter="all">Todos ({{ signals|length }})</button>
+    <button type="button" class="pill" data-sig-filter="open">Abertos</button>
+    <button type="button" class="pill" data-sig-filter="win">Acertos</button>
+    <button type="button" class="pill" data-sig-filter="loss">Stops</button>
+  </div>
+  <input type="search" id="adminSigSearch" class="search-input" placeholder="Buscar ativo, categoria ou #ID..." />
+</div>
+
+<div class="table-wrap" style="margin-bottom:36px;">
+  <table id="adminSignalsTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Ativo &amp; Origem</th>
+        <th>Direção</th>
+        <th>Entrada / Atual</th>
+        <th>SL / TP1 / TP2</th>
+        <th>Retorno</th>
+        <th>Status</th>
+        <th>Ação Manual</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in signals %}
+        {% set sig_kind = 'open' if s.status == 'ABERTO' else ('win' if s.status in ('ACERTO_TP1', 'ACERTO_TP2') else 'loss') %}
+        <tr data-kind="{{ sig_kind }}" data-search="{{ s.id }} {{ s.ativo }} {{ s.categoria }} {{ s.destino }} {{ s.origem }} {{ s.status }}">
+          <td class="mono">#{{ s.id }}</td>
+          <td>
+            <div><strong>{{ s.ativo }}</strong> <span class="badge badge-cat">{{ s.categoria }}</span></div>
+            <div style="margin-top:4px; font-size:0.72rem; color:var(--muted);">{{ s.destino }} • {{ s.origem }} • {{ s.criado_em|fmt_dt }}</div>
+          </td>
+          <td><span class="badge {% if s.direcao == 'COMPRA' %}badge-buy{% else %}badge-sell{% endif %}">{{ s.direcao }}</span></td>
+          <td class="mono">{{ s.entrada|fmt_price(s.categoria, s.ativo) }} / {{ s.preco_atual|fmt_price(s.categoria, s.ativo) }}</td>
+          <td class="mono">{{ s.sl|fmt_price(s.categoria, s.ativo) }} / {{ s.tp1|fmt_price(s.categoria, s.ativo) }} / {{ s.tp2|fmt_price(s.categoria, s.ativo) }}</td>
+          <td class="mono {% if (s.resultado_pct or 0) >= 0 %}text-green{% else %}text-red{% endif %}">
+            {{ (s.resultado_pct or 0)|fmt_pct(2, signed=True) }}
+          </td>
+          <td>
+            {% if s.status == 'ABERTO' %}
+              <span class="badge badge-open">ABERTO</span>
+            {% elif s.status == 'ACERTO_TP1' %}
+              <span class="badge badge-win">ACERTO TP1</span>
+            {% elif s.status == 'ACERTO_TP2' %}
+              <span class="badge badge-win">ACERTO TP2</span>
+            {% else %}
+              <span class="badge badge-loss">STOP LOSS</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <form method="POST" action="{{ url_for('admin_close_signal', signal_id=s.id) }}"
+                {% if s.status != 'ABERTO' %}data-confirm="Sinal #{{ s.id }} já está encerrado. Deseja sobrescrever para Acerto TP1 e notificar no Telegram?"{% endif %}>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+                <input type="hidden" name="outcome" value="ACERTO_TP1" />
+                <button type="submit" class="btn btn-sm btn-green" {% if s.status == 'ACERTO_TP1' %}disabled{% endif %}>TP1</button>
+              </form>
+              <form method="POST" action="{{ url_for('admin_close_signal', signal_id=s.id) }}"
+                {% if s.status != 'ABERTO' %}data-confirm="Sinal #{{ s.id }} já está encerrado. Deseja sobrescrever para Acerto TP2 e notificar no Telegram?"{% endif %}>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+                <input type="hidden" name="outcome" value="ACERTO_TP2" />
+                <button type="submit" class="btn btn-sm btn-green" {% if s.status == 'ACERTO_TP2' %}disabled{% endif %}>TP2</button>
+              </form>
+              <form method="POST" action="{{ url_for('admin_close_signal', signal_id=s.id) }}"
+                {% if s.status != 'ABERTO' %}data-confirm="Sinal #{{ s.id }} já está encerrado. Deseja sobrescrever para Stop Loss e notificar no Telegram?"{% endif %}>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+                <input type="hidden" name="outcome" value="ERRO_SL" />
+                <button type="submit" class="btn btn-sm btn-red" {% if s.status == 'ERRO_SL' %}disabled{% endif %}>SL</button>
+              </form>
+              {% if s.status != 'ABERTO' %}
+                <form method="POST" action="{{ url_for('admin_reopen_signal', signal_id=s.id) }}"
+                  data-confirm="Reabrir sinal #{{ s.id }} para status ABERTO?">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+                  <button type="submit" class="btn btn-sm btn-outline">Reabrir</button>
+                </form>
+              {% endif %}
+              <form method="POST" action="{{ url_for('admin_delete_signal', signal_id=s.id) }}"
+                data-confirm="Excluir permanentemente o sinal #{{ s.id }} ({{ s.ativo }})?">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+                <button type="submit" class="btn btn-sm btn-outline" style="color:#fda4af; border-color:rgba(255,71,87,0.35);">Excluir</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  (function initAuditFilters() {
+    let activeKind = "all";
+    const pills = document.querySelectorAll("#sigFilterPills .pill");
+    const search = document.getElementById("adminSigSearch");
+    const rows = document.querySelectorAll("#adminSignalsTable tbody tr");
+
+    function applyFilter() {
+      const q = (search.value || "").trim().toLowerCase();
+      rows.forEach(tr => {
+        const matchKind = activeKind === "all" || tr.dataset.kind === activeKind;
+        const matchQ = !q || (tr.dataset.search || "").toLowerCase().includes(q);
+        tr.style.display = (matchKind && matchQ) ? "" : "none";
+      });
+    }
+
+    pills.forEach(btn => {
+      btn.addEventListener("click", () => {
+        pills.forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        activeKind = btn.dataset.sigFilter;
+        applyFilter();
+      });
+    });
+    if (search) search.addEventListener("input", applyFilter);
+  })();
+</script>
+
+{% elif active_tab == 'assinantes' %}
+<!-- ABA 3: ASSINANTES & ACESSOS -->
+{% set ns = namespace(validos=0, irregulares=0, premium=0) %}
+{% for sub in subscribers %}
+  {% if sub.ativo and sub.expira_em >= today_iso %}
+    {% set ns.validos = ns.validos + 1 %}
+    {% if sub.plano in ('Anual', 'Vitalício') %}
+      {% set ns.premium = ns.premium + 1 %}
+    {% endif %}
+  {% else %}
+    {% set ns.irregulares = ns.irregulares + 1 %}
+  {% endif %}
+{% endfor %}
+
+<section class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-label">Total de Assinantes</div>
+    <div class="kpi-value">{{ subscribers|length }}</div>
+    <div class="kpi-sub">Cadastros no banco SQLite</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Ativos Válidos</div>
+    <div class="kpi-value text-green">{{ ns.validos }}</div>
+    <div class="kpi-sub">Com acesso liberado hoje</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Expirados / Suspensos</div>
+    <div class="kpi-value text-amber">{{ ns.irregulares }}</div>
+    <div class="kpi-sub">Acesso bloqueado no /vip</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Anual &amp; Vitalício</div>
+    <div class="kpi-value" style="color:#93c5fd;">{{ ns.premium }}</div>
+    <div class="kpi-sub">Carteiras Administradas liberadas</div>
+  </div>
+</section>
+
+<div class="panel" style="margin-bottom:24px;">
+  <h2 style="margin-top:0;">Novo Assinante VIP</h2>
+  <form method="POST" action="{{ url_for('admin_create_subscriber') }}" class="form-grid" style="align-items:end;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <div class="field" style="margin-bottom:0;">
+      <label for="nome">Nome</label>
+      <input id="nome" name="nome" type="text" placeholder="João Silva" required />
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label for="contato">E-mail ou Contato</label>
+      <input id="contato" name="contato" type="text" placeholder="joao@email.com" required />
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label for="plano">Plano</label>
+      <select id="plano" name="plano">
+        <option value="Mensal">Mensal (30 dias)</option>
+        <option value="Trimestral">Trimestral (90 dias)</option>
+        <option value="Anual">Anual (365 dias)</option>
+        <option value="Vitalício">Vitalício (Acesso Total)</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-vip">Cadastrar + Gerar Código VIP</button>
+  </form>
+</div>
+
+<div class="admin-toolbar">
+  <div class="filter-pills" id="subFilterPills">
+    <button type="button" class="pill active" data-sub-filter="all">Todos ({{ subscribers|length }})</button>
+    <button type="button" class="pill" data-sub-filter="valid">Ativos ({{ ns.validos }})</button>
+    <button type="button" class="pill" data-sub-filter="invalid">Expirados / Suspensos ({{ ns.irregulares }})</button>
+  </div>
+  <input type="search" id="adminSubSearch" class="search-input" placeholder="Buscar nome, e-mail, código ou plano..." />
+</div>
+
+<div class="table-wrap" style="margin-bottom:36px;">
+  <table id="adminSubscribersTable">
+    <thead>
+      <tr>
+        <th>Assinante</th>
+        <th>Contato</th>
+        <th>Plano</th>
+        <th>Código de Acesso</th>
+        <th>Validade</th>
+        <th>Status</th>
+        <th>Convite Único Telegram</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sub in subscribers %}
+        {% set is_valid = sub.ativo and sub.expira_em >= today_iso %}
+        <tr data-valid="{{ 'valid' if is_valid else 'invalid' }}" data-search="{{ sub.nome }} {{ sub.contato }} {{ sub.plano }} {{ sub.codigo_acesso }}">
+          <td><strong>{{ sub.nome }}</strong></td>
+          <td>{{ sub.contato }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('admin_update_subscriber_plan', sub_id=sub.id) }}" class="admin-inline-edit">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+              <select name="plano" aria-label="Plano de {{ sub.nome }}">
+                {% for pl in planos_disponiveis %}
+                  <option value="{{ pl }}" {% if sub.plano == pl %}selected{% endif %}>{{ pl }}</option>
+                {% endfor %}
+              </select>
+              <button type="submit" class="btn btn-sm">Salvar</button>
+            </form>
+          </td>
+          <td>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span class="mono text-amber"><strong>{{ sub.codigo_acesso }}</strong></span>
+              <button type="button" class="btn-copy-mini" data-copy-text="{{ sub.codigo_acesso }}" data-copy-msg="Código {{ sub.codigo_acesso }} copiado!">Copiar</button>
+            </div>
+          </td>
+          <td class="mono">
+            {{ sub.expira_em|fmt_date }}
+            {% if sub.plano == 'Vitalício' %}
+              <span class="badge badge-open" style="margin-left:4px;">Vitalício</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if not sub.ativo %}
+              <span class="badge badge-loss">SUSPENSO</span>
+            {% elif sub.expira_em < today_iso %}
+              <span class="badge badge-warn">EXPIRADO</span>
+            {% else %}
+              <span class="badge badge-win">ATIVO</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if sub.telegram_invite_link and (sub.telegram_invite_link.startswith('https://') or sub.telegram_invite_link.startswith('http://')) %}
+              <div style="display:flex; align-items:center; gap:6px;">
+                <a href="{{ sub.telegram_invite_link }}" target="_blank" rel="noopener noreferrer" class="text-amber" style="font-size:0.8rem;">Abrir ↗</a>
+                <button type="button" class="btn-copy-mini" data-copy-text="{{ sub.telegram_invite_link }}" data-copy-msg="Link do Telegram copiado!">Copiar</button>
+              </div>
+            {% elif sub.telegram_invite_link %}
+              <span class="text-amber mono" style="font-size:0.75rem;">{{ sub.telegram_invite_link }}</span>
+            {% else %}
+              <span style="color:var(--muted); font-size:0.8rem;">Não gerado</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <form method="POST" action="{{ url_for('admin_renew_subscriber', sub_id=sub.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+                <input type="hidden" name="dias" value="30" />
+                <button type="submit" class="btn btn-sm btn-green" title="Soma +30 dias à validade atual">+30d</button>
+              </form>
+              <form method="POST" action="{{ url_for('admin_toggle_subscriber', sub_id=sub.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+                <button type="submit" class="btn btn-sm">{{ 'Suspender' if sub.ativo else 'Ativar' }}</button>
+              </form>
+              <form method="POST" action="{{ url_for('admin_generate_invite', sub_id=sub.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+                <button type="submit" class="btn btn-sm btn-primary">Gerar Convite TG</button>
+              </form>
+              <form method="POST" action="{{ url_for('admin_delete_subscriber', sub_id=sub.id) }}"
+                data-confirm="Excluir permanentemente o assinante {{ sub.nome }}?">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+                <button type="submit" class="btn btn-sm btn-outline" style="color:#fda4af; border-color:rgba(255,71,87,0.35);">Excluir</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  (function initSubscriberFilters() {
+    let activeValid = "all";
+    const pills = document.querySelectorAll("#subFilterPills .pill");
+    const search = document.getElementById("adminSubSearch");
+    const rows = document.querySelectorAll("#adminSubscribersTable tbody tr");
+
+    function applyFilter() {
+      const q = (search.value || "").trim().toLowerCase();
+      rows.forEach(tr => {
+        const matchStatus = activeValid === "all" || tr.dataset.valid === activeValid;
+        const matchQ = !q || (tr.dataset.search || "").toLowerCase().includes(q);
+        tr.style.display = (matchStatus && matchQ) ? "" : "none";
+      });
+    }
+
+    pills.forEach(btn => {
+      btn.addEventListener("click", () => {
+        pills.forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        activeValid = btn.dataset.subFilter;
+        applyFilter();
+      });
+    });
+    if (search) search.addEventListener("input", applyFilter);
+  })();
+</script>
+
+{% else %}
+<!-- ABA 4: CARTEIRAS GERENCIADAS (PLANO ANUAL) -->
+<div class="panel" style="margin-bottom:24px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+    <div>
+      <h2 style="margin:0;">Saúde das 9 Carteiras (Soma = 100%)</h2>
+      <span style="font-size:0.82rem; color:var(--muted);">Clique em qualquer carteira abaixo para filtrar os ativos e editar pesos rapidamente</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      {% if portfolio_invalid_count > 0 %}
+        <span class="badge badge-warn">{{ portfolio_invalid_count }} carteira(s) diferente de 100%</span>
+      {% else %}
+        <span class="badge badge-win">Todas as 9 carteiras em 100%</span>
+      {% endif %}
+      <button type="button" id="resetPortfolioFilter" class="btn btn-sm btn-outline">Mostrar Todas</button>
+    </div>
+  </div>
+
+  <div class="portfolio-health-grid" id="portfolioHealthGrid">
+    {% for ps in portfolio_summary %}
+      <button type="button"
+              class="portfolio-health-chip {% if ps.ok %}is-ok{% else %}is-warn{% endif %}"
+              data-h="{{ ps.horizonte }}"
+              data-p="{{ ps.perfil }}">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; width:100%;">
+          <strong style="font-size:0.82rem;">{{ ps.horizonte }}</strong>
+          <span class="badge {% if ps.ok %}badge-win{% else %}badge-warn{% endif %}">
+            {{ ps.total_peso|fmt_pct(1, strip_zero=True) }}
+          </span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; width:100%; font-size:0.74rem; color:var(--muted); margin-top:6px;">
+          <span>{{ ps.perfil }} • {{ ps.qtd }} ativos</span>
+          <span class="mono">{{ ps.vigencia }}</span>
+        </div>
+      </button>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="panel" style="margin-bottom:24px;">
+  <h2 style="margin-top:0;">Adicionar Ativo à Carteira</h2>
+  <form method="POST" action="{{ url_for('admin_portfolio_add') }}" class="form-grid" style="align-items:end;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <div class="field" style="margin-bottom:0;">
+      <label for="horizonte">Horizonte</label>
+      <select id="horizonte" name="horizonte" required>
+        {% for h in horizontes %}
+          <option value="{{ h }}">{{ h }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label for="perfil">Perfil</label>
+      <select id="perfil" name="perfil" required>
+        {% for p in perfis %}
+          <option value="{{ p }}">{{ p }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label for="ativo_p">Ativo</label>
+      <input id="ativo_p" name="ativo" type="text" required placeholder="Ex: IVVB11" />
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label for="cat_p">Categoria</label>
+      <select id="cat_p" name="categoria" required>
+        {% for cat in categorias %}
+          <option value="{{ cat }}">{{ cat }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label for="peso_pct">Peso (%)</label>
+      <input id="peso_pct" name="peso_pct" type="number" step="0.01" min="0.01" max="100" required placeholder="25" />
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label for="vigencia_p">Vigência</label>
+      <input id="vigencia_p" name="vigencia" type="text" value="01/12/2026" required placeholder="01/12/2026" />
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label for="tese">Tese</label>
+      <input id="tese" name="tese" type="text" required placeholder="Motivo da alocação" />
+    </div>
+    <button type="submit" class="btn btn-electric">Adicionar à Carteira</button>
+  </form>
+</div>
+
+<div id="portfolioFilterBanner" class="validation-banner" style="display:none; margin-bottom:14px;"></div>
+
+<div class="table-wrap" style="margin-bottom:36px;">
+  <table id="adminPortfolioTable">
+    <thead>
+      <tr>
+        <th>Horizonte &amp; Perfil</th>
+        <th>Ativo</th>
+        <th>Peso Atual</th>
+        <th>Edição Rápida (Peso / Vigência / Tese)</th>
+        <th>Remover</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in portfolios %}
+        <tr data-h="{{ item.horizonte }}" data-p="{{ item.perfil }}">
+          <td>
+            <div><strong>{{ item.horizonte }}</strong></div>
+            <div style="margin-top:4px;"><span class="badge badge-cat">{{ item.perfil }}</span></div>
+          </td>
+          <td>
+            <div class="mono"><strong>{{ item.ativo }}</strong></div>
+            <div style="font-size:0.74rem; color:var(--muted);">{{ item.categoria }}</div>
+          </td>
+          <td class="mono text-green"><strong>{{ item.peso_pct|fmt_pct(1, strip_zero=True) }}</strong></td>
+          <td style="white-space:normal; min-width:390px;">
+            <form method="POST" action="{{ url_for('admin_portfolio_update', item_id=item.id) }}" class="admin-inline-edit" style="flex-wrap:wrap;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+              <input type="number" name="peso_pct" step="0.01" min="0.01" max="100" value="{{ item.peso_pct }}" required style="width:82px;" aria-label="Peso de {{ item.ativo }}" />
+              <input type="text" name="vigencia" value="{{ item.vigencia }}" required style="width:110px;" aria-label="Vigência de {{ item.ativo }}" />
+              <input type="text" name="tese" value="{{ item.tese }}" required style="flex:1; min-width:170px;" aria-label="Tese de {{ item.ativo }}" />
+              <button type="submit" class="btn btn-sm btn-primary">Salvar</button>
+            </form>
+          </td>
+          <td>
+            <form method="POST" action="{{ url_for('admin_portfolio_delete', item_id=item.id) }}"
+              data-confirm="Remover {{ item.ativo }} da carteira {{ item.horizonte }} / {{ item.perfil }}?">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+              <button type="submit" class="btn btn-sm btn-red">Remover</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  (function initPortfolioHealthFilter() {
+    const chips = document.querySelectorAll("#portfolioHealthGrid .portfolio-health-chip");
+    const rows = document.querySelectorAll("#adminPortfolioTable tbody tr");
+    const resetBtn = document.getElementById("resetPortfolioFilter");
+    const banner = document.getElementById("portfolioFilterBanner");
+    const hSel = document.getElementById("horizonte");
+    const pSel = document.getElementById("perfil");
+
+    let selected = null;
+
+    function applyFilter(h, p) {
+      selected = h && p ? { h, p } : null;
+      chips.forEach(c => {
+        const active = selected && c.dataset.h === selected.h && c.dataset.p === selected.p;
+        c.classList.toggle("active", Boolean(active));
+      });
+      let visibleCount = 0;
+      rows.forEach(tr => {
+        const show = !selected || (tr.dataset.h === selected.h && tr.dataset.p === selected.p);
+        tr.style.display = show ? "" : "none";
+        if (show) visibleCount += 1;
+      });
+      if (selected) {
+        banner.style.display = "block";
+        banner.className = "validation-banner is-ok";
+        banner.textContent = `Filtro ativo: ${selected.h} • ${selected.p} (${visibleCount} ativo(s) exibido(s)).`;
+        if (hSel) hSel.value = selected.h;
+        if (pSel) pSel.value = selected.p;
+      } else {
+        banner.style.display = "none";
+      }
+    }
+
+    chips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        if (selected && selected.h === chip.dataset.h && selected.p === chip.dataset.p) {
+          applyFilter(null, null);
+        } else {
+          applyFilter(chip.dataset.h, chip.dataset.p);
+        }
+      });
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => applyFilter(null, null));
+    }
+  })();
+</script>
+{% endif %}
+
+<script>
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-copy-text]");
+    if (!btn) return;
+    e.preventDefault();
+    if (window.hkCopyText) {
+      window.hkCopyText(btn.dataset.copyText || "", btn.dataset.copyMsg || "Copiado!");
+    }
+  });
+
+  document.addEventListener("submit", (e) => {
+    const form = e.target.closest("form[data-confirm]");
+    if (!form) return;
+    if (!window.confirm(form.dataset.confirm || "Confirmar ação?")) {
+      e.preventDefault();
+    }
+  });
+</script>
+</section>
+{% endblock %}

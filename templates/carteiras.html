@@ -1,0 +1,782 @@
+{% extends "base.html" %}
+{% block title %}Carteiras Gerenciadas (2, 5 e 10+ anos) — Heurístika{% endblock %}
+
+{% block content %}
+<section class="container section-wrap">
+  <!-- Header Institucional -->
+  <div class="section-head" style="margin-bottom:20px;">
+    <div>
+      <div class="hero-pill" style="margin-bottom:10px;">
+        <span class="live-dot-pulse" style="display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--electric);"></span>
+        <span>VIGÊNCIA OFICIAL: 01/12/2026 • ALOCAÇÃO MULTI-HORIZONTE</span>
+      </div>
+      <h1 style="margin:0; font-size:clamp(1.65rem, 3vw, 2.35rem); letter-spacing:-0.03em;">
+        Terminal de Carteiras &amp; Simulador Patrimonial
+      </h1>
+      <p style="margin:8px 0 0; color:var(--text-soft); max-width:720px; font-size:0.95rem;">
+        Selecione horizonte e perfil para simular crescimento composto vs. CDI e calcular exatamente quanto alocar em <strong>R$</strong> em cada ativo.
+      </p>
+    </div>
+
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <div class="seg-group" role="tablist" aria-label="Modo de visualização">
+        <button type="button" class="seg-btn active" id="viewTerminalBtn" data-view="terminal">Terminal da Carteira</button>
+        <button type="button" class="seg-btn" id="viewMatrixBtn" data-view="matrix">Matriz 9 Carteiras</button>
+      </div>
+      {% if has_annual_access %}
+        <span class="badge badge-buy">ACESSO ANUAL LIBERADO</span>
+      {% else %}
+        <button type="button" id="openAnnualPixTop" class="btn btn-sm btn-electric">Desbloquear Plano Anual (R$ 269,90)</button>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if not has_annual_access %}
+    <div class="paywall-bar-pro">
+      <div>
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;">
+          <span class="badge badge-vip">MODO SIMULADOR DEMO</span>
+          <span class="mono" style="font-size:0.74rem; color:var(--text-soft);">Vigência oficial 01/12/2026 • Plano Anual / Vitalício</span>
+        </div>
+        <div style="font-size:0.92rem; color:var(--text-soft);">
+          Explore livremente o simulador patrimonial e a macro-alocação por classe. Os <strong>tickers exatos, pesos individuais e lista de execução</strong> são exclusivos para assinantes anuais.
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        {% if subscriber %}
+          <span class="badge badge-cat">Plano atual: {{ subscriber.plano }}</span>
+        {% else %}
+          <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline">Já sou Assinante Anual</a>
+        {% endif %}
+        <button type="button" id="openAnnualPixBanner" class="btn btn-sm btn-electric">Assinar Anual via Pix</button>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Command Dock: Horizonte, Perfil & Simulador de Capital -->
+  <div class="term-panel wealth-dock">
+    <div class="dock-selectors">
+      <div>
+        <div class="term-kicker" style="margin-bottom:7px;">1. Horizonte de Investimento</div>
+        <div class="seg-group" id="horizonSwitcher" role="group" aria-label="Horizonte">
+          <button type="button" class="seg-btn" data-horizon="Curto (2 anos)">Curto (2 anos)</button>
+          <button type="button" class="seg-btn" data-horizon="Médio (5 anos)">Médio (5 anos)</button>
+          <button type="button" class="seg-btn" data-horizon="Longo (10+ anos)">Longo (10+ anos)</button>
+        </div>
+      </div>
+      <div>
+        <div class="term-kicker" style="margin-bottom:7px;">2. Perfil de Risco</div>
+        <div class="seg-group" id="profileSwitcher" role="group" aria-label="Perfil">
+          <button type="button" class="seg-btn" data-profile="Conservador">Conservador</button>
+          <button type="button" class="seg-btn" data-profile="Moderado">Moderado</button>
+          <button type="button" class="seg-btn" data-profile="Agressivo">Agressivo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dock-inputs">
+      <div class="input-group-pro">
+        <label for="capitalInicialInput">Capital Inicial (R$)</label>
+        <div class="money-input-wrap">
+          <span class="money-prefix">R$</span>
+          <input id="capitalInicialInput" type="number" min="0" step="500" value="50000" inputmode="decimal" />
+        </div>
+        <div class="preset-chips">
+          <button type="button" class="preset-chip" data-cap="10000">10k</button>
+          <button type="button" class="preset-chip" data-cap="50000">50k</button>
+          <button type="button" class="preset-chip" data-cap="100000">100k</button>
+          <button type="button" class="preset-chip" data-cap="250000">250k</button>
+        </div>
+      </div>
+
+      <div class="input-group-pro">
+        <label for="aporteMensalInput">Aporte Mensal (R$)</label>
+        <div class="money-input-wrap">
+          <span class="money-prefix">R$</span>
+          <input id="aporteMensalInput" type="number" min="0" step="100" value="2000" inputmode="decimal" />
+        </div>
+        <div class="preset-chips">
+          <button type="button" class="preset-chip" data-aporte="0">Sem aporte</button>
+          <button type="button" class="preset-chip" data-aporte="500">500</button>
+          <button type="button" class="preset-chip" data-aporte="2000">2k</button>
+          <button type="button" class="preset-chip" data-aporte="5000">5k</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 1: TERMINAL DA CARTEIRA -->
+  <div id="terminalView">
+    <!-- 5-Card Institutional KPIs -->
+    <div class="kpi-5">
+      <div class="kpi-card-pro">
+        <div class="kpi-label">Patrimônio Projetado (<span id="kpiYearsLabel">5</span>a)</div>
+        <div class="kpi-value text-green mono tabular" id="kpiProjectedVal">R$ 0,00</div>
+        <div class="kpi-sub mono" id="kpiAlphaVsCdi">+R$ 0,00 vs CDI</div>
+      </div>
+      <div class="kpi-card-pro">
+        <div class="kpi-label">Retorno Esperado (a.a.)</div>
+        <div class="kpi-value mono tabular" id="kpiExpectedReturn">0,0%</div>
+        <div class="kpi-sub mono" id="kpiMonthlyYield">Ganho inicial est.: R$ 0/mês</div>
+      </div>
+      <div class="kpi-card-pro">
+        <div class="kpi-label">Índice de Sharpe Est.</div>
+        <div class="kpi-value text-blue mono tabular" id="kpiSharpe">0,00</div>
+        <div class="kpi-sub">Eficiência risco-retorno</div>
+      </div>
+      <div class="kpi-card-pro">
+        <div class="kpi-label">Volatilidade &amp; Drawdown</div>
+        <div class="kpi-value text-amber mono tabular" id="kpiVol">0,0%</div>
+        <div class="kpi-sub mono" id="kpiDrawdown">Max DD est.: -0,0%</div>
+      </div>
+      <div class="kpi-card-pro">
+        <div class="kpi-label">Vigência &amp; Rebalanceamento</div>
+        <div class="kpi-value mono tabular" id="kpiVigencia">01/12/2026</div>
+        <div class="kpi-sub" id="kpiRebalance">Frequência: Trimestral</div>
+      </div>
+    </div>
+
+    <!-- Analytical Split: Compound Growth Chart + Asset Class Donut -->
+    <div class="wealth-grid">
+      <!-- Left: Interactive Wealth Curve -->
+      <div class="term-panel">
+        <div class="term-panel-head">
+          <div>
+            <div class="term-kicker">SIMULADOR DE PATRIMÔNIO COMPOSTO</div>
+            <h2 class="term-title" id="chartHeading">Projeção: Médio (5 anos) • Moderado</h2>
+          </div>
+          <div class="seg-group" id="projYearsSwitcher" aria-label="Prazo da projeção">
+            <button type="button" class="seg-btn btn-xs" data-proj="2">2 Anos</button>
+            <button type="button" class="seg-btn btn-xs active" data-proj="5">5 Anos</button>
+            <button type="button" class="seg-btn btn-xs" data-proj="10">10 Anos</button>
+          </div>
+        </div>
+
+        <div class="chart-svg-wrap" id="wealthChartWrap">
+          <div class="chart-tooltip" id="wealthTooltip"></div>
+          <svg id="wealthSvg" viewBox="0 0 640 230" preserveAspectRatio="none" style="width:100%; height:100%; display:block;"></svg>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-top:10px; font-size:0.75rem; color:var(--muted);">
+          <div style="display:flex; gap:14px; flex-wrap:wrap;">
+            <span><span style="color:#10b981;">●</span> Carteira Heurístika</span>
+            <span><span style="color:#60a5fa;">▬</span> Benchmark CDI (11,25% a.a.)</span>
+            <span><span style="color:#64748b;">┈</span> Total Aportado</span>
+          </div>
+          <span class="mono">Projeção modelo • Não garante retorno futuro</span>
+        </div>
+
+        <div class="horizon-mini-grid">
+          <div class="horizon-mini-box" id="miniBox2">
+            <div class="term-kicker">Horizonte 2 Anos</div>
+            <div class="mono tabular" style="font-size:1rem; font-weight:700; margin-top:3px;" id="miniVal2">R$ 0</div>
+            <div class="mono text-green" style="font-size:0.72rem;" id="miniSub2">+0%</div>
+          </div>
+          <div class="horizon-mini-box" id="miniBox5">
+            <div class="term-kicker">Horizonte 5 Anos</div>
+            <div class="mono tabular" style="font-size:1rem; font-weight:700; margin-top:3px;" id="miniVal5">R$ 0</div>
+            <div class="mono text-green" style="font-size:0.72rem;" id="miniSub5">+0%</div>
+          </div>
+          <div class="horizon-mini-box" id="miniBox10">
+            <div class="term-kicker">Horizonte 10 Anos</div>
+            <div class="mono tabular" style="font-size:1rem; font-weight:700; margin-top:3px;" id="miniVal10">R$ 0</div>
+            <div class="mono text-green" style="font-size:0.72rem;" id="miniSub10">+0%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Asset Class Breakdown -->
+      <div class="term-panel">
+        <div class="term-panel-head">
+          <div>
+            <div class="term-kicker">DISTRIBUIÇÃO POR CLASSE DE ATIVOS</div>
+            <h2 class="term-title" id="donutHeading">Composição Estrutural</h2>
+          </div>
+          <span class="badge badge-cat mono" id="assetCountBadge">4 ativos</span>
+        </div>
+
+        <div class="stacked-bar" id="stackedBar"></div>
+
+        <div class="donut-layout">
+          <div class="donut-wrap">
+            <svg id="donutSvg" viewBox="0 0 180 180" style="width:100%; height:100%; transform:rotate(-90deg);"></svg>
+            <div class="donut-center">
+              <span class="term-kicker">ALOCADO</span>
+              <strong class="mono tabular" style="font-size:1.15rem;" id="donutCenterPct">100%</strong>
+              <span class="mono" style="font-size:0.68rem; color:var(--muted);" id="donutCenterCap">R$ 50k</span>
+            </div>
+          </div>
+
+          <div class="class-legend" id="classLegend"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Execution & Position Allocation Calculator Table -->
+    <div class="term-panel" style="margin-bottom:28px;">
+      <div class="term-panel-head">
+        <div>
+          <div class="term-kicker">CALCULADORA DE POSIÇÃO • ORDEM DE COMPRA NA CORRETORA</div>
+          <h2 class="term-title" id="tableHeading">Alocação Exata em R$ — Médio (5 anos) • Moderado</h2>
+        </div>
+
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <span class="badge badge-buy mono" id="weightSumBadge">Peso Total: 100%</span>
+          {% if has_annual_access %}
+            <button type="button" id="copyAllocationBtn" class="btn btn-sm btn-electric">Copiar Lista de Compra</button>
+            <button type="button" id="exportCsvBtn" class="btn btn-sm btn-outline">Exportar CSV</button>
+          {% else %}
+            <button type="button" id="openAnnualPixTable" class="btn btn-sm btn-electric">Desbloquear Tickers &amp; Ordem</button>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="table-wrap" style="border:none; background:transparent;">
+        <table class="alloc-table">
+          <thead>
+            <tr>
+              <th>Ativo / Ticker</th>
+              <th>Classe</th>
+              <th>Peso Alvo</th>
+              <th>Aporte Inicial (R$)</th>
+              <th>Aporte Mensal (R$)</th>
+              <th>Tese Quantitativa</th>
+            </tr>
+          </thead>
+          <tbody id="allocationTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 2: MATRIZ COMPARATIVA DAS 9 CARTEIRAS -->
+  <div id="matrixView" style="display:none; margin-bottom:28px;">
+    <div class="term-panel">
+      <div class="term-panel-head">
+        <div>
+          <div class="term-kicker">COMPARATIVO QUANTITATIVO • 3 HORIZONTES × 3 PERFIS</div>
+          <h2 class="term-title">Matriz das 9 Carteiras Gerenciadas (Vigência 01/12/2026)</h2>
+        </div>
+        <span class="mono" style="font-size:0.78rem; color:var(--muted);">Clique em qualquer linha para abrir no Terminal</span>
+      </div>
+      <div class="table-wrap" style="border:none;">
+        <table>
+          <thead>
+            <tr>
+              <th>Horizonte</th>
+              <th>Perfil</th>
+              <th>Retorno Est. (a.a.)</th>
+              <th>Volatilidade</th>
+              <th>Sharpe</th>
+              <th>Max Drawdown</th>
+              <th>Rebalanceamento</th>
+              <th>Patrimônio Projetado</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="matrixTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <section class="disclaimer" style="margin-top:8px;">
+    <strong>Nota Metodológica &amp; Risco:</strong> Os parâmetros de retorno esperado, volatilidade, Sharpe e Max Drawdown são estimativas quantitativas baseadas em composição histórica das classes de ativos e taxa CDI de referência (11,25% a.a.). Carteiras vigentes a partir de 01/12/2026. Rentabilidade passada não garante retornos futuros.
+  </section>
+</section>
+
+<!-- Modal Pix Plano Anual -->
+{% if not has_annual_access %}
+<div id="annualPixModal" class="pix-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="annualPixTitle">
+  <div class="pix-modal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <span class="badge badge-vip">PLANO ANUAL + CARTEIRAS 01/12/2026</span>
+      <button type="button" id="closeAnnualPix" class="btn btn-sm btn-outline" aria-label="Fechar">✕</button>
+    </div>
+    <h3 id="annualPixTitle" style="margin:0 0 6px; font-size:1.22rem;">Desbloquear as 9 Carteiras Gerenciadas</h3>
+    <p style="margin:0 0 14px; color:var(--muted); font-size:0.88rem;">
+      Valor único anual: <strong class="mono text-green">R$ 269,90/ano</strong> (inclui Terminal VIP + Telegram + Carteiras).
+    </p>
+    <div style="font-size:0.8rem; color:var(--text-soft);">
+      <div><strong>Favorecido:</strong> {{ pix_receiver }}</div>
+      <div><strong>Modalidade:</strong> {{ pix_institution }}</div>
+    </div>
+    <div class="pix-key-box">
+      <code id="annualPixKey" class="mono" style="font-size:0.9rem; color:#34d399; word-break:break-all;">{{ pix_key }}</code>
+      <button type="button" id="copyAnnualPixBtn" class="btn btn-sm btn-electric">Copiar Chave</button>
+    </div>
+    <a href="{{ suporte_url }}" target="_blank" rel="noopener" class="btn btn-electric" style="width:100%;">
+      Enviar Comprovante e Liberar Acesso
+    </a>
+  </div>
+</div>
+{% endif %}
+
+<script>
+(function initWealthTerminal() {
+  const HAS_ACCESS = {{ has_annual_access|tojson }};
+  const PORTFOLIOS = {{ portfolios_catalog|tojson }};
+  let activeHorizon = {{ focus_horizonte|tojson }};
+  let activeProfile = {{ focus_perfil|tojson }};
+  let projectionYears = activeHorizon.startsWith("Curto") ? 2 : (activeHorizon.startsWith("Longo") ? 10 : 5);
+
+  const CDI_ANNUAL = 0.1125;
+  const CLASS_COLORS = {
+    "Renda Fixa": "#3b82f6",
+    "FIIs": "#10b981",
+    "Ações": "#34d399",
+    "ETF / Global": "#8b5cf6",
+    "Cripto": "#f59e0b",
+    "Hedge / Macro": "#ec4899",
+    "Fundos": "#06b6d4"
+  };
+
+  const QUANT_META = {
+    "Curto (2 anos)||Conservador": { ret: 12.4, vol: 3.8, sharpe: 0.85, dd: -2.8, reb: "Trimestral", yrs: 2 },
+    "Curto (2 anos)||Moderado":    { ret: 14.6, vol: 8.9, sharpe: 0.72, dd: -8.5, reb: "Trimestral", yrs: 2 },
+    "Curto (2 anos)||Agressivo":   { ret: 18.8, vol: 17.4, sharpe: 0.68, dd: -18.0, reb: "Mensal", yrs: 2 },
+    "Médio (5 anos)||Conservador": { ret: 13.1, vol: 5.2, sharpe: 0.82, dd: -4.9, reb: "Semestral", yrs: 5 },
+    "Médio (5 anos)||Moderado":    { ret: 16.2, vol: 11.4, sharpe: 0.78, dd: -12.4, reb: "Trimestral", yrs: 5 },
+    "Médio (5 anos)||Agressivo":   { ret: 21.4, vol: 21.2, sharpe: 0.75, dd: -24.5, reb: "Trimestral", yrs: 5 },
+    "Longo (10+ anos)||Conservador": { ret: 13.8, vol: 6.8, sharpe: 0.84, dd: -7.5, reb: "Semestral", yrs: 10 },
+    "Longo (10+ anos)||Moderado":    { ret: 17.5, vol: 13.1, sharpe: 0.82, dd: -15.8, reb: "Semestral", yrs: 10 },
+    "Longo (10+ anos)||Agressivo":   { ret: 23.8, vol: 24.5, sharpe: 0.79, dd: -29.0, reb: "Trimestral", yrs: 10 }
+  };
+
+  const fmtBRL = (val, compact = false) => {
+    const n = Number(val) || 0;
+    if (compact) {
+      if (n >= 1e6) return "R$ " + (n / 1e6).toFixed(2).replace(".", ",") + "M";
+      if (n >= 1e3) return "R$ " + (n / 1e3).toFixed(1).replace(".", ",") + "k";
+    }
+    return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  };
+  const fmtNum = (val, dec = 1) => (Number(val) || 0).toFixed(dec).replace(".", ",");
+  const escHtml = (s) => String(s || "").replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[ch]));
+
+  const capInput = document.getElementById("capitalInicialInput");
+  const aporteInput = document.getElementById("aporteMensalInput");
+
+  function getCapital() { return Math.max(0, parseFloat(capInput.value) || 0); }
+  function getAporte() { return Math.max(0, parseFloat(aporteInput.value) || 0); }
+
+  function simulateSeries(capital, monthly, annualRate, years) {
+    const months = years * 12;
+    const r = Math.pow(1 + annualRate, 1 / 12) - 1;
+    const cdiR = Math.pow(1 + CDI_ANNUAL, 1 / 12) - 1;
+    let port = capital;
+    let cdi = capital;
+    let invested = capital;
+    const pts = [{ m: 0, port, cdi, invested }];
+    for (let m = 1; m <= months; m++) {
+      port = port * (1 + r) + monthly;
+      cdi = cdi * (1 + cdiR) + monthly;
+      invested += monthly;
+      if (m % Math.max(1, Math.floor(months / 24)) === 0 || m === months) {
+        pts.push({ m, port, cdi, invested });
+      }
+    }
+    return pts;
+  }
+
+  function finalWealth(capital, monthly, annualRate, years) {
+    const months = years * 12;
+    const r = Math.pow(1 + annualRate, 1 / 12) - 1;
+    let val = capital;
+    for (let m = 1; m <= months; m++) val = val * (1 + r) + monthly;
+    return val;
+  }
+
+  function renderWealthChart(meta, capital, monthly) {
+    const svg = document.getElementById("wealthSvg");
+    const tooltip = document.getElementById("wealthTooltip");
+    const series = simulateSeries(capital, monthly, meta.ret / 100, projectionYears);
+    const W = 640, H = 230, padL = 62, padR = 16, padT = 16, padB = 28;
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
+
+    const maxVal = Math.max(...series.map(p => Math.max(p.port, p.cdi, p.invested)), 100);
+    const minVal = Math.min(...series.map(p => p.invested)) * 0.92;
+    const span = Math.max(maxVal - minVal, 1);
+
+    const toX = (m) => padL + (m / (projectionYears * 12)) * plotW;
+    const toY = (v) => padT + plotH - ((v - minVal) / span) * plotH;
+
+    let gridHtml = "";
+    for (let i = 0; i <= 4; i++) {
+      const val = minVal + (span * i) / 4;
+      const y = toY(val);
+      gridHtml += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${W - padR}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,0.06)" stroke-dasharray="3,3" />`;
+      gridHtml += `<text x="${padL - 8}" y="${(y + 3).toFixed(1)}" text-anchor="end" fill="#7c8aa0" font-size="10" font-family="JetBrains Mono, monospace">${fmtBRL(val, true)}</text>`;
+    }
+
+    const stepsX = projectionYears <= 2 ? 4 : 5;
+    for (let i = 0; i <= stepsX; i++) {
+      const yr = (projectionYears * i) / stepsX;
+      const x = toX(yr * 12);
+      gridHtml += `<text x="${x.toFixed(1)}" y="${H - 8}" text-anchor="middle" fill="#7c8aa0" font-size="10" font-family="JetBrains Mono, monospace">${yr === 0 ? "Hoje" : "Ano " + fmtNum(yr, projectionYears === 2 && yr % 1 !== 0 ? 1 : 0)}</text>`;
+    }
+
+    const pathFor = (key) => series.map((p, idx) => `${idx === 0 ? "M" : "L"}${toX(p.m).toFixed(1)},${toY(p[key]).toFixed(1)}`).join(" ");
+    const portPath = pathFor("port");
+    const cdiPath = pathFor("cdi");
+    const invPath = pathFor("invested");
+    const areaPath = `${portPath} L${toX(series[series.length - 1].m).toFixed(1)},${padT + plotH} L${toX(0).toFixed(1)},${padT + plotH} Z`;
+
+    const lastPt = series[series.length - 1];
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="wealthAreaGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(16,185,129,0.28)" />
+          <stop offset="100%" stop-color="rgba(16,185,129,0.01)" />
+        </linearGradient>
+      </defs>
+      ${gridHtml}
+      <path d="${areaPath}" fill="url(#wealthAreaGrad)" />
+      <path d="${invPath}" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3,4" />
+      <path d="${cdiPath}" fill="none" stroke="#60a5fa" stroke-width="2" stroke-dasharray="6,4" />
+      <path d="${portPath}" fill="none" stroke="#10b981" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" />
+      <line id="hoverRule" x1="0" y1="${padT}" x2="0" y2="${padT + plotH}" stroke="rgba(255,255,255,0.22)" stroke-width="1" style="display:none;" />
+      <circle id="hoverDotPort" cx="${toX(lastPt.m)}" cy="${toY(lastPt.port)}" r="4.5" fill="#34d399" stroke="#04070c" stroke-width="2" />
+    `;
+
+    svg.onmousemove = (e) => {
+      const rect = svg.getBoundingClientRect();
+      const relX = ((e.clientX - rect.left) / rect.width) * W;
+      const clampedM = Math.max(0, Math.min(projectionYears * 12, ((relX - padL) / plotW) * (projectionYears * 12)));
+      let nearest = series[0];
+      let minDist = Infinity;
+      for (const p of series) {
+        const d = Math.abs(p.m - clampedM);
+        if (d < minDist) { minDist = d; nearest = p; }
+      }
+      const rule = document.getElementById("hoverRule");
+      const dot = document.getElementById("hoverDotPort");
+      const cx = toX(nearest.m);
+      if (rule) { rule.setAttribute("x1", cx); rule.setAttribute("x2", cx); rule.style.display = "block"; }
+      if (dot) { dot.setAttribute("cx", cx); dot.setAttribute("cy", toY(nearest.port)); }
+      const alpha = nearest.port - nearest.cdi;
+      const yrLbl = (nearest.m / 12).toFixed(1).replace(".", ",");
+      tooltip.innerHTML = `
+        <div style="color:#94a3b8; margin-bottom:2px;">Mês ${nearest.m} (${yrLbl} anos)</div>
+        <div>Carteira: <strong class="text-green">${fmtBRL(nearest.port)}</strong></div>
+        <div>CDI (11,25%): <strong class="text-blue">${fmtBRL(nearest.cdi)}</strong></div>
+        <div>Aportado: <span style="color:#cbd5e1;">${fmtBRL(nearest.invested)}</span></div>
+        <div style="border-top:1px solid rgba(255,255,255,0.1); margin-top:3px; padding-top:3px;">
+          Alpha vs CDI: <strong class="${alpha >= 0 ? 'text-green' : 'text-red'}">${alpha >= 0 ? '+' : ''}${fmtBRL(alpha)}</strong>
+        </div>
+      `;
+      tooltip.classList.add("visible");
+    };
+    svg.onmouseleave = () => {
+      tooltip.classList.remove("visible");
+      const rule = document.getElementById("hoverRule");
+      if (rule) rule.style.display = "none";
+    };
+  }
+
+  function renderDonut(portfolio, capital) {
+    const svg = document.getElementById("donutSvg");
+    const stacked = document.getElementById("stackedBar");
+    const legend = document.getElementById("classLegend");
+    const entries = Object.entries(portfolio.classes || {}).sort((a, b) => b[1] - a[1]);
+    const totalW = entries.reduce((acc, [, w]) => acc + w, 0) || 100;
+
+    const R = 68, CX = 90, CY = 90, C = 2 * Math.PI * R;
+    let offset = 0;
+    let circles = "";
+    let stackedHtml = "";
+    let legendHtml = "";
+
+    entries.forEach(([cls, w]) => {
+      const pct = (w / totalW) * 100;
+      const dash = (pct / 100) * C;
+      const color = CLASS_COLORS[cls] || "#34d399";
+      circles += `<circle class="donut-seg" data-cls="${cls}" cx="${CX}" cy="${CY}" r="${R}" fill="transparent" stroke="${color}" stroke-width="20" stroke-dasharray="${dash.toFixed(2)} ${(C - dash).toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" style="transition:stroke-width 0.18s ease;" />`;
+      offset += dash;
+
+      stackedHtml += `<div class="stacked-seg" style="width:${pct.toFixed(1)}%; background:${color};" title="${cls}: ${fmtNum(pct, 0)}%"></div>`;
+      const brlVal = capital * (pct / 100);
+      legendHtml += `
+        <div class="class-row" data-cls="${cls}">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="class-dot" style="background:${color};"></span>
+            <span style="font-weight:600;">${cls}</span>
+          </div>
+          <div class="mono tabular" style="text-align:right;">
+            <strong>${fmtNum(pct, 0)}%</strong>
+            <span style="color:var(--muted); font-size:0.75rem; margin-left:6px;">${fmtBRL(brlVal)}</span>
+          </div>
+        </div>
+      `;
+    });
+
+    svg.innerHTML = `<circle cx="${CX}" cy="${CY}" r="${R}" fill="transparent" stroke="rgba(255,255,255,0.06)" stroke-width="20" />` + circles;
+    stacked.innerHTML = stackedHtml;
+    legend.innerHTML = legendHtml;
+
+    document.getElementById("donutCenterPct").textContent = `${Math.round(totalW)}%`;
+    document.getElementById("donutCenterCap").textContent = fmtBRL(capital, true);
+    document.getElementById("assetCountBadge").textContent = `${portfolio.ativos.length} ativos`;
+
+    legend.querySelectorAll(".class-row").forEach(row => {
+      row.addEventListener("mouseenter", () => {
+        const seg = svg.querySelector(`.donut-seg[data-cls="${row.dataset.cls}"]`);
+        if (seg) seg.setAttribute("stroke-width", "25");
+      });
+      row.addEventListener("mouseleave", () => {
+        const seg = svg.querySelector(`.donut-seg[data-cls="${row.dataset.cls}"]`);
+        if (seg) seg.setAttribute("stroke-width", "20");
+      });
+    });
+  }
+
+  function renderAllocationTable(portfolio, capital, monthly) {
+    const tbody = document.getElementById("allocationTbody");
+    const ativos = portfolio.ativos || [];
+    if (!ativos.length) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--muted);">Nenhum ativo cadastrado nesta carteira.</td></tr>`;
+      return;
+    }
+
+    let totalWeight = 0;
+    tbody.innerHTML = ativos.map(a => {
+      const color = CLASS_COLORS[a.classe] || "#10b981";
+      if (HAS_ACCESS && a.peso_pct !== null) {
+        totalWeight += a.peso_pct;
+        const initAmt = capital * (a.peso_pct / 100);
+        const monthAmt = monthly * (a.peso_pct / 100);
+        return `
+          <tr>
+            <td>
+              <strong class="mono">${escHtml(a.ativo)}</strong>
+              <div style="font-size:0.72rem; color:var(--muted);">${escHtml(a.categoria)}</div>
+            </td>
+            <td><span class="badge badge-cat" style="border-color:${color}55; color:${color};">${escHtml(a.classe)}</span></td>
+            <td>
+              <div class="weight-bar-wrap">
+                <strong class="mono tabular" style="min-width:38px;">${fmtNum(a.peso_pct, 0)}%</strong>
+                <div class="weight-bar-track"><div class="weight-bar-fill" style="width:${Math.min(100, a.peso_pct)}%; background:${color};"></div></div>
+              </div>
+            </td>
+            <td class="mono tabular text-green"><strong>${fmtBRL(initAmt)}</strong></td>
+            <td class="mono tabular">${fmtBRL(monthAmt)}</td>
+            <td style="white-space:normal; min-width:240px; color:var(--text-soft); font-size:0.82rem;">${escHtml(a.tese)}</td>
+          </tr>
+        `;
+      }
+      return `
+        <tr>
+          <td><strong class="mono" style="color:var(--amber);">🔒 ${escHtml(a.ativo)}</strong></td>
+          <td><span class="badge badge-cat" style="border-color:${color}55; color:${color};">${escHtml(a.classe)}</span></td>
+          <td class="mono text-muted">••% (Anual)</td>
+          <td class="mono text-muted">R$ •••••</td>
+          <td class="mono text-muted">R$ ••••</td>
+          <td style="white-space:normal; min-width:240px; color:var(--muted); font-size:0.82rem;">${escHtml(a.tese)}</td>
+        </tr>
+      `;
+    }).join("");
+
+    document.getElementById("weightSumBadge").textContent = HAS_ACCESS
+      ? `Peso Total: ${fmtNum(totalWeight, 0)}% • Distribuído: ${fmtBRL(capital)}`
+      : `Estrutura: ${ativos.length} ativos selecionados`;
+  }
+
+  function renderMatrix(capital, monthly) {
+    const tbody = document.getElementById("matrixTbody");
+    const horizons = ["Curto (2 anos)", "Médio (5 anos)", "Longo (10+ anos)"];
+    const profiles = ["Conservador", "Moderado", "Agressivo"];
+    const rows = [];
+    horizons.forEach(h => {
+      profiles.forEach(p => {
+        const key = `${h}||${p}`;
+        const m = QUANT_META[key];
+        const proj = finalWealth(capital, monthly, m.ret / 100, m.yrs);
+        const isCurrent = h === activeHorizon && p === activeProfile;
+        rows.push(`
+          <tr style="${isCurrent ? 'background:rgba(16,185,129,0.08);' : ''}">
+            <td><strong>${h}</strong></td>
+            <td><span class="badge ${p === 'Conservador' ? 'badge-open' : (p === 'Moderado' ? 'badge-vip' : 'badge-buy')}">${p.toUpperCase()}</span></td>
+            <td class="mono text-green"><strong>${fmtNum(m.ret, 1)}% a.a.</strong></td>
+            <td class="mono">${fmtNum(m.vol, 1)}%</td>
+            <td class="mono text-blue">${fmtNum(m.sharpe, 2)}</td>
+            <td class="mono text-red">${fmtNum(m.dd, 1)}%</td>
+            <td>${m.reb}</td>
+            <td class="mono text-green"><strong>${fmtBRL(proj)}</strong> <span style="font-size:0.72rem; color:var(--muted);">(${m.yrs}a)</span></td>
+            <td><button type="button" class="btn btn-xs btn-outline pick-matrix-btn" data-h="${h}" data-p="${p}">Abrir</button></td>
+          </tr>
+        `);
+      });
+    });
+    tbody.innerHTML = rows.join("");
+    tbody.querySelectorAll(".pick-matrix-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        activeHorizon = btn.dataset.h;
+        activeProfile = btn.dataset.p;
+        projectionYears = QUANT_META[`${activeHorizon}||${activeProfile}`].yrs;
+        setView("terminal");
+        updateAll();
+      });
+    });
+  }
+
+  function updateUrlState() {
+    if (!window.history || !window.history.replaceState) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set("horizonte", activeHorizon);
+    url.searchParams.set("perfil", activeProfile);
+    window.history.replaceState({}, "", url.toString());
+  }
+
+  function updateAll() {
+    const key = `${activeHorizon}||${activeProfile}`;
+    const portfolio = PORTFOLIOS[key] || { horizonte: activeHorizon, perfil: activeProfile, vigencia: "01/12/2026", ativos: [], classes: {} };
+    const meta = QUANT_META[key] || { ret: 15.0, vol: 10.0, sharpe: 0.78, dd: -10.0, reb: "Trimestral", yrs: 5 };
+    const capital = getCapital();
+    const monthly = getAporte();
+
+    // Sync active buttons
+    document.querySelectorAll("#horizonSwitcher .seg-btn").forEach(b => b.classList.toggle("active", b.dataset.horizon === activeHorizon));
+    document.querySelectorAll("#profileSwitcher .seg-btn").forEach(b => b.classList.toggle("active", b.dataset.profile === activeProfile));
+    document.querySelectorAll("#projYearsSwitcher .seg-btn").forEach(b => b.classList.toggle("active", parseInt(b.dataset.proj, 10) === projectionYears));
+
+    // KPIs
+    const projFinal = finalWealth(capital, monthly, meta.ret / 100, projectionYears);
+    const cdiFinal = finalWealth(capital, monthly, CDI_ANNUAL, projectionYears);
+    const alpha = projFinal - cdiFinal;
+    const monthlyIncomeNow = (capital * (meta.ret / 100)) / 12;
+
+    document.getElementById("kpiYearsLabel").textContent = projectionYears;
+    document.getElementById("kpiProjectedVal").textContent = fmtBRL(projFinal);
+    document.getElementById("kpiAlphaVsCdi").textContent = `${alpha >= 0 ? '+' : ''}${fmtBRL(alpha)} vs CDI`;
+    document.getElementById("kpiExpectedReturn").textContent = `${fmtNum(meta.ret, 1)}% a.a.`;
+    document.getElementById("kpiMonthlyYield").textContent = `Renda est. inicial: ${fmtBRL(monthlyIncomeNow)}/mês`;
+    document.getElementById("kpiSharpe").textContent = fmtNum(meta.sharpe, 2);
+    document.getElementById("kpiVol").textContent = `${fmtNum(meta.vol, 1)}% vol`;
+    document.getElementById("kpiDrawdown").textContent = `Max DD est.: ${fmtNum(meta.dd, 1)}%`;
+    document.getElementById("kpiVigencia").textContent = portfolio.vigencia || "01/12/2026";
+    document.getElementById("kpiRebalance").textContent = `Rebalanceamento: ${meta.reb}`;
+
+    document.getElementById("chartHeading").textContent = `Projeção: ${activeHorizon} • ${activeProfile}`;
+    document.getElementById("tableHeading").textContent = `Alocação Exata em R$ — ${activeHorizon} • ${activeProfile}`;
+
+    [2, 5, 10].forEach(yrs => {
+      const val = finalWealth(capital, monthly, meta.ret / 100, yrs);
+      const totInv = capital + monthly * yrs * 12;
+      const gainPct = totInv > 0 ? ((val - totInv) / totInv) * 100 : 0;
+      document.getElementById(`miniVal${yrs}`).textContent = fmtBRL(val);
+      document.getElementById(`miniSub${yrs}`).textContent = `+${fmtNum(gainPct, 1)}% s/ aportado`;
+      document.getElementById(`miniBox${yrs}`).classList.toggle("active", yrs === projectionYears);
+    });
+
+    renderWealthChart(meta, capital, monthly);
+    renderDonut(portfolio, capital);
+    renderAllocationTable(portfolio, capital, monthly);
+    renderMatrix(capital, monthly);
+  }
+
+  function setView(mode) {
+    const isMatrix = mode === "matrix";
+    document.getElementById("terminalView").style.display = isMatrix ? "none" : "block";
+    document.getElementById("matrixView").style.display = isMatrix ? "block" : "none";
+    document.getElementById("viewTerminalBtn").classList.toggle("active", !isMatrix);
+    document.getElementById("viewMatrixBtn").classList.toggle("active", isMatrix);
+  }
+
+  document.getElementById("viewTerminalBtn").addEventListener("click", () => setView("terminal"));
+  document.getElementById("viewMatrixBtn").addEventListener("click", () => setView("matrix"));
+
+  document.querySelectorAll("#horizonSwitcher .seg-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeHorizon = btn.dataset.horizon;
+      projectionYears = QUANT_META[`${activeHorizon}||${activeProfile}`]?.yrs || 5;
+      updateUrlState();
+      updateAll();
+    });
+  });
+
+  document.querySelectorAll("#profileSwitcher .seg-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeProfile = btn.dataset.profile;
+      updateUrlState();
+      updateAll();
+    });
+  });
+
+  document.querySelectorAll("#projYearsSwitcher .seg-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      projectionYears = parseInt(btn.dataset.proj, 10) || 5;
+      updateAll();
+    });
+  });
+
+  capInput.addEventListener("input", updateAll);
+  aporteInput.addEventListener("input", updateAll);
+
+  document.querySelectorAll(".preset-chip[data-cap]").forEach(c => {
+    c.addEventListener("click", () => { capInput.value = c.dataset.cap; updateAll(); });
+  });
+  document.querySelectorAll(".preset-chip[data-aporte]").forEach(c => {
+    c.addEventListener("click", () => { aporteInput.value = c.dataset.aporte; updateAll(); });
+  });
+
+  const copyBtn = document.getElementById("copyAllocationBtn");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", () => {
+      const key = `${activeHorizon}||${activeProfile}`;
+      const p = PORTFOLIOS[key];
+      if (!p) return;
+      const cap = getCapital(), mon = getAporte();
+      const lines = [
+        `HEURÍSTIKA — CARTEIRA ${activeHorizon.toUpperCase()} | PERFIL ${activeProfile.toUpperCase()}`,
+        `Vigência: ${p.vigencia || '01/12/2026'} | Capital: ${fmtBRL(cap)} | Aporte Mensal: ${fmtBRL(mon)}`,
+        "----------------------------------------",
+        ...p.ativos.map(a => `• ${a.ativo} (${a.classe}) — ${fmtNum(a.peso_pct, 0)}% | Inicial: ${fmtBRL(cap * a.peso_pct / 100)} | Mensal: ${fmtBRL(mon * a.peso_pct / 100)}`)
+      ];
+      window.hkCopyText(lines.join("\n"), "Ordem de alocação copiada!");
+    });
+  }
+
+  const csvBtn = document.getElementById("exportCsvBtn");
+  if (csvBtn) {
+    csvBtn.addEventListener("click", () => {
+      const key = `${activeHorizon}||${activeProfile}`;
+      const p = PORTFOLIOS[key];
+      if (!p) return;
+      const cap = getCapital(), mon = getAporte();
+      const header = "Ativo,Categoria,Classe,Peso_Pct,Aporte_Inicial_BRL,Aporte_Mensal_BRL,Tese\n";
+      const rows = p.ativos.map(a => [
+        `"${a.ativo}"`, `"${a.categoria}"`, `"${a.classe}"`, a.peso_pct,
+        (cap * a.peso_pct / 100).toFixed(2), (mon * a.peso_pct / 100).toFixed(2),
+        `"${(a.tese || '').replace(/"/g, '""')}"`
+      ].join(",")).join("\n");
+      const blob = new Blob(["\uFEFF" + header + rows], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `heuristika_${activeProfile.toLowerCase()}_${projectionYears}a.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      window.hkToast("Arquivo CSV exportado!", "success");
+    });
+  }
+
+  // Modal Pix Plano Anual
+  const annualModal = document.getElementById("annualPixModal");
+  if (annualModal) {
+    ["openAnnualPixTop", "openAnnualPixBanner", "openAnnualPixTable"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener("click", () => annualModal.classList.add("open"));
+    });
+    document.getElementById("closeAnnualPix").addEventListener("click", () => annualModal.classList.remove("open"));
+    annualModal.addEventListener("click", (e) => { if (e.target === annualModal) annualModal.classList.remove("open"); });
+    document.getElementById("copyAnnualPixBtn").addEventListener("click", () => {
+      const key = (document.getElementById("annualPixKey").textContent || "").trim();
+      window.hkCopyText(key, "Chave Pix copiada!");
+    });
+  }
+
+  updateAll();
+})();
+</script>
+{% endblock %}

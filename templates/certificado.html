@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Certificado {{ cert.codigo }} — Heurístika{% endblock %}
+
+{% block content %}
+<section class="container section-wrap" style="max-width:880px;">
+  <div class="panel cert-print-card" style="padding:40px; border:2px solid rgba(16, 185, 129, 0.55); background:radial-gradient(circle at top right, rgba(16,185,129,0.12), var(--surface) 60%); position:relative;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:26px; padding-bottom:18px; border-bottom:1px solid var(--border);">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="2" width="20" height="20" rx="6" fill="rgba(16,185,129,0.14)" stroke="#10b981" stroke-width="1.6"/>
+          <path d="M7 15.5L10.5 11.5L13.5 13.5L17.5 8.5" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="17.5" cy="8.5" r="1.6" fill="#10b981"/>
+        </svg>
+        <strong style="font-size:1.2rem; letter-spacing:-0.02em;">Heurístika Academia Quantitativa</strong>
+      </div>
+      <span class="badge badge-buy">AUTENTICIDADE VERIFICADA</span>
+    </div>
+
+    <div class="mono" style="font-size:0.78rem; color:#34d399; letter-spacing:0.12em; text-transform:uppercase;">
+      CERTIFICADO DE CONCLUSÃO &amp; PROFICIÊNCIA QUANTITATIVA
+    </div>
+    <h1 style="margin:10px 0 18px; font-size:clamp(1.75rem, 3.5vw, 2.55rem); letter-spacing:-0.03em;">
+      {{ cert.student_nome }}
+    </h1>
+
+    <p style="font-size:1rem; color:var(--text-soft); line-height:1.75; margin-bottom:26px;">
+      Concluiu com êxito a trilha educacional e foi aprovado(a) no <strong>Exame Avançado de Heurística Financeira, Gestão de Risco Quantitativa, Alocação Multi-Horizonte e Derivativos</strong>, obtendo aproveitamento de <strong class="text-green">{{ '%.0f'|format(cert.nota_pct) }}% ({{ cert.acertos }}/{{ cert.total_questoes }} questões)</strong>.
+    </p>
+
+    <div class="kpi-grid" style="margin-bottom:26px;">
+      <div class="kpi-card">
+        <div class="kpi-label">Código Verificador</div>
+        <div class="kpi-value" style="font-size:1.08rem; color:#34d399;">{{ cert.codigo }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Data de Emissão</div>
+        <div class="kpi-value" style="font-size:1.08rem;">{{ cert.emitido_em|fmt_dt }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Identificação</div>
+        <div class="kpi-value" style="font-size:1.02rem; word-break:break-all;">{{ identificacao_mascarada }}</div>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-top:18px; border-top:1px solid var(--border);">
+      <span class="mono" style="font-size:0.76rem; color:var(--muted);">
+        Validação online: /certificado/{{ cert.codigo }}
+      </span>
+      <div class="no-print" style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button type="button" id="copyCertUrlBtn" class="btn btn-sm btn-outline">Copiar Link de Verificação</button>
+        <button type="button" onclick="window.print()" class="btn btn-sm btn-electric">Imprimir / Salvar PDF</button>
+        <a href="{{ url_for('academia') }}" class="btn btn-sm btn-outline">Voltar à Academia</a>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  const copyCertBtn = document.getElementById("copyCertUrlBtn");
+  if (copyCertBtn) {
+    copyCertBtn.addEventListener("click", () => {
+      window.hkCopyText(window.location.href, "Link de validação do certificado copiado!");
+    });
+  }
+</script>
+{% endblock %}

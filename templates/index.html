@@ -1,0 +1,830 @@
+{% extends "base.html" %}
+{% block title %}{{ t.site_title }}{% endblock %}
+
+{% block content %}
+<!-- Broker-Grade Dark Hero (IC Markets + XM inspired) -->
+<section class="broker-hero">
+  <!-- Suporte opcional a vídeo MP4 real (basta salvar em static/hero-candles.mp4) -->
+  <video class="hero-video" autoplay muted loop playsinline onerror="this.style.display='none'">
+    <source src="{{ url_for('static', filename='hero-candles.mp4') }}" type="video/mp4" />
+  </video>
+  <!-- Vídeo procedural 60fps de Candles 3D em Alta (sempre ativo) -->
+  <canvas id="heroCanvas" class="hero-canvas" aria-hidden="true"></canvas>
+  <div class="hero-scrim" aria-hidden="true"></div>
+
+  <div class="container hero-grid">
+    <div>
+      <div class="hero-pill stagger-1">
+        <span class="live-dot-pulse" style="display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--electric);"></span>
+        <span>{{ t.hero_pill }}</span>
+      </div>
+      <h1 class="hero-headline stagger-2">
+        {{ t.hero_h1_top }}<br/>
+        <span class="thin">{{ t.hero_h1_sub }}</span>
+      </h1>
+      <p class="hero-desc stagger-3">
+        {{ t.hero_desc|safe }}
+      </p>
+      <div class="hero-buttons stagger-4">
+        {% if is_vip %}
+          <a href="{{ url_for('vip_area') }}" class="btn btn-electric">{{ t.hero_cta_panel }}</a>
+        {% else %}
+          <a href="#planos" class="btn btn-electric">{{ t.hero_cta_vip }}</a>
+          <a href="{{ url_for('login') }}" class="btn btn-outline">{{ t.hero_cta_sub }}</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="terminal-stage stagger-5">
+      <div class="floating-ticker-chip">
+        <span class="text-green">●</span>
+        <strong>Binance • Yahoo Finance • Stooq</strong>
+        <span style="color:var(--muted);">Feed Auditado</span>
+      </div>
+      <div class="terminal-window">
+        <div class="term-top">
+          <div class="term-dots"><span></span><span></span><span></span></div>
+          <span class="mono" style="font-size:0.72rem; color:var(--muted);">{{ t.term_title }} ({{ categoria_ativa|upper }})</span>
+          <span class="badge badge-buy">{{ stats.encerrados }} {{ t.term_closed }}</span>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <div>
+            <div style="font-size:0.72rem; color:var(--muted); text-transform:uppercase;">{{ t.term_winrate }}</div>
+            <div class="mono" style="font-size:2rem; font-weight:800; color:var(--electric);">{{ stats.taxa_acerto|fmt_pct(1, strip_zero=True) }}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:0.72rem; color:var(--muted); text-transform:uppercase;">{{ t.term_wl }}</div>
+            <div class="mono" style="font-size:1.1rem; font-weight:700;">
+              <span class="text-green">{{ stats.total_acertos }}</span> / <span class="text-red">{{ stats.total_erros }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-box" id="equityChartBox" data-points='{{ equity_points|tojson }}'>
+          <svg id="equitySvg" viewBox="0 0 400 120" preserveAspectRatio="none" style="width:100%; height:100%; display:block;"></svg>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; font-size:0.76rem; color:var(--muted);" class="mono">
+          <span>TP1: {{ stats.total_tp1 }} • TP2: {{ stats.total_tp2 }}</span>
+          <span>{{ t.term_open }}: <strong class="text-amber">{{ stats.abertos }}</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5-Column Broker Metrics Bar -->
+  <div class="broker-metrics-bar">
+    <div class="container metrics-5">
+      <div class="metric-col">
+        <div class="metric-val odometer" data-odo="{{ stats.taxa_acerto|fmt_pct(1, strip_zero=True) }}">{{ stats.taxa_acerto|fmt_pct(1, strip_zero=True) }}</div>
+        <div class="metric-lbl">{{ t.m_winrate }}</div>
+      </div>
+      <div class="metric-col">
+        <div class="metric-val odometer" data-odo="{{ stats.total_acertos }}">{{ stats.total_acertos }}</div>
+        <div class="metric-lbl">{{ t.m_targets }}</div>
+      </div>
+      <div class="metric-col">
+        <div class="metric-val count-up" data-target="6" data-suffix="" data-decimals="0">6</div>
+        <div class="metric-lbl">{{ t.m_cats }}</div>
+      </div>
+      <div class="metric-col">
+        <div class="metric-val">24/7</div>
+        <div class="metric-lbl">{{ t.m_audit }}</div>
+      </div>
+      <div class="metric-col">
+        <div class="metric-val">0%</div>
+        <div class="metric-lbl">{{ t.m_edit }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Fontes de Dados & Verificação Institucional -->
+<section class="sources-section reveal" id="fontes">
+  <div class="container">
+    <div class="sources-header">
+      <div>
+        <div class="sources-kicker">{{ t.src_kicker }}</div>
+        <h2 style="margin:4px 0 0; font-size:1.15rem; font-weight:700;">{{ t.src_title }}</h2>
+      </div>
+      <span class="badge badge-buy">{{ t.src_badge }}</span>
+    </div>
+
+    <div class="sources-grid">
+      <div class="source-card">
+        <div class="source-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <div>
+          <div class="source-name">Binance Spot API <span class="badge badge-cat">CRIPTO</span></div>
+          <div class="source-desc">{{ t.src_1_desc }}</div>
+        </div>
+      </div>
+
+      <div class="source-card">
+        <div class="source-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <div>
+          <div class="source-name">Yahoo Finance <span class="badge badge-cat">B3 • US • FUT</span></div>
+          <div class="source-desc">{{ t.src_2_desc }}</div>
+        </div>
+      </div>
+
+      <div class="source-card">
+        <div class="source-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <div>
+          <div class="source-name">Stooq Market Feed <span class="badge badge-cat">FOREX</span></div>
+          <div class="source-desc">{{ t.src_3_desc }}</div>
+        </div>
+      </div>
+
+      <div class="source-card">
+        <div class="source-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <div class="source-name">Ledger SQLite <span class="badge badge-cat">AUDIT</span></div>
+          <div class="source-desc">{{ t.src_4_desc }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FxPro-style Interactive Market Strip with XM Continuous Marquee -->
+<section class="market-strip-section" id="mercados">
+  <div class="container">
+    <div class="filter-bar">
+      {% for cat in categorias %}
+        <a href="{{ url_for('index', categoria=cat) }}#mercados" class="pill {% if categoria_ativa == cat %}active{% endif %}">{{ cat }}</a>
+      {% endfor %}
+    </div>
+
+    <div class="xm-marquee">
+      <div class="xm-marquee-track">
+        {% for loop_pass in [1, 2] %}
+          {% for t_item in ticker_assets %}
+            {% if categoria_ativa == 'Todos' or categoria_ativa == t_item.categoria %}
+              <div class="inst-card">
+                <div class="inst-left">
+                  <div class="inst-arrow">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                  </div>
+                  <div>
+                    <div class="inst-sym">{{ t_item.symbol }}</div>
+                    <div class="inst-px">{{ t_item.categoria }} • {{ t_item.price|fmt_price(t_item.categoria, t_item.symbol) }}</div>
+                  </div>
+                </div>
+                <a href="{{ url_for('index', categoria=t_item.categoria) }}#operacoes" class="inst-btn">{{ t.view_signals }}</a>
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sinais em Aberto -->
+<section class="container section-wrap reveal" id="operacoes">
+  <div class="section-head">
+    <div>
+      <h2>{{ t.open_title }}</h2>
+      <span class="section-sub">{{ free_open|length }} {{ t.open_sub_free }} • {{ vip_open|length }} {{ t.open_sub_vip }}</span>
+    </div>
+  </div>
+
+  {% if not free_open and not vip_open %}
+    <div class="panel" style="color:var(--muted); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <span>{{ t.no_open }}</span>
+      <a href="#historico" class="btn btn-sm btn-outline">{{ t.see_history }}</a>
+    </div>
+  {% else %}
+    <div class="signals-grid">
+      {% for s in free_open %}
+        {% set risk_dist = (s.entrada - s.sl)|abs %}
+        {% set rew2_dist = (s.tp2 - s.entrada)|abs %}
+        {% set rr_val = (rew2_dist / risk_dist) if risk_dist > 0 else 0 %}
+        {% set total_span = (s.tp2 - s.sl) if s.direcao == 'COMPRA' else (s.sl - s.tp2) %}
+        {% if total_span > 0 %}
+          {% set raw_entry_pct = (((s.entrada - s.sl) / total_span) * 100) if s.direcao == 'COMPRA' else (((s.sl - s.entrada) / total_span) * 100) %}
+          {% set raw_tp1_pct = (((s.tp1 - s.sl) / total_span) * 100) if s.direcao == 'COMPRA' else (((s.sl - s.tp1) / total_span) * 100) %}
+          {% set raw_live_pct = (((s.preco_atual - s.sl) / total_span) * 100) if s.direcao == 'COMPRA' else (((s.sl - s.preco_atual) / total_span) * 100) %}
+        {% else %}
+          {% set raw_entry_pct = 30 %}
+          {% set raw_tp1_pct = 65 %}
+          {% set raw_live_pct = 35 %}
+        {% endif %}
+        {% set entry_pct = [8, [82, raw_entry_pct]|min]|max %}
+        {% set tp1_pct = [entry_pct + 6, [95, raw_tp1_pct]|min]|max %}
+        {% set live_pct = [2, [98, raw_live_pct]|min]|max %}
+        <article class="signal-card">
+          <div class="signal-top">
+            <span class="badge badge-cat">{{ s.categoria|upper }}</span>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <span class="badge {% if s.direcao == 'COMPRA' %}badge-buy{% else %}badge-sell{% endif %}">{{ t.buy if s.direcao == 'COMPRA' else t.sell }}</span>
+              <span class="badge badge-open mono">R:R 1:{{ '%.1f'|format(rr_val) }}</span>
+              <span class="badge badge-cat">{{ t.showcase }}</span>
+            </div>
+          </div>
+          <h3 class="asset-title">{{ s.ativo }}</h3>
+          <div class="levels-grid">
+            <div class="level-box"><span>{{ t.entry }}</span>{{ s.entrada|fmt_price(s.categoria, s.ativo) }}</div>
+            <div class="level-box"><span>{{ t.sl }}</span><strong class="text-red">{{ s.sl|fmt_price(s.categoria, s.ativo) }}</strong></div>
+            <div class="level-box"><span>{{ t.tp1 }}</span><strong class="text-green">{{ s.tp1|fmt_price(s.categoria, s.ativo) }}</strong></div>
+            <div class="level-box"><span>{{ t.tp2 }}</span><strong class="text-green">{{ s.tp2|fmt_price(s.categoria, s.ativo) }}</strong></div>
+          </div>
+
+          <div class="ladder-wrap">
+            <div class="ladder-head">
+              <span class="text-red">STOP</span>
+              <span style="color:var(--text-soft);">{{ t.current }}: <strong>{{ s.preco_atual|fmt_price(s.categoria, s.ativo) }}</strong></span>
+              <span class="text-green">TP2</span>
+            </div>
+            <div class="ladder-track">
+              <div class="ladder-risk-fill" style="width:{{ '%.1f'|format(entry_pct) }}%;"></div>
+              <div class="ladder-gain-fill" style="left:{{ '%.1f'|format(entry_pct) }}%; width:{{ '%.1f'|format(100 - entry_pct) }}%;"></div>
+              <div class="ladder-pin" style="left:{{ '%.1f'|format(entry_pct) }}%;" title="{{ t.entry }}"></div>
+              <div class="ladder-pin" style="left:{{ '%.1f'|format(tp1_pct) }}%; background:#34d399;" title="TP1"></div>
+              <div class="ladder-pin-live" style="left:{{ '%.1f'|format(live_pct) }}%;" title="{{ t.current }}"></div>
+            </div>
+            <div class="ladder-labels"><span>SL</span><span>{{ t.entry }}</span><span>TP1</span><span>TP2</span></div>
+          </div>
+
+          <div style="margin-top:12px; font-size:0.78rem; color:var(--muted); display:flex; justify-content:space-between; align-items:center;" class="mono">
+            <span>{{ s.criado_em|fmt_dt }}</span>
+            <button type="button"
+                    class="btn btn-xs btn-ghost home-copy-sig-btn"
+                    data-copy="HEURÍSTIKA | {{ s.ativo }} ({{ s.direcao }})&#10;{{ t.entry }}: {{ s.entrada|fmt_price(s.categoria, s.ativo) }} | SL: {{ s.sl|fmt_price(s.categoria, s.ativo) }} | TP1: {{ s.tp1|fmt_price(s.categoria, s.ativo) }} | TP2: {{ s.tp2|fmt_price(s.categoria, s.ativo) }}">
+              Copiar Sinal
+            </button>
+          </div>
+        </article>
+      {% endfor %}
+
+      {% for s in vip_open %}
+        {% set risk_dist = (s.entrada - s.sl)|abs %}
+        {% set rew2_dist = (s.tp2 - s.entrada)|abs %}
+        {% set rr_val = (rew2_dist / risk_dist) if risk_dist > 0 else 0 %}
+        <article class="signal-card">
+          <div class="{% if not is_vip %}vip-blur-content{% endif %}">
+            <div class="signal-top">
+              <span class="badge badge-cat">{{ s.categoria|upper }}</span>
+              <div style="display:flex; gap:6px;">
+                {% if is_vip %}<span class="badge badge-open mono">R:R 1:{{ '%.1f'|format(rr_val) }}</span>{% endif %}
+                <span class="badge badge-vip">VIP</span>
+              </div>
+            </div>
+            <h3 class="asset-title">{{ s.ativo if is_vip else t.vip_asset }}</h3>
+            <div class="levels-grid">
+              <div class="level-box"><span>{{ t.entry }}</span>{{ s.entrada|fmt_price(s.categoria, s.ativo) if is_vip else '•••,••' }}</div>
+              <div class="level-box"><span>{{ t.sl }}</span>{{ s.sl|fmt_price(s.categoria, s.ativo) if is_vip else '•••,••' }}</div>
+              <div class="level-box"><span>{{ t.tp1 }}</span>{{ s.tp1|fmt_price(s.categoria, s.ativo) if is_vip else '•••,••' }}</div>
+              <div class="level-box"><span>{{ t.tp2 }}</span>{{ s.tp2|fmt_price(s.categoria, s.ativo) if is_vip else '•••,••' }}</div>
+            </div>
+          </div>
+          {% if not is_vip %}
+            <div class="vip-lock-overlay">
+              <div class="lock-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <span class="badge badge-vip">{{ t.vip_signal }} ({{ s.categoria|upper }})</span>
+              <p>{{ t.vip_monitoring }}</p>
+              <a href="#planos" class="btn btn-sm btn-electric">{{ t.hero_cta_vip }}</a>
+            </div>
+          {% else %}
+            <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; font-size:0.8rem;">
+              <a href="{{ url_for('vip_area') }}" class="text-green">{{ t.open_in_vip }}</a>
+              <button type="button"
+                      class="btn btn-xs btn-ghost home-copy-sig-btn"
+                      data-copy="HEURÍSTIKA VIP | {{ s.ativo }} ({{ s.direcao }})&#10;{{ t.entry }}: {{ s.entrada|fmt_price(s.categoria, s.ativo) }} | SL: {{ s.sl|fmt_price(s.categoria, s.ativo) }} | TP1: {{ s.tp1|fmt_price(s.categoria, s.ativo) }} | TP2: {{ s.tp2|fmt_price(s.categoria, s.ativo) }}">
+                Copiar Sinal
+              </button>
+            </div>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+
+<!-- Histórico Auditado -->
+<section class="container section-wrap reveal" style="padding-top:0;" id="historico">
+  <div class="filter-toolbar">
+    <div>
+      <h2 style="margin:0; font-size:1.4rem; font-weight:800; letter-spacing:-0.02em;">{{ t.hist_title }}</h2>
+      <span class="section-sub">{{ t.hist_sub }}</span>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <input type="search" id="homeHistSearch" class="search-input" placeholder="Buscar ativo no histórico..." />
+      <div class="seg-group" id="homeHistFilter">
+        <button type="button" class="seg-btn btn-xs active" data-out="ALL">Todos</button>
+        <button type="button" class="seg-btn btn-xs" data-out="GAIN">Gain</button>
+        <button type="button" class="seg-btn btn-xs" data-out="LOSS">Stop Loss</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>{{ t.th_cat }}</th>
+          <th>{{ t.th_asset }}</th>
+          <th>{{ t.th_dir }}</th>
+          <th>{{ t.th_entry }}</th>
+          <th>{{ t.th_close }}</th>
+          <th>{{ t.th_status }}</th>
+          <th>{{ t.th_var }}</th>
+          <th>{{ t.th_closed_at }}</th>
+        </tr>
+      </thead>
+      <tbody id="homeHistTbody">
+        {% for h in closed_history %}
+          {% set is_gain = h.status in ('ACERTO_TP1', 'ACERTO_TP2') %}
+          <tr class="home-hist-row" data-ativo="{{ h.ativo|upper }}" data-out="{{ 'GAIN' if is_gain else 'LOSS' }}">
+            <td class="mono" style="color:var(--muted);">#{{ h.id }}</td>
+            <td><span class="badge badge-cat">{{ h.categoria }}</span></td>
+            <td class="mono"><strong>{{ h.ativo }}</strong></td>
+            <td><span class="badge {% if h.direcao == 'COMPRA' %}badge-buy{% else %}badge-sell{% endif %}">{{ t.buy if h.direcao == 'COMPRA' else t.sell }}</span></td>
+            <td class="mono">{{ h.entrada|fmt_price(h.categoria, h.ativo) }}</td>
+            <td class="mono">{{ h.preco_atual|fmt_price(h.categoria, h.ativo) }}</td>
+            <td>
+              {% if is_gain %}
+                <span class="badge badge-win">GAIN {{ h.status.replace('ACERTO_', '') }}</span>
+              {% else %}
+                <span class="badge badge-loss">STOP LOSS</span>
+              {% endif %}
+            </td>
+            <td class="mono {% if h.resultado_pct >= 0 %}text-green{% else %}text-red{% endif %}">
+              {{ h.resultado_pct|fmt_pct(2, signed=True) }}
+            </td>
+            <td class="mono" style="color:var(--muted); font-size:0.78rem;">{{ h.encerrado_em|fmt_dt }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="9" style="text-align:center; color:var(--muted);">{{ t.no_hist }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Planos VIP -->
+<section class="container section-wrap reveal" style="padding-top:0;" id="planos">
+  <div class="section-head">
+    <div>
+      <h2>{{ t.plans_title }}</h2>
+      <span class="section-sub">{{ t.plans_sub }}</span>
+    </div>
+    <a href="{{ suporte_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline">{{ t.support_btn }}</a>
+  </div>
+
+  <div class="pricing-grid">
+    {% for p in planos %}
+      <div class="plan-card {% if p.destaque %}featured{% endif %}">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="margin:0; font-size:1.1rem;">{{ p.nome }}</h3>
+            {% if p.badge %}<span class="badge badge-buy">{{ p.badge }}</span>{% endif %}
+          </div>
+          <div class="plan-price">{{ p.preco }}<span>{{ p.periodo }}</span></div>
+          <ul class="plan-list">
+            {% for b in p.beneficios %}
+              <li>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>{{ b }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <button type="button"
+                class="btn {% if p.destaque %}btn-electric{% else %}btn-outline{% endif %} open-pix-btn"
+                data-plan="{{ p.nome }}"
+                data-price="{{ p.preco }}{{ p.periodo }}">
+          {{ t.pay_pix }}
+        </button>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Modal de Transferência Pix -->
+<div id="pixModal" class="pix-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="pixModalTitle">
+  <div class="pix-modal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <span class="badge badge-buy">{{ t.pix_badge }}</span>
+      <button type="button" id="closePixModal" class="btn btn-sm btn-outline" aria-label="Fechar">✕</button>
+    </div>
+    <h3 id="pixModalTitle" style="margin:0 0 6px; font-size:1.25rem;">{{ t.pix_modal_title }} <span id="pixPlanName">Mensal</span></h3>
+    <p style="margin:0 0 14px; color:var(--muted); font-size:0.88rem;">
+      {{ t.pix_value_lbl }} <strong id="pixPlanPrice" class="mono text-green">R$ 29,99/mês</strong>
+    </p>
+
+    <div style="font-size:0.8rem; color:var(--text-soft);">
+      <div><strong>{{ t.pix_recv_lbl }}</strong> {{ pix_receiver }}</div>
+      <div><strong>{{ t.pix_mode_lbl }}</strong> {{ pix_institution }}</div>
+    </div>
+
+    <div class="pix-key-box">
+      <code id="pixKeyValue" class="mono" style="font-size:0.9rem; color:#34d399; word-break:break-all;">{{ pix_key }}</code>
+      <button type="button" id="copyPixBtn" class="btn btn-sm btn-electric" data-copy-label="{{ t.pix_copy }}" data-copied-label="{{ t.pix_copied }}">{{ t.pix_copy }}</button>
+    </div>
+
+    <p style="margin:0 0 16px; font-size:0.8rem; color:var(--muted);">
+      {{ t.pix_hint }}
+    </p>
+
+    <a href="{{ suporte_url }}" target="_blank" rel="noopener" class="btn btn-electric" style="width:100%;">
+      {{ t.pix_send_btn }}
+    </a>
+  </div>
+</div>
+
+<div class="container">
+  <section class="disclaimer">
+    <strong>{{ t.disclaimer_title }}</strong> {{ t.disclaimer_body }}
+  </section>
+</div>
+
+<script>
+  (function renderEquityChart() {
+    const box = document.getElementById("equityChartBox");
+    const svg = document.getElementById("equitySvg");
+    if (!box || !svg) return;
+    let pts = [];
+    try { pts = JSON.parse(box.dataset.points || "[0]"); } catch (e) { pts = [0]; }
+    if (pts.length < 2) pts = [0, 0];
+
+    const w = 400, h = 120, pad = 10;
+    const minVal = Math.min(...pts);
+    const maxVal = Math.max(...pts);
+    const span = (maxVal - minVal) || 1;
+    const coords = pts.map((v, idx) => {
+      const x = pad + (idx / (pts.length - 1)) * (w - pad * 2);
+      const y = h - pad - ((v - minVal) / span) * (h - pad * 2);
+      return [x, y];
+    });
+    const linePath = coords.map((p, i) => `${i === 0 ? "M" : "L"}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
+    const areaPath = `${linePath} L${coords[coords.length - 1][0].toFixed(1)},${h - pad} L${coords[0][0].toFixed(1)},${h - pad} Z`;
+    const isPositive = pts[pts.length - 1] >= 0;
+    const stroke = isPositive ? "#10b981" : "#ff4757";
+    const fill = isPositive ? "rgba(16, 185, 129, 0.16)" : "rgba(255, 71, 87, 0.14)";
+    svg.innerHTML = `
+      <path d="${areaPath}" fill="${fill}" />
+      <path d="${linePath}" class="equity-line-anim" fill="none" stroke="${stroke}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="${coords[coords.length - 1][0]}" cy="${coords[coords.length - 1][1]}" r="4" fill="${stroke}" />
+    `;
+  })();
+
+  // Cinematic 3D Bullish Candlestick Motion (vídeo procedural 60fps de alta contínua)
+  (function initHeroCanvas() {
+    const canvas = document.getElementById("heroCanvas");
+    if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const ctx = canvas.getContext("2d");
+    let w = 0, h = 0;
+
+    const candleSpacing = 34;
+    const candleWidth = 17;
+    let candles = [];
+    let scrollOffset = 0;
+    let lastClose = 0.78;
+    let pulsePhase = 0;
+    const embers = [];
+
+    function nextCandle(prevClose) {
+      const isPullback = Math.random() < 0.22;
+      const delta = isPullback
+        ? -(0.018 + Math.random() * 0.032)
+        : (0.028 + Math.random() * 0.055);
+      const open = prevClose;
+      let close = open - delta; // Y menor = preço mais alto na tela
+      if (close < 0.14) close = 0.74;
+      const high = Math.min(open, close) - (0.018 + Math.random() * 0.042);
+      const low = Math.max(open, close) + (0.015 + Math.random() * 0.032);
+      const volume = 0.12 + Math.random() * 0.22;
+      return { open, close, high, low, volume, bull: close <= open };
+    }
+
+    function seedCandles() {
+      const count = Math.ceil((w || 1400) / candleSpacing) + 6;
+      candles = [];
+      let c = 0.80;
+      for (let i = 0; i < count; i++) {
+        const item = nextCandle(c);
+        c = item.close;
+        candles.push(item);
+      }
+      lastClose = c;
+    }
+
+    function resize() {
+      w = canvas.width = canvas.offsetWidth;
+      h = canvas.height = canvas.offsetHeight;
+      if (candles.length === 0) seedCandles();
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    function frame() {
+      ctx.clearRect(0, 0, w, h);
+      pulsePhase += 0.08;
+
+      // Grade institucional
+      ctx.strokeStyle = "rgba(52, 211, 153, 0.055)";
+      ctx.lineWidth = 1;
+      for (let y = 48; y < h; y += 64) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+      for (let x = 60; x < w; x += 96) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+
+      // Fluxo contínuo e visível dos candles em alta
+      scrollOffset += 1.45;
+      if (scrollOffset >= candleSpacing) {
+        scrollOffset -= candleSpacing;
+        candles.shift();
+        const nc = nextCandle(lastClose);
+        lastClose = nc.close;
+        candles.push(nc);
+        if (nc.bull) {
+          for (let k = 0; k < 3; k++) {
+            embers.push({
+              x: w - 40 + (Math.random() - 0.5) * 30,
+              y: nc.close * h,
+              vy: -0.7 - Math.random() * 0.9,
+              vx: -1.1 - Math.random() * 0.4,
+              life: 1,
+              r: 1.8 + Math.random() * 2.2
+            });
+          }
+        }
+      }
+
+      // Histograma de Volume brilhante na base
+      candles.forEach((c, idx) => {
+        const x = idx * candleSpacing - scrollOffset;
+        const vh = c.volume * h * 0.55;
+        ctx.fillStyle = c.bull ? "rgba(16, 185, 129, 0.24)" : "rgba(255, 71, 87, 0.14)";
+        ctx.fillRect(x + 2, h - vh, candleWidth - 4, vh);
+      });
+
+      // EMA rápida luminosa + área de brilho sob a tendência
+      ctx.save();
+      ctx.shadowColor = "rgba(52, 211, 153, 0.85)";
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      candles.forEach((c, idx) => {
+        const x = idx * candleSpacing - scrollOffset + candleWidth * 0.5;
+        const y = ((c.open + c.close) * 0.5) * h;
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = "rgba(52, 211, 153, 0.78)";
+      ctx.lineWidth = 2.6;
+      ctx.stroke();
+      ctx.restore();
+
+      // Candles OHLC 3D-lit com destaque no candle ativo da ponta direita
+      candles.forEach((c, idx) => {
+        const x = idx * candleSpacing - scrollOffset;
+        const isLiveTip = idx === candles.length - 2;
+        const liveBoost = isLiveTip ? Math.sin(pulsePhase) * 8 : 0;
+
+        const yOpen = c.open * h;
+        const yClose = c.close * h - liveBoost;
+        const yHigh = Math.min(c.high * h, yClose - 6);
+        const yLow = c.low * h;
+        const bodyTop = Math.min(yOpen, yClose);
+        const bodyH = Math.max(8, Math.abs(yClose - yOpen));
+
+        ctx.save();
+        if (c.bull) {
+          ctx.shadowColor = "rgba(16, 185, 129, 0.85)";
+          ctx.shadowBlur = isLiveTip ? 26 : 16;
+        }
+
+        // Pavio luminoso
+        ctx.beginPath();
+        ctx.moveTo(x + candleWidth / 2, yHigh);
+        ctx.lineTo(x + candleWidth / 2, yLow);
+        ctx.strokeStyle = c.bull ? "rgba(110, 231, 183, 0.92)" : "rgba(255, 71, 87, 0.55)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Corpo com gradiente esmeralda nobre + reflexo superior
+        const grad = ctx.createLinearGradient(x, bodyTop, x, bodyTop + bodyH);
+        if (c.bull) {
+          grad.addColorStop(0, "rgba(110, 231, 183, 0.98)");
+          grad.addColorStop(0.35, "rgba(16, 185, 129, 0.90)");
+          grad.addColorStop(1, "rgba(5, 150, 105, 0.62)");
+        } else {
+          grad.addColorStop(0, "rgba(255, 71, 87, 0.65)");
+          grad.addColorStop(1, "rgba(159, 18, 57, 0.38)");
+        }
+        ctx.fillStyle = grad;
+        ctx.fillRect(x, bodyTop, candleWidth, bodyH);
+
+        // Borda especular no topo do candle comprador
+        if (c.bull) {
+          ctx.fillStyle = "rgba(236, 253, 245, 0.85)";
+          ctx.fillRect(x, bodyTop, candleWidth, 2);
+        }
+
+        // Linha horizontal tracejada de preço ao vivo no candle da ponta
+        if (isLiveTip) {
+          ctx.setLineDash([5, 5]);
+          ctx.beginPath();
+          ctx.moveTo(0, yClose);
+          ctx.lineTo(w, yClose);
+          ctx.strokeStyle = "rgba(52, 211, 153, 0.45)";
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+        ctx.restore();
+      });
+
+      // Partículas ascendentes luminosas
+      for (let i = embers.length - 1; i >= 0; i--) {
+        const em = embers[i];
+        em.x += em.vx;
+        em.y += em.vy;
+        em.life -= 0.014;
+        if (em.life <= 0) { embers.splice(i, 1); continue; }
+        ctx.beginPath();
+        ctx.arc(em.x, em.y, em.r * em.life, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(110, 231, 183, ${em.life * 0.85})`;
+        ctx.fill();
+      }
+
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
+
+  // Scroll-triggered reveal + Number Count-Up (XM-style)
+  (function initMotionObservers() {
+    const reveals = document.querySelectorAll(".reveal");
+    const counters = document.querySelectorAll(".count-up");
+
+    if (!("IntersectionObserver" in window)) {
+      reveals.forEach(el => el.classList.add("is-visible"));
+      return;
+    }
+
+    const revObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          revObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => revObs.observe(el));
+
+    const cntObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = parseFloat(el.dataset.target || "0");
+        const decimals = parseInt(el.dataset.decimals || "0", 10);
+        const suffix = el.dataset.suffix || "";
+        const duration = 900;
+        const start = performance.now();
+        function tick(now) {
+          const p = Math.min(1, (now - start) / duration);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = (target * eased).toFixed(decimals) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        cntObs.unobserve(el);
+      });
+    }, { threshold: 0.4 });
+    counters.forEach(el => cntObs.observe(el));
+
+    // XM Vertical Digit-Strip Odometer (6000 / (1 + 0.3 * i) ms)
+    const odos = document.querySelectorAll(".odometer");
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const odoObs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target;
+          const raw = (el.dataset.odo || el.textContent || "").trim();
+          el.innerHTML = "";
+          const strips = [];
+          let digitIdx = 0;
+          for (const ch of raw) {
+            if (/[0-9]/.test(ch)) {
+              const con = document.createElement("span");
+              con.className = "digit-con";
+              const strip = document.createElement("span");
+              strip.className = "digit-strip";
+              const dur = Math.round(3200 / (1 + 0.3 * digitIdx));
+              strip.style.transition = `top ${dur}ms cubic-bezier(0.22, 1, 0.36, 1)`;
+              strip.innerHTML = "0123456789".split("").map(n => `<span>${n}</span>`).join("");
+              con.appendChild(strip);
+              el.appendChild(con);
+              strips.push({ strip, val: parseInt(ch, 10) });
+              digitIdx++;
+            } else {
+              const lit = document.createElement("span");
+              lit.textContent = ch;
+              el.appendChild(lit);
+            }
+          }
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              strips.forEach(({ strip, val }) => {
+                strip.style.top = `-${val * 2.2}rem`;
+              });
+            });
+          });
+          odoObs.unobserve(el);
+        });
+      }, { threshold: 0.4 });
+      odos.forEach(el => odoObs.observe(el));
+    }
+  })();
+
+  // Modal Pix (cópia de chave em 1 clique)
+  (function initPixModal() {
+    const modal = document.getElementById("pixModal");
+    if (!modal) return;
+    const planNameEl = document.getElementById("pixPlanName");
+    const planPriceEl = document.getElementById("pixPlanPrice");
+    const closeBtn = document.getElementById("closePixModal");
+    const copyBtn = document.getElementById("copyPixBtn");
+    const pixKeyEl = document.getElementById("pixKeyValue");
+
+    document.querySelectorAll(".open-pix-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        planNameEl.textContent = btn.dataset.plan || "Mensal";
+        planPriceEl.textContent = btn.dataset.price || "R$ 29,99/mês";
+        modal.classList.add("open");
+      });
+    });
+
+    closeBtn.addEventListener("click", () => modal.classList.remove("open"));
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.remove("open");
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      const key = (pixKeyEl.textContent || "").trim();
+      const origLabel = copyBtn.dataset.copyLabel || "Copiar Chave";
+      const copiedLabel = copyBtn.dataset.copiedLabel || "Copiado!";
+      const ok = await window.hkCopyText(key, copiedLabel);
+      if (ok) {
+        copyBtn.textContent = copiedLabel;
+        setTimeout(() => { copyBtn.textContent = origLabel; }, 1800);
+      } else {
+        copyBtn.textContent = key;
+      }
+    });
+  })();
+
+  // Cópia de sinal vitrine + filtro instantâneo do livro razão
+  (function initHomeSignalsTerminal() {
+    document.querySelectorAll(".home-copy-sig-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        window.hkCopyText(btn.dataset.copy, "Sinal copiado para a área de transferência!");
+      });
+    });
+
+    const searchInp = document.getElementById("homeHistSearch");
+    const filterBtns = document.querySelectorAll("#homeHistFilter .seg-btn");
+    let activeOut = "ALL";
+
+    function applyHomeHist() {
+      const q = (searchInp ? searchInp.value : "").trim().toUpperCase();
+      document.querySelectorAll(".home-hist-row").forEach(row => {
+        const matchQ = !q || row.dataset.ativo.includes(q);
+        const matchOut = activeOut === "ALL" || row.dataset.out === activeOut;
+        row.style.display = (matchQ && matchOut) ? "" : "none";
+      });
+    }
+
+    if (searchInp) searchInp.addEventListener("input", applyHomeHist);
+    filterBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        activeOut = btn.dataset.out;
+        filterBtns.forEach(b => b.classList.toggle("active", b === btn));
+        applyHomeHist();
+      });
+    });
+  })();
+</script>
+{% endblock %}

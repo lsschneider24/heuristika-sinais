@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Entrar na Área VIP — Heurístika{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="panel">
+    <span class="badge badge-vip" style="margin-bottom:10px;">ÁREA DO ASSINANTE VIP</span>
+    <h1 style="margin:0 0 8px; font-size:1.5rem;">Acessar Sinais em Tempo Real</h1>
+    <p style="margin:0 0 20px; color:var(--muted); font-size:0.9rem;">
+      Entre com seu <strong>e-mail/contato</strong> cadastrado ou seu <strong>código de acesso VIP</strong>.
+    </p>
+
+    <form method="POST" action="{{ url_for('login') }}">
+      <div class="field">
+        <label for="identificador">E-mail, contato ou Código VIP</label>
+        <input id="identificador" name="identificador" type="text" placeholder="Ex: cliente@exemplo.com ou VIP-DEMO-2026" required autofocus />
+      </div>
+      <button type="submit" class="btn btn-vip" style="width:100%;">Entrar no Painel VIP</button>
+    </form>
+
+    <div style="margin-top:18px; padding-top:16px; border-top:1px solid var(--border); display:flex; justify-content:space-between; font-size:0.84rem; color:var(--muted);">
+      <a href="{{ checkout_url }}" target="_blank" rel="noopener" class="text-amber">Ainda não é assinante? Assinar →</a>
+      <a href="{{ suporte_url }}" target="_blank" rel="noopener">Suporte</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+bin/
+*.log
+sinais_vip.db*
+tests/
+site_dist/
