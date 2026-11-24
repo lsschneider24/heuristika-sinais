@@ -1,7 +1,7 @@
 {
   "schema_version": "1.1.0",
   "reference_date": "2026-11-24",
-  "collected_at": "2026-11-24T08:25:58",
+  "collected_at": "2026-11-24T13:53:43",
   "max_age_days": 90,
   "origin_type": "automated_public_collector",
   "schedule_cadence": "monthly",
@@ -49,18 +49,20 @@
       "sector": "Bancos",
       "liquid_b3": true,
       "evento_corporativo": true,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 4.61,
-          "source": "Yahoo Finance (div 12m / preço R$ 14.2 em 2026-11-24; JCP bruto)",
+          "value": 4.52,
+          "source": "Yahoo Finance (div 12m / preço R$ 14.49 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 45.0,
-          "source": "Fato Relevante Payout BB 2026",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 24.8,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 001023, método DVA, base 2026-09-30]",
+          "date": "2026-11-24",
+          "data_base": "2026-09-30",
+          "verified": true
         },
         "years_paying": {
           "value": 11,
@@ -75,16 +77,17 @@
           "verified": true
         },
         "roe_pct": {
-          "value": 43.38,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 001023]: DRE 3.11 Lucro Líquido / BPP 2.03 Patrimônio Líquido * 100 (aplicado a Bancos e Seguros)",
+          "value": 35.94,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 001023, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false,
-      "corporate_event_reason": "Redução anunciada do payout de 2026 para 25% e cancelamento de proventos intermediários em 10/11/2026 (RI Banco do Brasil)."
+      "verified": true,
+      "corporate_event_reason": "Queda YoY de proventos 12m: -62.0% (Yahoo Finance) | Comunicado CVM IPE (90d): 2026-11-11: Remuneração aos acionistas para 2026 e 2027 | Redução anunciada do payout de 2026 para 25% e cancelamento de proventos intermediários em 10/11/2026 (RI Banco do Brasil)."
     },
     {
       "symbol": "ITUB4",
@@ -93,18 +96,20 @@
       "sector": "Bancos",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
           "value": 0.05,
-          "source": "Yahoo Finance (div 12m / preço R$ 39.73 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 7.8% @ R$ 39.73 em 23/11/2026]",
+          "source": "Yahoo Finance (div 12m / preço R$ 40.11 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 7.8% @ R$ 39.73 em 23/11/2026]",
           "date": "2026-11-24",
           "verified": false
         },
         "payout_pct": {
-          "value": 60.0,
-          "source": "ITR 3T26 Itaú",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 70.59,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 019348, método DVA, base 2026-09-30]",
+          "date": "2026-11-24",
+          "data_base": "2026-09-30",
+          "verified": true
         },
         "years_paying": {
           "value": 10,
@@ -120,8 +125,9 @@
         },
         "roe_pct": {
           "value": 1.95,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 019348]: DRE 3.11 Lucro Líquido / BPP 2.03 Patrimônio Líquido * 100 (aplicado a Bancos e Seguros)",
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 019348, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -136,18 +142,20 @@
       "sector": "Bancos",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 7.69,
-          "source": "Yahoo Finance (div 12m / preço R$ 28.25 em 2026-11-24; JCP bruto)",
+          "value": 7.81,
+          "source": "Yahoo Finance (div 12m / preço R$ 27.83 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 52.0,
-          "source": "ITR 3T26 Santander",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 105.65,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 020532, método DVA, base 2026-09-30]",
+          "date": "2026-11-24",
+          "data_base": "2026-09-30",
+          "verified": true
         },
         "years_paying": {
           "value": 10,
@@ -162,15 +170,16 @@
           "verified": true
         },
         "roe_pct": {
-          "value": 109.83,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 020532]: DRE 3.11 Lucro Líquido / BPP 2.03 Patrimônio Líquido * 100 (aplicado a Bancos e Seguros)",
+          "value": 1.23,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 020532, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "BBDC4",
@@ -178,19 +187,21 @@
       "name": "Bradesco PN",
       "sector": "Bancos",
       "liquid_b3": true,
-      "evento_corporativo": false,
+      "evento_corporativo": true,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
           "value": 0.14,
-          "source": "Yahoo Finance (div 12m / preço R$ 13.71 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 11.1% @ R$ 13.71 em 23/11/2026]",
+          "source": "Yahoo Finance (div 12m / preço R$ 13.83 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 11.1% @ R$ 13.71 em 23/11/2026]",
           "date": "2026-11-24",
           "verified": false
         },
         "payout_pct": {
-          "value": 58.0,
-          "source": "ITR 3T26 Bradesco",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 60.26,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 000906, método DVA, base 2026-09-30]",
+          "date": "2026-11-24",
+          "data_base": "2026-09-30",
+          "verified": true
         },
         "years_paying": {
           "value": 11,
@@ -205,15 +216,17 @@
           "verified": true
         },
         "roe_pct": {
-          "value": 5.4,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 000906]: DRE 3.11 Lucro Líquido / BPP 2.03 Patrimônio Líquido * 100 (aplicado a Bancos e Seguros)",
+          "value": 5.59,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 000906, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": false,
+      "corporate_event_reason": "Queda YoY de proventos 12m: -96.8% (Yahoo Finance)"
     },
     {
       "symbol": "ABCB4",
@@ -222,18 +235,20 @@
       "sector": "Bancos",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 11.65,
-          "source": "Yahoo Finance (div 12m / preço R$ 23.07 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 10.9% @ R$ 23.07 em 23/11/2026]",
+          "value": 11.34,
+          "source": "Yahoo Finance (div 12m / preço R$ 23.71 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
-          "verified": false
+          "verified": true
         },
         "payout_pct": {
-          "value": 42.0,
-          "source": "ITR 3T26 ABC Brasil",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 65.84,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 020958, método DVA, base 2026-09-30]",
+          "date": "2026-11-24",
+          "data_base": "2026-09-30",
+          "verified": true
         },
         "years_paying": {
           "value": 10,
@@ -249,8 +264,9 @@
         },
         "roe_pct": {
           "value": null,
-          "source": "Pendente conferência CVM DFP/ITR (ROE)",
+          "source": "Dado ausente/indisponível na CVM (ROE)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": false
         }
       },
@@ -265,17 +281,19 @@
       "sector": "Energia Elétrica",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 7.92,
-          "source": "Yahoo Finance (div 12m / preço R$ 39.46 em 2026-11-24; JCP bruto)",
+          "value": 7.79,
+          "source": "Yahoo Finance (div 12m / preço R$ 40.12 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 71.15,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 020257]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 62.55,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 020257, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -285,15 +303,17 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 3.66,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 020257]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 4.32,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 020257, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 20.76,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 20.13,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -308,17 +328,19 @@
       "sector": "Energia Elétrica",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 4.5,
-          "source": "Yahoo Finance (div 12m / preço R$ 24.79 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 4.1% @ R$ 24.79 em 23/11/2026]",
+          "value": 4.53,
+          "source": "Yahoo Finance (div 12m / preço R$ 24.63 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
-          "verified": false
+          "verified": true
         },
         "payout_pct": {
-          "value": 48.18,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 017329]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 34.07,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 017329, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -328,21 +350,23 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 3.3,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 017329]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 3.08,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 017329, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 20.54,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 18.66,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "CPFE3",
@@ -351,17 +375,19 @@
       "sector": "Energia Elétrica",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 6.52,
-          "source": "Yahoo Finance (div 12m / preço R$ 43.28 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 8.6% @ R$ 43.28 em 23/11/2026]",
+          "value": 6.42,
+          "source": "Yahoo Finance (div 12m / preço R$ 43.93 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 8.6% @ R$ 43.28 em 23/11/2026]",
           "date": "2026-11-24",
           "verified": false
         },
         "payout_pct": {
-          "value": 76.26,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 018660]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 70.63,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 018660, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -371,15 +397,17 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.97,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 018660]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 1.13,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 018660, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 24.43,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 24.87,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -394,17 +422,19 @@
       "sector": "Energia Elétrica",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 10.57,
-          "source": "Yahoo Finance (div 12m / preço R$ 10.78 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 9.5% @ R$ 10.78 em 23/11/2026]",
+          "value": 10.54,
+          "source": "Yahoo Finance (div 12m / preço R$ 10.81 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
-          "verified": false
+          "verified": true
         },
         "payout_pct": {
-          "value": 71.71,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 002453]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 59.08,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 002453, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -414,21 +444,23 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 2.02,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 002453]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 2.04,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 002453, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 17.14,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 17.96,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "ISAE4",
@@ -437,17 +469,19 @@
       "sector": "Energia Elétrica",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 7.76,
-          "source": "Yahoo Finance (div 12m / preço R$ 25.83 em 2026-11-24; JCP bruto)",
+          "value": 7.64,
+          "source": "Yahoo Finance (div 12m / preço R$ 26.21 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 37.44,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 018376]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 29.84,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 018376, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -457,15 +491,17 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 3.32,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 018376]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 3.16,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 018376, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 11.71,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 12.46,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -480,17 +516,19 @@
       "sector": "Energia Elétrica",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 7.07,
-          "source": "Yahoo Finance (div 12m / preço R$ 15.04 em 2026-11-24; JCP bruto)",
+          "value": 7.05,
+          "source": "Yahoo Finance (div 12m / preço R$ 15.08 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 40.92,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 014311]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 31.46,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 014311, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -500,15 +538,17 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.51,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 014311]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 1.97,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 014311, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 11.64,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 14.07,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -522,18 +562,20 @@
       "name": "Axia Energia ON (ex-Eletrobras)",
       "sector": "Energia Elétrica",
       "liquid_b3": true,
-      "evento_corporativo": false,
+      "evento_corporativo": true,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
           "value": 0.0,
-          "source": "Yahoo Finance (div 12m / preço R$ 45.52 em 2026-11-24; JCP bruto)",
+          "source": "Yahoo Finance (div 12m / preço R$ 46.07 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 94.98,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 002437]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 33.46,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 002437, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -543,21 +585,24 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 5.48,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 002437]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 2.18,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 002437, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 5.54,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 15.74,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": true
+      "verified": true,
+      "corporate_event_reason": "Queda YoY de proventos 12m: -100.0% (Yahoo Finance)"
     },
     {
       "symbol": "AURE3",
@@ -565,18 +610,20 @@
       "name": "Auren Energia ON",
       "sector": "Energia Elétrica",
       "liquid_b3": true,
-      "evento_corporativo": false,
+      "evento_corporativo": true,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
           "value": 0.0,
-          "source": "Yahoo Finance (div 12m / preço R$ 11.69 em 2026-11-24; JCP bruto)",
+          "source": "Yahoo Finance (div 12m / preço R$ 11.88 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 95.0,
-          "source": "ITR 3T26 Auren",
-          "date": "2026-11-15",
+          "value": null,
+          "source": "Dado ausente/indisponível na CVM (nunca convertido em zero)",
+          "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": false
         },
         "years_paying": {
@@ -586,21 +633,24 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 4.79,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 026620]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 5.19,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 026620, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": -4.05,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": -3.7,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": false,
+      "corporate_event_reason": "Queda YoY de proventos 12m: -100.0% (Yahoo Finance)"
     },
     {
       "symbol": "BBSE3",
@@ -609,18 +659,20 @@
       "sector": "Seguros",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
           "value": 12.57,
-          "source": "Yahoo Finance (div 12m / preço R$ 36.51 em 2026-11-24; JCP bruto)",
+          "source": "Yahoo Finance (div 12m / preço R$ 36.52 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 78.0,
-          "source": "ITR 3T26 BB Seguridade",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 95.77,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 023159, método DVA, base 2026-09-30]",
+          "date": "2026-11-24",
+          "data_base": "2026-09-30",
+          "verified": true
         },
         "years_paying": {
           "value": 10,
@@ -635,15 +687,16 @@
           "verified": true
         },
         "roe_pct": {
-          "value": 86.84,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 023159]: DRE 3.11 Lucro Líquido / BPP 2.03 Patrimônio Líquido * 100 (aplicado a Bancos e Seguros)",
+          "value": 68.17,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 023159, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "CXSE3",
@@ -652,17 +705,19 @@
       "sector": "Seguros",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 6.76,
-          "source": "Yahoo Finance (div 12m / preço R$ 20.44 em 2026-11-24; JCP bruto)",
+          "value": 6.79,
+          "source": "Yahoo Finance (div 12m / preço R$ 20.36 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 68.51,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 023795]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 69.05,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 023795, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -678,9 +733,10 @@
           "verified": true
         },
         "roe_pct": {
-          "value": 31.67,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 023795]: DRE 3.11 Lucro Líquido / BPP 2.03 Patrimônio Líquido * 100 (aplicado a Bancos e Seguros)",
+          "value": 32.56,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 023795, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -695,17 +751,19 @@
       "sector": "Seguros",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 6.99,
-          "source": "Yahoo Finance (div 12m / preço R$ 42.91 em 2026-11-24; JCP bruto)",
+          "value": 7.08,
+          "source": "Yahoo Finance (div 12m / preço R$ 42.39 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 49.37,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 016659]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 46.68,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 016659, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -721,9 +779,10 @@
           "verified": true
         },
         "roe_pct": {
-          "value": 21.57,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 016659]: DRE 3.11 Lucro Líquido / BPP 2.03 Patrimônio Líquido * 100 (aplicado a Bancos e Seguros)",
+          "value": 22.13,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 016659, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -737,19 +796,21 @@
       "name": "Sanepar Unit",
       "sector": "Saneamento",
       "liquid_b3": true,
-      "evento_corporativo": false,
+      "evento_corporativo": true,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 1.63,
-          "source": "Yahoo Finance (div 12m / preço R$ 33.84 em 2026-11-24; JCP bruto)",
+          "value": 1.61,
+          "source": "Yahoo Finance (div 12m / preço R$ 34.39 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 48.0,
-          "source": "ITR 3T26 Sanepar",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 32.25,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 018627, método DVA, base 2026-09-30]",
+          "date": "2026-11-24",
+          "data_base": "2026-09-30",
+          "verified": true
         },
         "years_paying": {
           "value": 9,
@@ -758,21 +819,24 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.6,
-          "source": "ITR 3T26 Sanepar",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 0.67,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 018627, base 2026-09-30]",
+          "date": "2026-11-24",
+          "data_base": "2026-09-30",
+          "verified": true
         },
         "roe_pct": {
-          "value": null,
-          "source": "Não exigido para não-financeiras",
+          "value": 4.12,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
-          "verified": false
+          "data_base": "2026-09-30",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true,
+      "corporate_event_reason": "Queda YoY de proventos 12m: -75.0% (Yahoo Finance)"
     },
     {
       "symbol": "CSMG3",
@@ -780,18 +844,20 @@
       "name": "Copasa ON",
       "sector": "Saneamento",
       "liquid_b3": true,
-      "evento_corporativo": false,
+      "evento_corporativo": true,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 3.52,
-          "source": "Yahoo Finance (div 12m / preço R$ 56.68 em 2026-11-24; JCP bruto)",
+          "value": 3.42,
+          "source": "Yahoo Finance (div 12m / preço R$ 58.26 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 46.14,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 019445]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 43.83,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 019445, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -801,21 +867,24 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.87,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 019445]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 2.13,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 019445, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 16.5,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 13.95,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": true
+      "verified": true,
+      "corporate_event_reason": "Comunicado CVM IPE (90d): 2026-09-10: Remuneração aos acionistas 3T26"
     },
     {
       "symbol": "SBSP3",
@@ -824,17 +893,19 @@
       "sector": "Saneamento",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 5.21,
-          "source": "Yahoo Finance (div 12m / preço R$ 27.7 em 2026-11-24; JCP bruto)",
+          "value": 5.18,
+          "source": "Yahoo Finance (div 12m / preço R$ 27.88 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 28.14,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 014443]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 32.68,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 014443, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -845,14 +916,16 @@
         },
         "net_debt_ebitda": {
           "value": 1.45,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 014443]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 014443, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 19.96,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 15.6,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -867,17 +940,19 @@
       "sector": "Telecom",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 7.35,
-          "source": "Yahoo Finance (div 12m / preço R$ 34.97 em 2026-11-24; JCP bruto)",
+          "value": 7.24,
+          "source": "Yahoo Finance (div 12m / preço R$ 35.46 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 54.55,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 017671]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 57.69,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 017671, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -887,15 +962,17 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.53,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 017671]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 0.52,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 017671, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 8.95,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 10.74,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -910,18 +987,20 @@
       "sector": "Telecom",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 6.72,
-          "source": "Yahoo Finance (div 12m / preço R$ 21.92 em 2026-11-24; JCP bruto)",
+          "value": 6.64,
+          "source": "Yahoo Finance (div 12m / preço R$ 22.19 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 70.0,
-          "source": "ITR 3T26 TIM",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 46.99,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 024929, método DVA, base 2026-09-30]",
+          "date": "2026-11-24",
+          "data_base": "2026-09-30",
+          "verified": true
         },
         "years_paying": {
           "value": 10,
@@ -930,21 +1009,23 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.8,
-          "source": "ITR 3T26 TIM",
-          "date": "2026-11-15",
-          "verified": false
+          "value": -0.27,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 024929, base 2026-09-30]",
+          "date": "2026-11-24",
+          "data_base": "2026-09-30",
+          "verified": true
         },
         "roe_pct": {
-          "value": null,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 11.0,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
-          "verified": false
+          "data_base": "2026-09-30",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "PETR4",
@@ -952,18 +1033,20 @@
       "name": "Petrobras PN",
       "sector": "Petróleo & Gás",
       "liquid_b3": true,
-      "evento_corporativo": false,
+      "evento_corporativo": true,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 8.87,
-          "source": "Yahoo Finance (div 12m / preço R$ 41.3 em 2026-11-24; JCP bruto)",
+          "value": 8.84,
+          "source": "Yahoo Finance (div 12m / preço R$ 41.43 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 37.28,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 009512]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 33.57,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 009512, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -973,21 +1056,24 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.07,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 009512]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 0.77,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 009512, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 26.49,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 27.83,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": true
+      "verified": true,
+      "corporate_event_reason": "Comunicado CVM IPE (90d): 2026-11-10: Petrobras informa sobre remuneração aos acionistas"
     },
     {
       "symbol": "PRIO3",
@@ -996,18 +1082,20 @@
       "sector": "Petróleo & Gás",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
           "value": 0.0,
-          "source": "Yahoo Finance (div 12m / preço R$ 58.22 em 2026-11-24; JCP bruto)",
+          "source": "Yahoo Finance (div 12m / preço R$ 59.44 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 0.0,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 022187]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": null,
+          "source": "Dado ausente/indisponível na CVM (nunca convertido em zero)",
           "date": "2026-11-24",
-          "verified": true
+          "data_base": "2026-09-30",
+          "verified": false
         },
         "years_paying": {
           "value": 1,
@@ -1016,21 +1104,23 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 3.27,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 022187]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 1.11,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 022187, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 8.73,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 19.95,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": true
+      "verified": false
     },
     {
       "symbol": "VALE3",
@@ -1039,17 +1129,19 @@
       "sector": "Mineração & Siderurgia",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 9.61,
-          "source": "Yahoo Finance (div 12m / preço R$ 58.41 em 2026-11-24; JCP bruto)",
+          "value": 10.17,
+          "source": "Yahoo Finance (div 12m / preço R$ 55.17 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 0.0,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 004170]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 4245.5,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 004170, método DFC (6.03.*), base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -1059,15 +1151,17 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.25,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 004170]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 1.55,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 004170, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 6.25,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 0.28,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -1081,18 +1175,20 @@
       "name": "CSN Mineração ON",
       "sector": "Mineração & Siderurgia",
       "liquid_b3": true,
-      "evento_corporativo": false,
+      "evento_corporativo": true,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 4.44,
-          "source": "Yahoo Finance (div 12m / preço R$ 4.94 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 18.7% @ R$ 4.94 em 23/11/2026]",
+          "value": 4.54,
+          "source": "Yahoo Finance (div 12m / preço R$ 4.83 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 18.7% @ R$ 4.94 em 23/11/2026]",
           "date": "2026-11-24",
           "verified": false
         },
         "payout_pct": {
-          "value": 84.14,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 025585]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 108.44,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 025585, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -1102,21 +1198,24 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.05,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 025585]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 0.63,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 025585, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 24.69,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 19.23,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": false,
+      "corporate_event_reason": "Queda YoY de proventos 12m: -50.6% (Yahoo Finance)"
     },
     {
       "symbol": "GGBR4",
@@ -1125,17 +1224,19 @@
       "sector": "Mineração & Siderurgia",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 3.35,
-          "source": "Yahoo Finance (div 12m / preço R$ 25.34 em 2026-11-24; JCP bruto)",
+          "value": 3.45,
+          "source": "Yahoo Finance (div 12m / preço R$ 24.63 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 0.0,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 003980]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 11.82,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 003980, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -1145,15 +1246,17 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.05,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 003980]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 0.79,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 003980, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 2.64,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 5.01,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -1168,17 +1271,19 @@
       "sector": "Papel & Celulose",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 5.47,
-          "source": "Yahoo Finance (div 12m / preço R$ 16.51 em 2026-11-24; JCP bruto)",
+          "value": 5.43,
+          "source": "Yahoo Finance (div 12m / preço R$ 16.64 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 8.41,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 012653]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 261.21,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 012653, método DFC (6.03.*), base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -1188,15 +1293,17 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.83,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 012653]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 2.98,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 012653, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 11.65,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 2.73,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -1210,18 +1317,20 @@
       "name": "Suzano ON",
       "sector": "Papel & Celulose",
       "liquid_b3": true,
-      "evento_corporativo": false,
+      "evento_corporativo": true,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 2.03,
-          "source": "Yahoo Finance (div 12m / preço R$ 55.19 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 0.0% @ R$ 55.19 em 23/11/2026]",
+          "value": 2.02,
+          "source": "Yahoo Finance (div 12m / preço R$ 55.56 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 0.0% @ R$ 55.19 em 23/11/2026]",
           "date": "2026-11-24",
           "verified": false
         },
         "payout_pct": {
-          "value": 10.31,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 013986]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 16.66,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 013986, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -1231,21 +1340,24 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 3.16,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 013986]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 3.39,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 013986, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 30.57,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 14.48,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": false,
+      "corporate_event_reason": "Queda YoY de proventos 12m: -44.4% (Yahoo Finance)"
     },
     {
       "symbol": "RANI3",
@@ -1253,18 +1365,20 @@
       "name": "Irani Papel e Embalagem ON",
       "sector": "Papel & Celulose",
       "liquid_b3": true,
-      "evento_corporativo": false,
+      "evento_corporativo": true,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 5.36,
-          "source": "Yahoo Finance (div 12m / preço R$ 7.81 em 2026-11-24; JCP bruto)",
+          "value": 5.35,
+          "source": "Yahoo Finance (div 12m / preço R$ 7.83 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 24.67,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 002429]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 22.77,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 002429, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -1274,21 +1388,24 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.64,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 002429]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 1.74,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 002429, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 16.67,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 9.82,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": true
+      "verified": true,
+      "corporate_event_reason": "Queda YoY de proventos 12m: -42.9% (Yahoo Finance)"
     },
     {
       "symbol": "WEGE3",
@@ -1297,17 +1414,19 @@
       "sector": "Indústria",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 4.01,
-          "source": "Yahoo Finance (div 12m / preço R$ 49.91 em 2026-11-24; JCP bruto)",
+          "value": 4.0,
+          "source": "Yahoo Finance (div 12m / preço R$ 50.03 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 56.31,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 005410]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 47.96,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 005410, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -1317,15 +1436,17 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": -0.3,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 005410]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": -0.29,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 005410, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 36.52,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 31.31,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -1340,17 +1461,19 @@
       "sector": "Indústria",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 9.84,
-          "source": "Yahoo Finance (div 12m / preço R$ 30.57 em 2026-11-24; JCP bruto)",
+          "value": 9.85,
+          "source": "Yahoo Finance (div 12m / preço R$ 30.55 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 18.15,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 008575]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 16.55,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 008575, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -1360,15 +1483,17 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.91,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 008575]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 0.53,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 008575, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 70.47,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 59.81,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -1383,17 +1508,19 @@
       "sector": "Consumo & Bebidas",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 5.31,
-          "source": "Yahoo Finance (div 12m / preço R$ 15.94 em 2026-11-24; JCP bruto)",
+          "value": 5.23,
+          "source": "Yahoo Finance (div 12m / preço R$ 16.17 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 68.19,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 023264]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 44.26,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 023264, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -1403,15 +1530,17 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": -0.56,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 023264]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": -0.64,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 023264, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 18.01,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 17.78,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -1426,17 +1555,19 @@
       "sector": "Serviços Financeiros",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 6.37,
-          "source": "Yahoo Finance (div 12m / preço R$ 14.16 em 2026-11-24; JCP bruto)",
+          "value": 6.26,
+          "source": "Yahoo Finance (div 12m / preço R$ 14.42 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 65.93,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 021610]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 79.17,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 021610, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -1446,15 +1577,17 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": -0.05,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 021610]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": -0.3,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 021610, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 26.26,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 30.21,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -1469,17 +1602,19 @@
       "sector": "Saúde & Farmácias",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 3.07,
-          "source": "Yahoo Finance (div 12m / preço R$ 14.69 em 2026-11-24; JCP bruto)",
+          "value": 3.1,
+          "source": "Yahoo Finance (div 12m / preço R$ 14.55 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
-          "value": 51.22,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 005258]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "value": 57.72,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 005258, método DVA, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
@@ -1489,15 +1624,17 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.69,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 005258]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 0.56,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 005258, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": 17.72,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": 16.98,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },
@@ -1512,17 +1649,19 @@
       "sector": "Holding & Energia",
       "liquid_b3": true,
       "evento_corporativo": false,
+      "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
           "value": 0.0,
-          "source": "Yahoo Finance (div 12m / preço R$ 3.14 em 2026-11-24; JCP bruto)",
+          "source": "Yahoo Finance (div 12m / preço R$ 3.26 em 2026-11-24; JCP bruto)",
           "date": "2026-11-24",
           "verified": true
         },
         "payout_pct": {
           "value": null,
-          "source": "Dado não consolidado no snapshot",
-          "date": "2026-11-15",
+          "source": "Dado ausente/indisponível na CVM (nunca convertido em zero)",
+          "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": false
         },
         "years_paying": {
@@ -1532,15 +1671,17 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 2.32,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 019836]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "value": 2.39,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 019836, base 2026-09-30]",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
-          "value": -32.87,
-          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "value": -22.07,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26)",
           "date": "2026-11-24",
+          "data_base": "2026-09-30",
           "verified": true
         }
       },

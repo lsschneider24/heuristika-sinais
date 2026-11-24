@@ -1006,11 +1006,18 @@ class SinaisVIPTestCase(unittest.TestCase):
             import shutil
             shutil.rmtree(bkp_dir, ignore_errors=True)
 
-        # Pré-requisito 4: snapshot B3 possui flag verified=false até o Auditor registrar evidência
+        # Pré-requisito 4: snapshot com campos sem evidência mantém verified=false (via fixture sintética)
+        import json as _json
         import market_data
-        fund = market_data.load_b3_fundamentals(reference_today="2026-11-23")
-        self.assertFalse(fund["stocks_by_symbol"]["BBAS3"]["verified"])
-        self.assertFalse(fund["stocks_by_symbol"]["CSAN3"]["verified"])
+        from tests.fixtures_strategies import make_synthetic_b3_snapshot_json
+        _tmp_s = Path(tempfile.mktemp(suffix=".json"))
+        try:
+            _tmp_s.write_text(_json.dumps(make_synthetic_b3_snapshot_json("2026-11-15", 32)), encoding="utf-8")
+            fund = market_data.load_b3_fundamentals(snapshot_path=_tmp_s, reference_today="2026-11-23")
+            self.assertFalse(fund["stocks_by_symbol"]["SYN_UNVER"]["verified"])
+            self.assertFalse(fund["stocks_by_symbol"]["SYN_MISS"]["verified"])
+        finally:
+            _tmp_s.unlink(missing_ok=True)
 
         # Etapa 2A + 2B: Catálogo completo (6 Fase 1 ativas + 3 Fase 2)
         strats = strategies_engine.list_strategies()
@@ -1093,6 +1100,29 @@ class SinaisVIPTestCase(unittest.TestCase):
         res = strategies_engine.run_strategy("dividendos_barsi", market_ctx=ctx, persist=False)
         selected_syms = {w["symbol"] for w in res.get("target_weights", [])}
         self.assertNotIn("BBAS3", selected_syms)
+
+    def test_cvm_missing_data_never_zero(self):
+        import json
+        from pathlib import Path
+        import market_data
+        from tests.fixtures_strategies import make_synthetic_b3_snapshot_json
+
+        snap = make_synthetic_b3_snapshot_json("2026-11-24", 30)
+        snap["stocks"][2]["fields"]["payout_pct"] = {"value": None, "source": "Dado ausente", "date": "2026-11-24", "verified": False}
+        snap["stocks"][2]["fields"]["net_debt_ebitda"] = {"value": None, "source": "Dado ausente", "date": "2026-11-24", "verified": False}
+        snap["stocks"][2]["verified"] = False
+
+        tmp_snap = Path(tempfile.mktemp(suffix=".json"))
+        try:
+            tmp_snap.write_text(json.dumps(snap), encoding="utf-8")
+            loaded = market_data.load_b3_fundamentals(snapshot_path=tmp_snap, reference_today="2026-11-24")
+            st = loaded["stocks_by_symbol"]["SYN02"]
+            self.assertEqual(st["values"]["payout_pct"], "indisponível")
+            self.assertEqual(st["values"]["net_debt_ebitda"], "indisponível")
+            self.assertNotEqual(st["values"]["payout_pct"], 0.0)
+            self.assertFalse(st["verified"])
+        finally:
+            tmp_snap.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

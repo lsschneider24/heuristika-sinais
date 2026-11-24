@@ -85,3 +85,45 @@
 1. Escrever e executar sua própria reconciliação independente a partir de `README.md` e `strategies_config.json` (sem ler `strategies_engine.py` nem `audit/tools/reconcile_backtests.py`).
 2. Executar `python audit/run_audit.py` e validar `EXIT 0`, integridade de `MANIFEST.json` e relatório `backtest_long_2026-11-24.md`.
 3. Revisar as justificativas das alterações em `tests/test_basic.py`.
+
+## Parecer do Auditor (Revisão Etapa 2D + Itens 7–13)
+- **`audit/run_audit.py`:** **PASS (`exit_code=0`)** — Relatório: `audit/reports/audit_2026-11-24_0955.md` (`24/24` testes OK, `MANIFEST.json` válido).
+- **Parecer Etapa 2D:** **FAIL (pendência específica no Item 7 e melhoria no Pipeline CVM/Evento Corporativo)**:
+  1. **Item 7 (Bloqueante):** incluir `risk_parity_simplified` e `radar_top_n` (com e sem cripto, com rastreio de entradas/saídas) em `audit/reports/backtest_long_2026-11-24.md`.
+  2. **Item 9/10 (Pipeline CVM):** evoluir `cvm_pipeline.py` para LTM (`DFP 2025 - ITR 9M25 + ITR 9M26`) e fallback para `DFC`/`DMPL` quando `DVA 7.08.04.01/02` vier zerado (casos `ITUB4`, `BBSE3`, `VALE3`).
+  3. **Item 11 (`evento_corporativo`):** implementar regra automática sem viés sazonal (ex.: queda >= 40% em 12m móveis YoY ou 6m vs mesmo 6m do ano anterior).
+
+---
+
+# HANDOFF — Etapa 2E (Construtor → Auditor)
+
+## O que foi feito na Etapa 2E
+1. **A + B — Backtests completos (12+ anos) e Banda de Rebalanceamento:**
+   - `market_data.fetch_bcb_cdi_series` atualizado para fatiar consultas ao SGS/BCB em blocos de até 3.200 dias (suportando 15 anos de CDI diário).
+   - `audit/tools/run_long_backtests.py` atualizado com `range_str="15y"` e todas as 5 estratégias baseadas em preço (`indexacao_bogle`, `trend_following_turtles` c/ e s/ cripto, `dual_momentum_global`, `risk_parity_simplified`, `radar_top_n` c/ e s/ cripto), mais benchmarks (`CDI`, `BOVA11`, `IVVB11`) com volatilidade, MaxDD e Sharpe na mesma janela de cada estratégia.
+   - `strategies_config.json` e `strategy_param_versions` atualizados com `rebalance_band_pct: 25.0` e `min_order_pct: 2.0` para `trend_following_turtles` e `dual_momentum_global`; sensibilidade documentada para `0%`, `10%`, `25%` e `50%` em `audit/reports/backtest_long_2026-11-24.md`.
+2. **C — Pipeline CVM LTM (`DFP 2025 - ITR 9M25 + ITR 9M26`) e Sem Zero Indevido:**
+   - `cvm_pipeline.py` reescrito: dado ausente/zerado nunca vira `0.0` (retorna `None` / `'indisponível'`); lê `_con_` com fallback `_ind_` (`ABCB4: 020958`, `SAPR11: 018627`); usa DVA (`7.08.04` / `7.09.04` / `7.11.04`) com fallback `DFC 6.03.*` (corrigindo `VALE3`, `ITUB4`, `BBSE3`, `BBAS3`); registra `data_base` (`2026-09-30` LTM).
+   - `data_collector.py` atualizado com tolerância relativa de DY (`15%` / `±0,5 pp`) considerando JCP bruto vs líquido (85%).
+   - Resultado da coleta: **`26/35` ativos `verified=true`**, **`9` `verified=false`**, **`8` elegíveis para `dividendos_barsi`** (`CMIG4`, `LEVE3`, `VIVT3`, `PSSA3`, `CPLE3`, `CXSE3`, `TIMS3`, `B3SA3` a 10% + `20%` `SELIC_CDI` → `carteira incompleta: 8 de 10 ativos`).
+3. **D — Detectores Automáticos de `evento_corporativo`:**
+   - Detector YoY de proventos 12m (queda `>= 40%` vs 12m anteriores no Yahoo Finance) + varredura de comunicados CVM IPE (`ipe_cia_aberta_2026.zip`, últimos 90 dias) + `CORPORATE_EVENTS` manual como exceções adicionais. `BBAS3` foi capturado pelos 3 critérios simultaneamente (`10` ativos sinalizados).
+4. **E — Testes (`25/25 OK`):**
+   - Adicionado `test_cvm_missing_data_never_zero` em `tests/test_basic.py`.
+   - Pré-requisito 4 em `test_phase1_prerequisites_and_phase2a_deterministic_engine` isolado com `make_synthetic_b3_snapshot_json` para não depender do snapshot de produção (`BBAS3` passou a `verified=true` após o fallback DFC+ROE, sendo excluído da seleção via `evento_corporativo`).
+
+## Arquivos Alterados / Criados na Etapa 2E
+- `market_data.py`
+- `strategies_config.json`
+- `cvm_pipeline.py`
+- `data_collector.py`
+- `data/b3_fundamentals.json`
+- `audit/tools/run_long_backtests.py`
+- `audit/reports/backtest_long_2026-11-24.md`
+- `tests/test_basic.py`
+- `HANDOFF.md`
+
+## Pendências para o Auditor
+1. Executar `python audit/run_audit.py` e confirmar `EXIT 0` + `MANIFEST.json`.
+2. Validar o novo relatório completo `audit/reports/backtest_long_2026-11-24.md` (todas as 5 estratégias, 12+ anos, sensibilidade da banda).
+3. Executar a reconciliação independente do Auditor (a partir de `README.md` e `strategies_config.json`).

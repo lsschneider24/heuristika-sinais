@@ -55,10 +55,12 @@ TICKER_ALIASES: dict[str, dict[str, str]] = {
     },
 }
 
-# Eventos corporativos recentes que exigem exclusão temporária da seleção (Etapa 2C - B.6)
+# Eventos corporativos manuais adicionais (exceções complementares aos detectores automáticos YoY e CVM IPE)
 CORPORATE_EVENTS: dict[str, str] = {
     "BBAS3": "Redução anunciada do payout de 2026 para 25% e cancelamento de proventos intermediários em 10/11/2026 (RI Banco do Brasil).",
 }
+
+CVM_IPE_2026_URL = "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_2026.zip"
 
 DISCONTINUED_TICKERS: list[dict[str, str]] = []
 
@@ -143,7 +145,9 @@ def fetch_yahoo_dividends(yahoo_symbol: str, use_cache: bool = True) -> dict[str
         divs = (res.get("events") or {}).get("dividends") or {}
         now_ts = datetime.now(timezone.utc).timestamp()
         cutoff_12m = now_ts - 365 * 86400
+        cutoff_24m = now_ts - 730 * 86400
         div_12m = 0.0
+        div_prev_12m = 0.0
         years_set: set[int] = set()
         for ev in divs.values():
             amt = float(ev.get("amount") or 0.0)
@@ -153,13 +157,18 @@ def fetch_yahoo_dividends(yahoo_symbol: str, use_cache: bool = True) -> dict[str
                 years_set.add(yr)
                 if dt_ts >= cutoff_12m:
                     div_12m += amt
+                elif dt_ts >= cutoff_24m:
+                    div_prev_12m += amt
 
+        yoy_drop_pct = round((div_12m / div_prev_12m - 1.0) * 100.0, 1) if div_prev_12m > 0 else None
         dy_12m_pct = round((div_12m / float(price)) * 100.0, 2) if (price and float(price) > 0) else None
         out = {
             "ok": True,
             "url": url,
             "price": round(float(price), 2) if price is not None else None,
             "div_12m_sum": round(div_12m, 4),
+            "div_prev_12m_sum": round(div_prev_12m, 4),
+            "yoy_div_change_pct": yoy_drop_pct,
             "dy_12m_pct": dy_12m_pct,
             "years_paying": len(years_set),
             "collected_at": datetime.now().strftime("%Y-%m-%d"),
@@ -216,14 +225,49 @@ def fetch_fundamentus_crosscheck(symbol: str, use_cache: bool = True) -> dict[st
     return out
 
 
-def _within_tolerance(a: float | None, b: float | None, rel_tol: float = 0.05, abs_pp: float = 0.3) -> bool:
+def _within_tolerance(a: float | None, b: float | None, rel_tol: float = 0.15, abs_pp: float = 0.5) -> bool:
+    """Tolerância relativa ao nível do DY (15% ou ±0,5 pp) considerando diferença JCP bruto (100%) vs líquido (85%)."""
     if a is None or b is None:
         return False
-    if abs(a - b) <= abs_pp:
-        return True
-    if a != 0 and abs(b - a) / abs(a) <= rel_tol:
-        return True
+    for cand_a in (a, a * 0.85):
+        if abs(cand_a - b) <= abs_pp:
+            return True
+        if cand_a != 0 and abs(b - cand_a) / abs(cand_a) <= rel_tol:
+            return True
     return False
+
+
+def detect_cvm_ipe_events(cache_dir: Path, days: int = 90) -> dict[str, list[str]]:
+    """Varre fatos relevantes/comunicados CVM IPE 2026 dos últimos 90 dias por política de dividendos/payout."""
+    import csv
+    import io
+    import zipfile
+
+    zp = cvm_pipeline._ensure_zip(cache_dir, "ipe_cia_aberta_2026.zip", CVM_IPE_2026_URL)
+    if zp is None:
+        return {}
+    cvm_to_b3 = {v: k for k, v in cvm_pipeline.B3_TO_CD_CVM.items()}
+    cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+    hits: dict[str, list[str]] = {}
+    keywords = ("POLITICA DE DIVIDEND", "POLÍTICA DE DIVIDEND", "PAYOUT", "REMUNERACAO AOS ACIONISTAS", "REMUNERAÇÃO AOS ACIONISTAS", "REVISAO DE PROVENT", "REVISÃO DE PROVENT")
+    with zipfile.ZipFile(zp) as z:
+        for fn in z.namelist():
+            if not fn.endswith(".csv"):
+                continue
+            with z.open(fn) as f:
+                r = csv.DictReader(io.TextIOWrapper(f, encoding="latin1"), delimiter=";")
+                for row in r:
+                    cvm = str(row.get("Codigo_CVM") or row.get("CD_CVM") or "").zfill(6)
+                    if cvm not in cvm_to_b3:
+                        continue
+                    dt_ent = str(row.get("Data_Entrega") or row.get("DT_ENTREGA") or "")[:10]
+                    if dt_ent < cutoff:
+                        continue
+                    subj = f"{row.get('Categoria', '')} {row.get('Tipo', '')} {row.get('Assunto', '')}".upper()
+                    if any(kw in subj for kw in keywords):
+                        sym = cvm_to_b3[cvm]
+                        hits.setdefault(sym, []).append(f"{dt_ent}: {row.get('Assunto', '')[:80]}")
+    return hits
 
 
 def collect_b3_fundamentals(
@@ -234,6 +278,7 @@ def collect_b3_fundamentals(
     """Gera data/b3_fundamentals.json aplicando aliases, coleta pública, checagem cruzada e política C."""
     base_snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
     cvm_data = cvm_pipeline.load_cvm_fundamentals(CACHE_DIR)
+    ipe_hits = detect_cvm_ipe_events(CACHE_DIR, days=90)
     today_str = datetime.now().strftime("%Y-%m-%d")
     new_stocks: list[dict[str, Any]] = []
 
@@ -274,19 +319,22 @@ def collect_b3_fundamentals(
         # Anos pagando só é marcado verified=true se confirmado por histórico > 0 no Yahoo e compatível com snapshot
         yrs_verified = bool(yh.get("ok") and yrs_val is not None and yrs_val > 0)
 
-        # Etapa 2D: Payout, Dívida Líquida/EBITDA e ROE via Dados Abertos CVM (DFP 2025)
+        # Etapa 2E: Payout, Dívida Líquida/EBITDA e ROE via Dados Abertos CVM (LTM: DFP 2025 + ITR 9M26)
+        # Regra C.1: dado ausente nunca vira zero (value=None, verified=False)
         cvm_row = cvm_data.get(sym) or {}
         is_financial = item.get("sector") in ("Bancos", "Seguros")
+        cvm_data_base = cvm_row.get("data_base") or "indisponível"
 
         cvm_payout = cvm_row.get("payout_pct")
         payout_field = {
-            "value": cvm_payout if cvm_payout is not None else old_payout.get("value"),
+            "value": cvm_payout,
             "source": (
-                f"{cvm_row.get('source_doc')} [CD_CVM {cvm_row.get('cd_cvm')}]: {cvm_pipeline.CVM_FORMULAS['payout_pct']}"
+                f"{cvm_row.get('source_doc')} [CD_CVM {cvm_row.get('cd_cvm')}, método {cvm_row.get('div_method')}, base {cvm_data_base}]"
                 if cvm_payout is not None
-                else (old_payout.get("source") or "Pendente conferência CVM DFP/ITR")
+                else "Dado ausente/indisponível na CVM (nunca convertido em zero)"
             ),
-            "date": today_str if cvm_payout is not None else (old_payout.get("date") or today_str),
+            "date": today_str,
+            "data_base": cvm_data_base,
             "verified": cvm_payout is not None,
         }
 
@@ -301,29 +349,32 @@ def collect_b3_fundamentals(
             roe_field = {
                 "value": cvm_roe,
                 "source": (
-                    f"{cvm_row.get('source_doc')} [CD_CVM {cvm_row.get('cd_cvm')}]: {cvm_pipeline.CVM_FORMULAS['roe_pct']}"
+                    f"{cvm_row.get('source_doc')} [CD_CVM {cvm_row.get('cd_cvm')}, base {cvm_data_base}]"
                     if cvm_roe is not None
-                    else "Pendente conferência CVM DFP/ITR (ROE)"
+                    else "Dado ausente/indisponível na CVM (ROE)"
                 ),
                 "date": today_str,
+                "data_base": cvm_data_base,
                 "verified": cvm_roe is not None,
             }
         else:
             cvm_nd = cvm_row.get("net_debt_ebitda")
             nd_field = {
-                "value": cvm_nd if cvm_nd is not None else old_nd.get("value"),
+                "value": cvm_nd,
                 "source": (
-                    f"{cvm_row.get('source_doc')} [CD_CVM {cvm_row.get('cd_cvm')}]: {cvm_pipeline.CVM_FORMULAS['net_debt_ebitda']}"
+                    f"{cvm_row.get('source_doc')} [CD_CVM {cvm_row.get('cd_cvm')}, base {cvm_data_base}]"
                     if cvm_nd is not None
-                    else (old_nd.get("source") or "Pendente conferência CVM DFP/ITR")
+                    else "Dado ausente/indisponível na CVM (Dívida Líq./EBITDA)"
                 ),
-                "date": today_str if cvm_nd is not None else (old_nd.get("date") or today_str),
+                "date": today_str,
+                "data_base": cvm_data_base,
                 "verified": cvm_nd is not None,
             }
             roe_field = {
                 "value": cvm_row.get("roe_pct"),
                 "source": cvm_row.get("source_doc") or "Não exigido para não-financeiras",
                 "date": today_str,
+                "data_base": cvm_data_base,
                 "verified": cvm_row.get("roe_pct") is not None,
             }
 
@@ -347,7 +398,17 @@ def collect_b3_fundamentals(
 
         req_keys = ("dy_12m_pct", "payout_pct", "years_paying", "roe_pct") if is_financial else ("dy_12m_pct", "payout_pct", "years_paying", "net_debt_ebitda")
         all_fields_verified = all(bool(fields_out[k]["verified"]) for k in req_keys)
-        corp_reason = CORPORATE_EVENTS.get(sym)
+
+        # Detectores automáticos de evento corporativo (YoY proventos + CVM IPE 90d) + exceções manuais
+        corp_reasons: list[str] = []
+        yoy_chg = yh.get("yoy_div_change_pct") if yh.get("ok") else None
+        if yoy_chg is not None and yoy_chg <= -40.0:
+            corp_reasons.append(f"Queda YoY de proventos 12m: {yoy_chg}% (Yahoo Finance)")
+        if sym in ipe_hits:
+            corp_reasons.append(f"Comunicado CVM IPE (90d): {ipe_hits[sym][0]}")
+        if sym in CORPORATE_EVENTS:
+            corp_reasons.append(CORPORATE_EVENTS[sym])
+        corp_reason = " | ".join(corp_reasons) if corp_reasons else None
 
         entry: dict[str, Any] = {
             "symbol": sym,
@@ -356,6 +417,7 @@ def collect_b3_fundamentals(
             "sector": item.get("sector"),
             "liquid_b3": bool(item.get("liquid_b3", True)),
             "evento_corporativo": bool(corp_reason),
+            "data_base_cvm": cvm_data_base,
             "fields": fields_out,
             "origin_type": "automated_public_collector",
             "collected_at": today_str,
