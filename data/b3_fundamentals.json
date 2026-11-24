@@ -1,7 +1,7 @@
 {
   "schema_version": "1.1.0",
   "reference_date": "2026-11-24",
-  "collected_at": "2026-11-24T07:16:52",
+  "collected_at": "2026-11-24T08:25:58",
   "max_age_days": 90,
   "origin_type": "automated_public_collector",
   "schedule_cadence": "monthly",
@@ -69,10 +69,16 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.0,
-          "source": "Instituição Financeira (Basileia > 15%)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": null,
+          "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 43.38,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 001023]: DRE 3.11 Lucro Líquido / BPP 2.03 Patrimônio Líquido * 100 (aplicado a Bancos e Seguros)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
@@ -107,10 +113,16 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.0,
-          "source": "Instituição Financeira (Basileia > 16%)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": null,
+          "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 1.95,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 019348]: DRE 3.11 Lucro Líquido / BPP 2.03 Patrimônio Líquido * 100 (aplicado a Bancos e Seguros)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
@@ -144,10 +156,16 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.0,
-          "source": "Instituição Financeira",
-          "date": "2026-11-15",
-          "verified": false
+          "value": null,
+          "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 109.83,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 020532]: DRE 3.11 Lucro Líquido / BPP 2.03 Patrimônio Líquido * 100 (aplicado a Bancos e Seguros)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
@@ -181,10 +199,16 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.0,
-          "source": "Instituição Financeira",
-          "date": "2026-11-15",
-          "verified": false
+          "value": null,
+          "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 5.4,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 000906]: DRE 3.11 Lucro Líquido / BPP 2.03 Patrimônio Líquido * 100 (aplicado a Bancos e Seguros)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
@@ -218,9 +242,15 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.0,
-          "source": "Instituição Financeira",
-          "date": "2026-11-15",
+          "value": null,
+          "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": null,
+          "source": "Pendente conferência CVM DFP/ITR (ROE)",
+          "date": "2026-11-24",
           "verified": false
         }
       },
@@ -243,10 +273,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 75.0,
-          "source": "Política de Dividendos Taesa (Lucro Regulatório)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 71.15,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 020257]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 11,
@@ -255,15 +285,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 2.7,
-          "source": "ITR 3T26 Taesa",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 3.66,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 020257]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 20.76,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "EGIE3",
@@ -280,10 +316,10 @@
           "verified": false
         },
         "payout_pct": {
-          "value": 65.0,
-          "source": "ITR 3T26 Engie Brasil",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 48.18,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 017329]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 10,
@@ -292,10 +328,16 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 2.4,
-          "source": "ITR 3T26 Engie Brasil",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 3.3,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 017329]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 20.54,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
@@ -317,10 +359,10 @@
           "verified": false
         },
         "payout_pct": {
-          "value": 72.0,
-          "source": "ITR 3T26 CPFL",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 76.26,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 018660]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 8,
@@ -329,10 +371,16 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.9,
-          "source": "ITR 3T26 CPFL",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 0.97,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 018660]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 24.43,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
@@ -354,10 +402,10 @@
           "verified": false
         },
         "payout_pct": {
-          "value": 55.0,
-          "source": "ITR 3T26 Cemig",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 71.71,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 002453]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 11,
@@ -366,10 +414,16 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.1,
-          "source": "ITR 3T26 Cemig",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 2.02,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 002453]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 17.14,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
@@ -391,10 +445,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 74.0,
-          "source": "ITR 3T26 ISA Energia",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 37.44,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 018376]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 10,
@@ -403,15 +457,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 2.5,
-          "source": "ITR 3T26 ISA Energia",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 3.32,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 018376]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 11.71,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "CPLE3",
@@ -428,10 +488,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 62.0,
-          "source": "ITR 3T26 Copel",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 40.92,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 014311]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 9,
@@ -440,16 +500,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.8,
-          "source": "ITR 3T26 Copel",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 1.51,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 014311]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 11.64,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false,
-      "aliased_from": "CPLE6"
+      "verified": true
     },
     {
       "symbol": "AXIA3",
@@ -466,10 +531,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 40.0,
-          "source": "ITR 3T26 Eletrobras",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 94.98,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 002437]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 7,
@@ -478,16 +543,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 2.2,
-          "source": "ITR 3T26 Eletrobras",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 5.48,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 002437]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 5.54,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false,
-      "aliased_from": "ELET3"
+      "verified": true
     },
     {
       "symbol": "AURE3",
@@ -516,10 +586,16 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 3.6,
-          "source": "ITR 3T26 Auren (pós-aquisição)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 4.79,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 026620]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": -4.05,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
@@ -553,10 +629,16 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.0,
-          "source": "Seguradora (Caixa Líquido)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": null,
+          "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 86.84,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 023159]: DRE 3.11 Lucro Líquido / BPP 2.03 Patrimônio Líquido * 100 (aplicado a Bancos e Seguros)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
@@ -578,10 +660,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 76.0,
-          "source": "ITR 3T26 Caixa Seguridade",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 68.51,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 023795]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 6,
@@ -590,15 +672,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.0,
-          "source": "Seguradora (Caixa Líquido)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": null,
+          "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 31.67,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 023795]: DRE 3.11 Lucro Líquido / BPP 2.03 Patrimônio Líquido * 100 (aplicado a Bancos e Seguros)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "PSSA3",
@@ -615,10 +703,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 50.0,
-          "source": "ITR 3T26 Porto",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 49.37,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 016659]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 11,
@@ -627,15 +715,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.0,
-          "source": "Seguradora (Caixa Líquido)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": null,
+          "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 21.57,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 016659]: DRE 3.11 Lucro Líquido / BPP 2.03 Patrimônio Líquido * 100 (aplicado a Bancos e Seguros)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "SAPR11",
@@ -668,6 +762,12 @@
           "source": "ITR 3T26 Sanepar",
           "date": "2026-11-15",
           "verified": false
+        },
+        "roe_pct": {
+          "value": null,
+          "source": "Não exigido para não-financeiras",
+          "date": "2026-11-24",
+          "verified": false
         }
       },
       "origin_type": "automated_public_collector",
@@ -689,10 +789,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 64.0,
-          "source": "ITR 3T26 Copasa",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 46.14,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 019445]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 10,
@@ -701,15 +801,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.5,
-          "source": "ITR 3T26 Copasa",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 1.87,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 019445]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 16.5,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "SBSP3",
@@ -726,10 +832,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 28.0,
-          "source": "ITR 3T26 Sabesp (Ciclo de Capex)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 28.14,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 014443]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 10,
@@ -738,15 +844,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.7,
-          "source": "ITR 3T26 Sabesp",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 1.45,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 014443]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 19.96,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "VIVT3",
@@ -763,10 +875,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 77.0,
-          "source": "ITR 3T26 Vivo",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 54.55,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 017671]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 10,
@@ -775,15 +887,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.6,
-          "source": "ITR 3T26 Vivo",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 0.53,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 017671]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 8.95,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "TIMS3",
@@ -816,6 +934,12 @@
           "source": "ITR 3T26 TIM",
           "date": "2026-11-15",
           "verified": false
+        },
+        "roe_pct": {
+          "value": null,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": false
         }
       },
       "origin_type": "automated_public_collector",
@@ -837,10 +961,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 62.0,
-          "source": "Política de Remuneração Petrobras (45% FCL)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 37.28,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 009512]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 9,
@@ -849,15 +973,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.9,
-          "source": "ITR 3T26 Petrobras",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 1.07,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 009512]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 26.49,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "PRIO3",
@@ -874,10 +1004,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 10.0,
-          "source": "ITR 3T26 PRIO (Foco em M&A e Recompra)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 0.0,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 022187]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 1,
@@ -886,15 +1016,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.2,
-          "source": "ITR 3T26 PRIO",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 3.27,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 022187]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 8.73,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "VALE3",
@@ -911,10 +1047,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 54.0,
-          "source": "ITR 3T26 Vale",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 0.0,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 004170]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 11,
@@ -923,15 +1059,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.8,
-          "source": "ITR 3T26 Vale",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 1.25,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 004170]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 6.25,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "CMIN3",
@@ -948,10 +1090,10 @@
           "verified": false
         },
         "payout_pct": {
-          "value": 88.0,
-          "source": "ITR 3T26 CSN Mineração (Payout > 80%)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 84.14,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 025585]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 6,
@@ -960,10 +1102,16 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": -0.3,
-          "source": "ITR 3T26 CSN Mineração (Caixa Líquido)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 0.05,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 025585]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 24.69,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
@@ -985,10 +1133,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 36.0,
-          "source": "ITR 3T26 Gerdau",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 0.0,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 003980]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 10,
@@ -997,15 +1145,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.5,
-          "source": "ITR 3T26 Gerdau",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 1.05,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 003980]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 2.64,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "KLBN11",
@@ -1022,10 +1176,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 58.0,
-          "source": "ITR 3T26 Klabin",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 8.41,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 012653]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 9,
@@ -1034,15 +1188,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 3.4,
-          "source": "ITR 3T26 Klabin (Alavancagem > 3,0x)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 1.83,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 012653]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 11.65,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "SUZB3",
@@ -1059,10 +1219,10 @@
           "verified": false
         },
         "payout_pct": {
-          "value": 25.0,
-          "source": "ITR 3T26 Suzano",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 10.31,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 013986]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 8,
@@ -1071,10 +1231,16 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 3.1,
-          "source": "ITR 3T26 Suzano",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 3.16,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 013986]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 30.57,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
@@ -1096,10 +1262,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 50.0,
-          "source": "ITR 3T26 Irani",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 24.67,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 002429]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 9,
@@ -1108,16 +1274,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 2.1,
-          "source": "ITR 3T26 Irani",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 1.64,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 002429]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 16.67,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false,
-      "aliased_from": "IRANI3"
+      "verified": true
     },
     {
       "symbol": "WEGE3",
@@ -1134,10 +1305,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 52.0,
-          "source": "ITR 3T26 WEG",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 56.31,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 005410]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 11,
@@ -1146,15 +1317,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": -0.4,
-          "source": "ITR 3T26 WEG (Caixa Líquido)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": -0.3,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 005410]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 36.52,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "LEVE3",
@@ -1171,10 +1348,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 68.0,
-          "source": "ITR 3T26 Metal Leve",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 18.15,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 008575]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 10,
@@ -1183,15 +1360,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 0.9,
-          "source": "ITR 3T26 Metal Leve",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 0.91,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 008575]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 70.47,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "ABEV3",
@@ -1208,10 +1391,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 72.0,
-          "source": "ITR 3T26 Ambev",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 68.19,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 023264]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 11,
@@ -1220,15 +1403,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": -0.5,
-          "source": "ITR 3T26 Ambev (Caixa Líquido)",
-          "date": "2026-11-15",
-          "verified": false
+          "value": -0.56,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 023264]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 18.01,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "B3SA3",
@@ -1245,10 +1434,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 65.0,
-          "source": "ITR 3T26 B3",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 65.93,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 021610]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 11,
@@ -1257,15 +1446,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.1,
-          "source": "ITR 3T26 B3",
-          "date": "2026-11-15",
-          "verified": false
+          "value": -0.05,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 021610]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 26.26,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "RADL3",
@@ -1282,10 +1477,10 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 34.0,
-          "source": "ITR 3T26 RD Saúde",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 51.22,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 005258]: (DVA 7.08.04.01 JCP + DVA 7.08.04.02 Dividendos) / DRE 3.11 Lucro Líquido * 100",
+          "date": "2026-11-24",
+          "verified": true
         },
         "years_paying": {
           "value": 11,
@@ -1294,15 +1489,21 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": 1.3,
-          "source": "ITR 3T26 RD Saúde",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 0.69,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 005258]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": 17.72,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-24",
-      "verified": false
+      "verified": true
     },
     {
       "symbol": "CSAN3",
@@ -1331,10 +1532,16 @@
           "verified": true
         },
         "net_debt_ebitda": {
-          "value": null,
-          "source": "Dado não consolidado no snapshot",
-          "date": "2026-11-15",
-          "verified": false
+          "value": 2.32,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br) [CD_CVM 019836]: (BPP 2.01.04 + BPP 2.02.01 - BPA 1.01.01 - BPA 1.01.02) / (DRE 3.05 EBIT + DFC_MI D&A)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "roe_pct": {
+          "value": -32.87,
+          "source": "CVM DFP 2025 (dados.cvm.gov.br)",
+          "date": "2026-11-24",
+          "verified": true
         }
       },
       "origin_type": "automated_public_collector",

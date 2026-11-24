@@ -27,6 +27,8 @@ import time
 import urllib.request
 from typing import Any
 
+import cvm_pipeline
+
 BASE_DIR = Path(__file__).resolve().parent
 SNAPSHOT_PATH = BASE_DIR / "data" / "b3_fundamentals.json"
 CACHE_DIR = BASE_DIR / "data" / "collector_cache"
@@ -231,6 +233,7 @@ def collect_b3_fundamentals(
 ) -> dict[str, Any]:
     """Gera data/b3_fundamentals.json aplicando aliases, coleta pública, checagem cruzada e política C."""
     base_snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    cvm_data = cvm_pipeline.load_cvm_fundamentals(CACHE_DIR)
     today_str = datetime.now().strftime("%Y-%m-%d")
     new_stocks: list[dict[str, Any]] = []
 
@@ -271,19 +274,58 @@ def collect_b3_fundamentals(
         # Anos pagando só é marcado verified=true se confirmado por histórico > 0 no Yahoo e compatível com snapshot
         yrs_verified = bool(yh.get("ok") and yrs_val is not None and yrs_val > 0)
 
-        # Payout e Dívida Líquida/EBITDA exigem fonte primária CVM/RI; permanecem verified=false até evidência primária
+        # Etapa 2D: Payout, Dívida Líquida/EBITDA e ROE via Dados Abertos CVM (DFP 2025)
+        cvm_row = cvm_data.get(sym) or {}
+        is_financial = item.get("sector") in ("Bancos", "Seguros")
+
+        cvm_payout = cvm_row.get("payout_pct")
         payout_field = {
-            "value": old_payout.get("value"),
-            "source": old_payout.get("source") or "Pendente conferência CVM DFP/ITR",
-            "date": old_payout.get("date") or today_str,
-            "verified": False,
+            "value": cvm_payout if cvm_payout is not None else old_payout.get("value"),
+            "source": (
+                f"{cvm_row.get('source_doc')} [CD_CVM {cvm_row.get('cd_cvm')}]: {cvm_pipeline.CVM_FORMULAS['payout_pct']}"
+                if cvm_payout is not None
+                else (old_payout.get("source") or "Pendente conferência CVM DFP/ITR")
+            ),
+            "date": today_str if cvm_payout is not None else (old_payout.get("date") or today_str),
+            "verified": cvm_payout is not None,
         }
-        nd_field = {
-            "value": old_nd.get("value"),
-            "source": old_nd.get("source") or "Pendente conferência CVM DFP/ITR",
-            "date": old_nd.get("date") or today_str,
-            "verified": False,
-        }
+
+        if is_financial:
+            nd_field = {
+                "value": None,
+                "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
+                "date": today_str,
+                "verified": True,
+            }
+            cvm_roe = cvm_row.get("roe_pct")
+            roe_field = {
+                "value": cvm_roe,
+                "source": (
+                    f"{cvm_row.get('source_doc')} [CD_CVM {cvm_row.get('cd_cvm')}]: {cvm_pipeline.CVM_FORMULAS['roe_pct']}"
+                    if cvm_roe is not None
+                    else "Pendente conferência CVM DFP/ITR (ROE)"
+                ),
+                "date": today_str,
+                "verified": cvm_roe is not None,
+            }
+        else:
+            cvm_nd = cvm_row.get("net_debt_ebitda")
+            nd_field = {
+                "value": cvm_nd if cvm_nd is not None else old_nd.get("value"),
+                "source": (
+                    f"{cvm_row.get('source_doc')} [CD_CVM {cvm_row.get('cd_cvm')}]: {cvm_pipeline.CVM_FORMULAS['net_debt_ebitda']}"
+                    if cvm_nd is not None
+                    else (old_nd.get("source") or "Pendente conferência CVM DFP/ITR")
+                ),
+                "date": today_str if cvm_nd is not None else (old_nd.get("date") or today_str),
+                "verified": cvm_nd is not None,
+            }
+            roe_field = {
+                "value": cvm_row.get("roe_pct"),
+                "source": cvm_row.get("source_doc") or "Não exigido para não-financeiras",
+                "date": today_str,
+                "verified": cvm_row.get("roe_pct") is not None,
+            }
 
         fields_out = {
             "dy_12m_pct": {
@@ -300,9 +342,11 @@ def collect_b3_fundamentals(
                 "verified": yrs_verified,
             },
             "net_debt_ebitda": nd_field,
+            "roe_pct": roe_field,
         }
 
-        all_fields_verified = all(bool(fields_out[k]["verified"]) for k in ("dy_12m_pct", "payout_pct", "years_paying", "net_debt_ebitda"))
+        req_keys = ("dy_12m_pct", "payout_pct", "years_paying", "roe_pct") if is_financial else ("dy_12m_pct", "payout_pct", "years_paying", "net_debt_ebitda")
+        all_fields_verified = all(bool(fields_out[k]["verified"]) for k in req_keys)
         corp_reason = CORPORATE_EVENTS.get(sym)
 
         entry: dict[str, Any] = {

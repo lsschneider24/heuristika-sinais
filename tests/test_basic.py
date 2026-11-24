@@ -1033,7 +1033,11 @@ class SinaisVIPTestCase(unittest.TestCase):
             self.assertGreaterEqual(item["dy_12m_pct"], 6.0)
             self.assertLessEqual(item["payout_pct"], 80.0)
             self.assertGreaterEqual(item["years_paying"], 5)
-            self.assertLessEqual(item["net_debt_ebitda"], 3.0)
+            if item["sector"] in ("Bancos", "Seguros"):
+                self.assertIsNone(item["net_debt_ebitda"])
+                self.assertGreaterEqual(item["roe_pct"], 12.0)
+            else:
+                self.assertLessEqual(item["net_debt_ebitda"], 3.0)
             sec = item["sector"]
             sector_sums[sec] = sector_sums.get(sec, 0.0) + item["target_weight_pct"]
         for sec, tot in sector_sums.items():

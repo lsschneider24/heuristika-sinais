@@ -1,0 +1,408 @@
+{
+  "schema_version": "1.0.0",
+  "updated_at": "2026-11-23T15:10:00-03:00",
+  "updated_by": "system_init",
+  "governance": {
+    "paper_trading_only": true,
+    "allow_price_fallback": false,
+    "base_currency": "BRL",
+    "missing_data_label": "indisponível",
+    "stale_data_label": "dados desatualizados",
+    "fundamentals_max_age_days": 90,
+    "require_admin_for_approval": true,
+    "mandatory_disclaimer": "Laboratório de estudos: carteiras-modelo educativas e simuladas. Não constituem recomendação de investimento. Rentabilidade passada não garante resultados futuros.",
+    "backtest_warnings": [
+      "Impostos (IR sobre ganho de capital, dividendos, IOF ou come-cotas) não estão modelados nas simulações.",
+      "O universo atual de ativos listados gera viés de sobrevivência (survivorship bias) e viés de seleção por ter sido escolhido hoje."
+    ]
+  },
+  "llm": {
+    "enabled_default": false,
+    "provider": "gemini_free",
+    "max_requests_per_minute": 5,
+    "max_requests_per_day": 50,
+    "max_tokens_per_response": 450,
+    "fallback_to_deterministic": true
+  },
+  "backtest": {
+    "base_value": 100.0,
+    "lookback_days": 252,
+    "max_gap_days": 1,
+    "brokerage_bps": 5.0,
+    "slippage_bps": 10.0,
+    "execution_delay_bars": 1,
+    "benchmarks": {
+      "CDI": {
+        "source": "BCB_SGS",
+        "sgs_daily_series": 12,
+        "sgs_annual_series": 4389,
+        "return_type": "total_return_cdi",
+        "label": "CDI (BCB SGS Série 12)",
+        "description": "Taxa CDI diária (% a.d. - Série 12 SGS/BCB) e anualizada base 252 (Série 4389 SGS/BCB)"
+      },
+      "BOVA11": {
+        "source": "YAHOO",
+        "yahoo_symbol": "BOVA11.SA",
+        "return_type": "total_return_adjusted",
+        "label": "BOVA11.SA (Ajustado)",
+        "description": "ETF iShares Ibovespa B3 (preço ajustado)"
+      },
+      "IVVB11": {
+        "source": "YAHOO",
+        "yahoo_symbol": "IVVB11.SA",
+        "return_type": "total_return_adjusted",
+        "label": "IVVB11.SA (Ajustado)",
+        "description": "ETF iShares S&P 500 B3 em BRL (preço ajustado)"
+      },
+      "IBOV_PRICE": {
+        "source": "YAHOO_STOOQ",
+        "yahoo_symbol": "^BVSP",
+        "stooq_symbol": "^bvp",
+        "return_type": "price_index_only",
+        "label": "Ibovespa ^BVSP (índice de preço, sem dividendos)",
+        "description": "Índice de preço sem reinvestimento de dividendos (apenas referência)"
+      }
+    }
+  },
+  "strategies": {
+    "dividendos_barsi": {
+      "id": "dividendos_barsi",
+      "phase": 1,
+      "enabled": true,
+      "nome": "Dividendos Previdenciários",
+      "estilo": "Renda Passiva & Previdência Acionária",
+      "investidor_inspiracao": "Luiz Barsi Filho",
+      "fundamento": "Foco na acumulação de ações de setores perenes da B3 (energia, saneamento, bancos, seguros e telecom) com geração de caixa previsível, dividendos consistentes e endividamento controlado.",
+      "regras_selecao": [
+        "Ações líquidas da B3 (universo auditado de 35 ativos líquidos)",
+        "Dividend Yield 12m >= 6,0%",
+        "Payout <= 80,0% (exclui distribuições insustentáveis acima do lucro)",
+        "Histórico >= 5 anos consecutivos pagando dividendos",
+        "Não-financeiras: Dívida Líquida / EBITDA <= 3,0x",
+        "Financeiras (Bancos e Seguradoras): dispensa Dívida Líquida / EBITDA e exige ROE >= 12,0% + Payout <= 80,0%",
+        "Seleção de 10 a 15 ativos ranqueados por Dividend Yield 12m (ativos com evento_corporativo ficam fora)"
+      ],
+      "regras_rebalanceamento": [
+        "Periodicidade semestral (a cada 180 dias)",
+        "Teto máximo de 10,0% por ativo individual",
+        "Teto máximo de 25,0% por setor econômico",
+        "Proposta de exclusão imediata caso um ativo deixe de cumprir os filtros fundamentalistas"
+      ],
+      "principal_risco": "Concentração em setores regulados/domésticos e armadilhas de dividendo (value traps) caso o lucro futuro caia.",
+      "ultima_atualizacao": "2026-11-23",
+      "parametros": {
+        "min_dy_12m_pct": 6.0,
+        "max_payout_pct": 80.0,
+        "min_years_paying": 5,
+        "max_net_debt_ebitda": 3.0,
+        "min_roe_pct": 12.0,
+        "financial_sectors": ["Bancos", "Seguros"],
+        "min_assets": 10,
+        "max_assets": 15,
+        "max_weight_per_asset_pct": 10.0,
+        "max_weight_per_sector_pct": 25.0,
+        "rebalance_period_days": 180,
+        "drift_threshold_pp": 4.0,
+        "max_drawdown_alert_pct": 18.0
+      }
+    },
+    "indexacao_bogle": {
+      "id": "indexacao_bogle",
+      "phase": 1,
+      "enabled": true,
+      "nome": "Indexação Passiva Global",
+      "estilo": "Alocação Estrutural via Índices de Baixo Custo",
+      "investidor_inspiracao": "John C. Bogle",
+      "fundamento": "Captura o prêmio de mercado global e o juro real doméstico por meio de veículos indexados amplos, minimizando giro de carteira, custos friccionais e erros de stock picking.",
+      "regras_selecao": [
+        "40% em Renda Fixa Pós-Fixada / Soberana (Referência CDI / Tesouro Selic - LFTB11)",
+        "30% em Ações Brasil Indexadas (BOVA11 - Ibovespa)",
+        "30% em Ações Exterior Dolarizadas (IVVB11 - S&P 500)"
+      ],
+      "regras_rebalanceamento": [
+        "Rebalanceamento calendário anual (a cada 365 dias)",
+        "Gatilho por banda: proposta automática sempre que qualquer classe desviar > 5,0 pontos percentuais do peso-alvo"
+      ],
+      "principal_risco": "Risco de mercado sistêmico (beta = 1 nas parcelas acionárias) sem proteção tática ativa em bear markets prolongados.",
+      "ultima_atualizacao": "2026-11-23",
+      "parametros": {
+        "target_allocations": [
+          {
+            "symbol": "SELIC_CDI",
+            "label": "Tesouro Selic / CDI (Renda Fixa)",
+            "asset_class": "Renda Fixa",
+            "target_weight_pct": 40.0,
+            "source_type": "BCB_CDI"
+          },
+          {
+            "symbol": "BOVA11",
+            "yahoo_symbol": "BOVA11.SA",
+            "label": "iShares Ibovespa (Ações Brasil)",
+            "asset_class": "Ações Brasil",
+            "target_weight_pct": 30.0,
+            "source_type": "YAHOO"
+          },
+          {
+            "symbol": "IVVB11",
+            "yahoo_symbol": "IVVB11.SA",
+            "label": "iShares S&P 500 (Exterior USD)",
+            "asset_class": "Exterior",
+            "target_weight_pct": 30.0,
+            "source_type": "YAHOO"
+          }
+        ],
+        "rebalance_period_days": 365,
+        "drift_threshold_pp": 5.0,
+        "max_drawdown_alert_pct": 15.0
+      }
+    },
+    "trend_following_turtles": {
+      "id": "trend_following_turtles",
+      "phase": 1,
+      "enabled": true,
+      "nome": "Trend Following Sistemático",
+      "estilo": "Seguidor de Tendência & Paridade de Volatilidade",
+      "investidor_inspiracao": "Richard Dennis & William Eckhardt (Turtles)",
+      "fundamento": "Opera tendências direcionais confirmadas por médias móveis longas (MM50 e MM200), cortando perdas rapidamente na perda de tendência ou stop por ATR e dimensionando posições pelo inverso da volatilidade.",
+      "regras_selecao": [
+        "Condição de entrada: Preço de fechamento > Média Móvel de 200 dias (MM200) E Média Móvel de 50 dias (MM50) > MM200",
+        "Condição de saída: Fechamento abaixo da MM200 OU queda >= 2,0 × ATR(14) abaixo do topo recente",
+        "Tamanho de posição inversamente proporcional à volatilidade (1 / ATR% diário), normalizado entre os ativos aprovados",
+        "Parcela não alocada ou ativos fora de tendência permanecem em Caixa remunerado a 100% do CDI"
+      ],
+      "regras_rebalanceamento": [
+        "Verificação e proposta de ajuste semanal (a cada 7 dias)",
+        "Alerta imediato se algum ativo em carteira perder a MM200 ou acionar Stop por ATR"
+      ],
+      "principal_risco": "Mercados laterais (whipsaws) que geram entradas em topo e saídas em fundo consecutivas.",
+      "ultima_atualizacao": "2026-11-23",
+      "parametros": {
+        "fast_ma_days": 50,
+        "slow_ma_days": 200,
+        "atr_period_days": 14,
+        "atr_stop_multiplier": 2.0,
+        "max_weight_per_asset_pct": 25.0,
+        "rebalance_period_days": 7,
+        "drift_threshold_pp": 5.0,
+        "max_drawdown_alert_pct": 20.0,
+        "universe": [
+          {"symbol": "BOVA11", "yahoo_symbol": "BOVA11.SA", "asset_class": "Ações Brasil"},
+          {"symbol": "IVVB11", "yahoo_symbol": "IVVB11.SA", "asset_class": "Exterior"},
+          {"symbol": "PETR4", "yahoo_symbol": "PETR4.SA", "asset_class": "Ações Brasil"},
+          {"symbol": "VALE3", "yahoo_symbol": "VALE3.SA", "asset_class": "Ações Brasil"},
+          {"symbol": "ITUB4", "yahoo_symbol": "ITUB4.SA", "asset_class": "Ações Brasil"},
+          {"symbol": "WEGE3", "yahoo_symbol": "WEGE3.SA", "asset_class": "Ações Brasil"},
+          {"symbol": "GC=F", "yahoo_symbol": "GC=F", "asset_class": "Ouro / Commodities"},
+          {"symbol": "BTC-USD", "yahoo_symbol": "BTC-USD", "asset_class": "Cripto"}
+        ]
+      }
+    },
+    "value_graham": {
+      "id": "value_graham",
+      "phase": 2,
+      "enabled": false,
+      "nome": "Value Investing & Margem de Segurança",
+      "estilo": "Desconto Fundamentalista & Múltiplos Baixos",
+      "investidor_inspiracao": "Benjamin Graham & Warren Buffett",
+      "fundamento": "Seleção de empresas negociadas com desconto significativo em relação ao valor intrínseco e múltiplos históricos (P/L, P/VP e EV/EBITDA), exigindo margem de segurança.",
+      "regras_selecao": [
+        "Estrutura preparada para Fase 2: P/L <= 10x, P/VP <= 1,5x, ROE >= 12% e Margem de Segurança >= 25%"
+      ],
+      "regras_rebalanceamento": [
+        "Reavaliação trimestral pós-divulgação de balanços (ITR/DFP)"
+      ],
+      "principal_risco": "Armadilhas de valor (empresas baratas por deterioração estrutural do negócio).",
+      "ultima_atualizacao": "2026-11-23",
+      "parametros": {
+        "max_pe": 10.0,
+        "max_pb": 1.5,
+        "min_roe_pct": 12.0,
+        "rebalance_period_days": 90
+      }
+    },
+    "qualidade_compounders": {
+      "id": "qualidade_compounders",
+      "phase": 2,
+      "enabled": false,
+      "nome": "Qualidade & Compounders",
+      "estilo": "Alto ROIC, Fossos Competitivos & Crescimento de Lucros",
+      "investidor_inspiracao": "Charlie Munger & Terry Smith",
+      "fundamento": "Foco em empresas com elevado retorno sobre o capital investido (ROIC), margens resilientes, baixa necessidade de alavancagem e reinvestimento composto no longo prazo.",
+      "regras_selecao": [
+        "Estrutura preparada para Fase 2: ROIC >= 15%, Margem Líquida >= 12%, Dívida Líquida/EBITDA <= 1,5x e CAGR de Lucros 5a > IPCA"
+      ],
+      "regras_rebalanceamento": [
+        "Rebalanceamento anual com baixo giro (buy and monitor)"
+      ],
+      "principal_risco": "Compressão de múltiplos em ciclos de alta rápida nas taxas de juros reais.",
+      "ultima_atualizacao": "2026-11-23",
+      "parametros": {
+        "min_roic_pct": 15.0,
+        "min_net_margin_pct": 12.0,
+        "max_net_debt_ebitda": 1.5,
+        "rebalance_period_days": 365
+      }
+    },
+    "fatorial_multifactor": {
+      "id": "fatorial_multifactor",
+      "phase": 2,
+      "enabled": false,
+      "nome": "Fatorial Quantitativo (Multi-Factor)",
+      "estilo": "Combinação Sistemática de Fatores (Valor, Momentum, Qualidade & Baixa Vol)",
+      "investidor_inspiracao": "Eugene Fama, Kenneth French & Cliff Asness",
+      "fundamento": "Ranqueamento multifatorial combinando escores normalizados (Z-Score) de Valor, Momentum 12m-1m, Qualidade Operacional e Baixa Volatilidade.",
+      "regras_selecao": [
+        "Estrutura preparada para Fase 2: Top decil do score composto Z(Value) + Z(Momentum) + Z(Quality) + Z(LowVol)"
+      ],
+      "regras_rebalanceamento": [
+        "Rebalanceamento trimestral sistemático por ranking"
+      ],
+      "principal_risco": "Períodos de rotação brusca entre fatores (factor crowding e reversão de momentum).",
+      "ultima_atualizacao": "2026-11-23",
+      "parametros": {
+        "weights_factors": {"value": 0.25, "momentum": 0.25, "quality": 0.25, "low_vol": 0.25},
+        "top_n_assets": 12,
+        "rebalance_period_days": 90
+      }
+    },
+    "dual_momentum_global": {
+      "id": "dual_momentum_global",
+      "phase": 1,
+      "enabled": true,
+      "nome": "Dual Momentum Global",
+      "estilo": "Momentum Relativo Regional + Momentum Absoluto vs Ativo Livre de Risco",
+      "investidor_inspiracao": "Gary Antonacci",
+      "fundamento": "Compara o momentum de 12 meses entre blocos globais (EUA, Internacional e Brasil) na mesma moeda-base e migra para Renda Fixa Pós-Fixada quando o líder não supera o ativo livre de risco.",
+      "regras_selecao": [
+        "Momentum relativo: escolhe o líder em retorno 12m (na moeda-base configurada) entre IVV, VGK/EEM e BOVA11.SA",
+        "Momentum absoluto: só aloca no líder se o retorno 12m na moeda-base superar o ativo livre de risco na mesma moeda (CDI se BRL; SHY se USD)",
+        "Se falhar no momentum absoluto, aloca 100% no ativo livre de risco da moeda-base"
+      ],
+      "regras_rebalanceamento": [
+        "Verificação mensal (21 pregões), execução em t+1 com corretagem e slippage"
+      ],
+      "principal_risco": "Atraso de sinal em reversões em V após quedas rápidas de mercado.",
+      "ultima_atualizacao": "2026-11-23",
+      "parametros": {
+        "lookback_days": 252,
+        "rebalance_period_days": 30,
+        "base_currency": "BRL",
+        "candidates": [
+          {"symbol": "IVV", "yahoo_symbol": "IVV", "currency": "USD", "region": "EUA", "br_equivalent": "IVVB11.SA"},
+          {"symbol": "VGK", "yahoo_symbol": "VGK", "currency": "USD", "region": "Europa"},
+          {"symbol": "EEM", "yahoo_symbol": "EEM", "currency": "USD", "region": "Emergentes"},
+          {"symbol": "BOVA11.SA", "yahoo_symbol": "BOVA11.SA", "currency": "BRL", "region": "Brasil"}
+        ],
+        "usd_risk_free_symbol": "SHY",
+        "max_drawdown_alert_pct": 18.0
+      }
+    },
+    "risk_parity_simplified": {
+      "id": "risk_parity_simplified",
+      "phase": 1,
+      "enabled": true,
+      "nome": "Paridade de risco simplificada (inspirada em All Weather)",
+      "estilo": "Ponderação por Inverso da Volatilidade Sem Alavancagem",
+      "investidor_inspiracao": "Ray Dalio (versão simplificada sem alavancagem)",
+      "fundamento": "Distribui pesos pelo inverso da volatilidade realizada entre Ações, Renda Fixa, Ouro e Commodities com tetos por ativo e classe. Diferente do All Weather institucional de Dalio, esta versão NÃO usa alavancagem em títulos e impõe teto máximo por ativo.",
+      "regras_selecao": [
+        "Pesos proporcionais a 1 / volatilidade realizada (janela 63 pregões), sem alavancagem",
+        "Teto máximo de 35,0% por ativo e 50,0% por classe para evitar domínio de títulos curtos (ex.: SHY)"
+      ],
+      "regras_rebalanceamento": [
+        "Rebalanceamento trimestral (63 pregões) em t+1 com corretagem e slippage"
+      ],
+      "principal_risco": "Sem alavancagem na renda fixa, choques simultâneos de juros e ações podem reduzir a eficiência defensiva.",
+      "ultima_atualizacao": "2026-11-23",
+      "parametros": {
+        "vol_window_days": 63,
+        "rebalance_period_days": 90,
+        "max_weight_per_asset_pct": 35.0,
+        "max_weight_per_class_pct": 50.0,
+        "max_drawdown_alert_pct": 15.0,
+        "universe": [
+          {"symbol": "IVV", "yahoo_symbol": "IVV", "asset_class": "Ações", "region": "EUA", "currency": "USD", "br_equivalent": "IVVB11.SA"},
+          {"symbol": "BOVA11.SA", "yahoo_symbol": "BOVA11.SA", "asset_class": "Ações", "region": "Brasil", "currency": "BRL"},
+          {"symbol": "TLT", "yahoo_symbol": "TLT", "asset_class": "Renda Fixa", "region": "EUA", "currency": "USD"},
+          {"symbol": "SHY", "yahoo_symbol": "SHY", "asset_class": "Renda Fixa", "region": "EUA", "currency": "USD"},
+          {"symbol": "GLD", "yahoo_symbol": "GLD", "asset_class": "Ouro", "region": "Global", "currency": "USD", "br_equivalent": "GOLD11.SA"},
+          {"symbol": "DBC", "yahoo_symbol": "DBC", "asset_class": "Commodities", "region": "Global", "currency": "USD"}
+        ]
+      }
+    },
+    "radar_top_n": {
+      "id": "radar_top_n",
+      "phase": 1,
+      "enabled": true,
+      "nome": "Radar Top-N",
+      "estilo": "Seleção Sistemática pelo Score Heurístico do Radar Global",
+      "investidor_inspiracao": "Laboratório Quantitativo Heurístika",
+      "fundamento": "Seleciona os Top N ativos ranqueados pelo score heurístico composto do Radar Global (sem poder preditivo comprovado), com rebalanceamento mensal em t+1 para auditar empiricamente se o score agrega valor frente aos benchmarks.",
+      "regras_selecao": [
+        "Calcula o score heurístico composto (Momentum 12-1, Tendência, Força Relativa, Baixa Vol, Drawdown) sem look-ahead",
+        "Seleciona os Top N ativos com histórico mínimo (252 pregões) em pesos iguais respeitando teto por ativo"
+      ],
+      "regras_rebalanceamento": [
+        "Rebalanceamento mensal (21 pregões) com execução em t+1 e custos"
+      ],
+      "principal_risco": "Giro mensal elevado e rotação brusca de fatores/regiões em mercados sem tendência.",
+      "ultima_atualizacao": "2026-11-23",
+      "parametros": {
+        "top_n": 5,
+        "min_history_days": 252,
+        "rebalance_period_days": 30,
+        "max_weight_per_asset_pct": 25.0,
+        "max_drawdown_alert_pct": 22.0
+      }
+    }
+  },
+  "global_radar": {
+    "score_disclaimer": "Pontuação heurística, sem poder preditivo comprovado.",
+    "benchmark_symbol": "ACWI",
+    "fx_symbol": "USDBRL=X",
+    "correlation_window_days": 126,
+    "high_correlation_threshold": 0.75,
+    "score_weights": {
+      "momentum_12_1": 0.30,
+      "trend": 0.25,
+      "relative_strength": 0.20,
+      "low_volatility": 0.15,
+      "drawdown_control": 0.10
+    },
+    "regime_rules": {
+      "convention_note": "Limiares configuráveis definidos como convenções didáticas de laboratório.",
+      "aggregation_rule": "RISK-ON se >= 3 de 4 sinais forem risk-on; RISK-OFF se >= 3 de 4 forem risk-off; caso contrário NEUTRO.",
+      "min_signals_for_direction": 3,
+      "vix_symbol": "^VIX",
+      "vix_risk_on_below": 18.0,
+      "vix_risk_off_above": 25.0,
+      "yield_10y_symbol": "^TNX",
+      "yield_3m_symbol": "^IRX",
+      "yield_units_note": "Valores no Yahoo Finance já expressos em pontos percentuais (% a.a., ex.: 4.25 = 4,25%).",
+      "yield_curve_risk_on_above": 0.25,
+      "yield_curve_risk_off_below": -0.25,
+      "dxy_symbol": "DX-Y.NYB",
+      "credit_hyg_symbol": "HYG",
+      "credit_ief_symbol": "IEF"
+    },
+    "universe": [
+      {"symbol": "IVV", "yahoo_symbol": "IVV", "name": "iShares Core S&P 500", "asset_class": "Ações EUA", "region": "EUA", "currency": "USD", "br_equivalent": "IVVB11.SA"},
+      {"symbol": "QQQ", "yahoo_symbol": "QQQ", "name": "Invesco QQQ Nasdaq 100", "asset_class": "Ações EUA", "region": "EUA", "currency": "USD", "br_equivalent": "NASD11.SA"},
+      {"symbol": "VGK", "yahoo_symbol": "VGK", "name": "Vanguard FTSE Europe", "asset_class": "Europa", "region": "Europa", "currency": "USD"},
+      {"symbol": "EWJ", "yahoo_symbol": "EWJ", "name": "iShares MSCI Japan", "asset_class": "Japão", "region": "Japão", "currency": "USD"},
+      {"symbol": "EEM", "yahoo_symbol": "EEM", "name": "iShares MSCI Emerging Markets", "asset_class": "Emergentes", "region": "Emergentes", "currency": "USD"},
+      {"symbol": "MCHI", "yahoo_symbol": "MCHI", "name": "iShares MSCI China", "asset_class": "China", "region": "China", "currency": "USD"},
+      {"symbol": "INDA", "yahoo_symbol": "INDA", "name": "iShares MSCI India", "asset_class": "Índia", "region": "Índia", "currency": "USD"},
+      {"symbol": "BOVA11.SA", "yahoo_symbol": "BOVA11.SA", "name": "iShares Ibovespa B3", "asset_class": "Brasil", "region": "Brasil", "currency": "BRL"},
+      {"symbol": "EWZ", "yahoo_symbol": "EWZ", "name": "iShares MSCI Brazil", "asset_class": "Brasil", "region": "Brasil", "currency": "USD", "br_equivalent": "BOVA11.SA"},
+      {"symbol": "TLT", "yahoo_symbol": "TLT", "name": "iShares 20+ Year Treasury", "asset_class": "Renda Fixa", "region": "EUA", "currency": "USD"},
+      {"symbol": "SHY", "yahoo_symbol": "SHY", "name": "iShares 1-3 Year Treasury", "asset_class": "Renda Fixa", "region": "EUA", "currency": "USD"},
+      {"symbol": "HYG", "yahoo_symbol": "HYG", "name": "iShares High Yield Corporate", "asset_class": "Renda Fixa", "region": "EUA", "currency": "USD"},
+      {"symbol": "GLD", "yahoo_symbol": "GLD", "name": "SPDR Gold Shares", "asset_class": "Ouro", "region": "Global", "currency": "USD", "br_equivalent": "GOLD11.SA"},
+      {"symbol": "DBC", "yahoo_symbol": "DBC", "name": "Invesco DB Commodity Index", "asset_class": "Commodities", "region": "Global", "currency": "USD"},
+      {"symbol": "VNQ", "yahoo_symbol": "VNQ", "name": "Vanguard Real Estate REIT", "asset_class": "Imóveis", "region": "EUA", "currency": "USD"},
+      {"symbol": "BTC-USD", "yahoo_symbol": "BTC-USD", "name": "Bitcoin Spot USD", "asset_class": "Cripto", "region": "Global", "currency": "USD", "br_equivalent": "HASH11.SA"},
+      {"symbol": "ETH-USD", "yahoo_symbol": "ETH-USD", "name": "Ethereum Spot USD", "asset_class": "Cripto", "region": "Global", "currency": "USD", "br_equivalent": "ETHE11.SA"}
+    ]
+  }
+}

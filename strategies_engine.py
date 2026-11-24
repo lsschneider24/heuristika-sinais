@@ -277,6 +277,8 @@ class DividendosBarsiStrategy(BaseStrategy):
         max_payout = float(self.params.get("max_payout_pct", 80.0))
         min_years = int(self.params.get("min_years_paying", 5))
         max_nd = float(self.params.get("max_net_debt_ebitda", 3.0))
+        min_roe = float(self.params.get("min_roe_pct", 12.0))
+        financial_sectors = set(self.params.get("financial_sectors") or ["Bancos", "Seguros"])
         min_assets = int(self.params.get("min_assets", 10))
         max_assets = int(self.params.get("max_assets", 15))
         max_asset_w = float(self.params.get("max_weight_per_asset_pct", 10.0))
@@ -303,7 +305,9 @@ class DividendosBarsiStrategy(BaseStrategy):
             payout = vals.get("payout_pct")
             yrs = vals.get("years_paying")
             nd = vals.get("net_debt_ebitda")
+            roe = vals.get("roe_pct")
             sector = st.get("sector", INDISPONIVEL)
+            is_financial = sector in financial_sectors
 
             if not st.get("liquid_b3"):
                 rejected.append({"symbol": st["symbol"], "reason": "Baixa liquidez B3"})
@@ -314,7 +318,8 @@ class DividendosBarsiStrategy(BaseStrategy):
                     "reason": f"Evento corporativo ativo: {st.get('corporate_event_reason') or 'mudança recente de política de dividendos'}",
                 })
                 continue
-            if any(v == INDISPONIVEL or v is None for v in (dy, payout, yrs, nd, sector)):
+            req_vals = (dy, payout, yrs, roe, sector) if is_financial else (dy, payout, yrs, nd, sector)
+            if any(v == INDISPONIVEL or v is None for v in req_vals):
                 missing_count += 1
                 rejected.append({
                     "symbol": st["symbol"],
@@ -329,7 +334,10 @@ class DividendosBarsiStrategy(BaseStrategy):
                 reasons.append(f"Payout {payout}% > {max_payout}%")
             if int(yrs) < min_years:
                 reasons.append(f"Anos pagando {yrs} < {min_years}")
-            if float(nd) > max_nd:
+            if is_financial:
+                if float(roe) < min_roe:
+                    reasons.append(f"ROE {roe}% < {min_roe}%")
+            elif float(nd) > max_nd:
                 reasons.append(f"Dív.Líq/EBITDA {nd}x > {max_nd}x")
 
             if reasons:
@@ -344,7 +352,8 @@ class DividendosBarsiStrategy(BaseStrategy):
                 "dy_12m_pct": float(dy),
                 "payout_pct": float(payout),
                 "years_paying": int(yrs),
-                "net_debt_ebitda": float(nd),
+                "net_debt_ebitda": None if is_financial else float(nd),
+                "roe_pct": float(roe) if (roe is not None and roe != INDISPONIVEL) else None,
                 "data_date": st.get("reference_date"),
             })
 
@@ -500,6 +509,7 @@ def _allocate_with_caps(
             "payout_pct": it["payout_pct"],
             "years_paying": it["years_paying"],
             "net_debt_ebitda": it["net_debt_ebitda"],
+            "roe_pct": it.get("roe_pct"),
         })
     return out
 

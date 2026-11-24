@@ -105,7 +105,7 @@ def load_b3_fundamentals(
         ref_date_str = INDISPONIVEL
         freshness_label = INDISPONIVEL
 
-    required_fields = ("dy_12m_pct", "payout_pct", "years_paying", "net_debt_ebitda")
+    required_fields = ("dy_12m_pct", "payout_pct", "years_paying", "net_debt_ebitda", "roe_pct")
     default_sources = raw.get("default_field_sources") or {}
     normalized_stocks: list[dict[str, Any]] = []
     by_symbol: dict[str, dict[str, Any]] = {}
@@ -154,6 +154,9 @@ def load_b3_fundamentals(
         sector = item.get("sector") or INDISPONIVEL
         if sector == INDISPONIVEL:
             missing_fields.append("sector")
+        is_financial = sector in ("Bancos", "Seguros")
+        sector_req = ("dy_12m_pct", "payout_pct", "years_paying", "roe_pct") if is_financial else ("dy_12m_pct", "payout_pct", "years_paying", "net_debt_ebitda")
+        sector_missing = [f for f in missing_fields if f in sector_req or f == "sector"]
 
         stock_entry = {
             "symbol": symbol,
@@ -163,12 +166,12 @@ def load_b3_fundamentals(
             "liquid_b3": bool(item.get("liquid_b3", True)),
             "evento_corporativo": bool(item.get("evento_corporativo", False)),
             "corporate_event_reason": item.get("corporate_event_reason"),
-            "verified": stock_verified and len(missing_fields) == 0,
+            "verified": stock_verified and len(sector_missing) == 0,
             "origin_type": item.get("origin_type") or raw.get("origin_type") or "manual_cvm_ri_snapshot",
             "fields": norm_fields,
             "values": flat_values,
-            "missing_fields": missing_fields,
-            "has_missing_data": len(missing_fields) > 0,
+            "missing_fields": sector_missing,
+            "has_missing_data": len(sector_missing) > 0,
             "reference_date": ref_date_str,
             "is_stale": is_stale,
             "freshness_label": freshness_label,
