@@ -855,6 +855,241 @@ class SinaisVIPTestCase(unittest.TestCase):
         finally:
             shutil.rmtree(tmp_out, ignore_errors=True)
 
+    def test_phase1_strategy_foundation_and_strict_data(self):
+        from pathlib import Path
+        from unittest.mock import patch
+        import market_data
+
+        # 1. strategies_config.json versionado com as 3 estratégias Fase 1 e 3 Fase 2 + LLM desligado por padrão
+        cfg = market_data.load_strategies_config()
+        self.assertIn("strategies", cfg)
+        strats = cfg["strategies"]
+        for sid in ("dividendos_barsi", "indexacao_bogle", "trend_following_turtles"):
+            self.assertIn(sid, strats)
+            self.assertEqual(strats[sid]["phase"], 1)
+            self.assertTrue(strats[sid]["enabled"])
+        for sid2 in ("value_graham", "qualidade_compounders", "fatorial_multifactor"):
+            self.assertIn(sid2, strats)
+            self.assertEqual(strats[sid2]["phase"], 2)
+        self.assertFalse(cfg["llm"]["enabled_default"])
+        self.assertFalse(config.LLM_ENABLED)
+
+        # 2. Snapshot fundamentalista B3 via fixture sintética (30 a 40 ações, campo não verificado/ausente='indisponível', >90d='dados desatualizados')
+        import json
+        from tests.fixtures_strategies import make_synthetic_b3_snapshot_json
+        tmp_snap = Path(tempfile.mktemp(suffix=".json"))
+        try:
+            tmp_snap.write_text(json.dumps(make_synthetic_b3_snapshot_json("2026-11-15", 32)), encoding="utf-8")
+            fund_ok = market_data.load_b3_fundamentals(snapshot_path=tmp_snap, reference_today="2026-11-23")
+            self.assertEqual(fund_ok["status"], "ok")
+            self.assertFalse(fund_ok["is_stale"])
+            self.assertGreaterEqual(fund_ok["universe_count"], 30)
+            self.assertLessEqual(fund_ok["universe_count"], 40)
+
+            syn_unver = fund_ok["stocks_by_symbol"]["SYN_UNVER"]
+            self.assertEqual(syn_unver["values"]["dy_12m_pct"], "indisponível")
+            self.assertFalse(syn_unver["verified"])
+            self.assertTrue(syn_unver["fields"]["dy_12m_pct"]["source"])
+
+            syn_miss = fund_ok["stocks_by_symbol"]["SYN_MISS"]
+            self.assertEqual(syn_miss["values"]["payout_pct"], "indisponível")
+            self.assertEqual(syn_miss["values"]["net_debt_ebitda"], "indisponível")
+            self.assertIn("payout_pct", syn_miss["missing_fields"])
+
+            # Snapshot com > 90 dias sinaliza 'dados desatualizados'
+            fund_stale = market_data.load_b3_fundamentals(snapshot_path=tmp_snap, reference_today="2027-03-15")
+            self.assertTrue(fund_stale["is_stale"])
+            self.assertEqual(fund_stale["status"], "dados desatualizados")
+            self.assertEqual(fund_stale["freshness_label"], "dados desatualizados")
+        finally:
+            tmp_snap.unlink(missing_ok=True)
+
+        # 3. Modo estrito (allow_fallback=False): NUNCA retorna dado estimado/simulado quando a fonte falha
+        with patch.object(signals_engine.requests, "get", side_effect=RuntimeError("Offline")):
+            h, l, c, fonte = signals_engine.get_candles("Cripto", "BTC/USD", allow_fallback=False)
+            self.assertEqual(h, "indisponível")
+            self.assertEqual(c, "indisponível")
+            self.assertEqual(fonte, "indisponível")
+
+            px, px_src = signals_engine.get_current_price("Cripto", "BTC/USD", allow_fallback=False)
+            self.assertEqual(px, "indisponível")
+            self.assertEqual(px_src, "indisponível")
+
+            # Quando allow_fallback=True (apenas módulo legado de sinais), rotula explicitamente como SIMULADO
+            _, _, _, sim_src = signals_engine.get_candles("Cripto", "BTC/USD", allow_fallback=True)
+            self.assertIn("SIMULADO", sim_src)
+            _, sim_px_src = signals_engine.get_current_price("Cripto", "BTC/USD", allow_fallback=True)
+            self.assertIn("SIMULADO", sim_px_src)
+
+        with patch.object(market_data.requests, "get", side_effect=RuntimeError("Offline")):
+            strict_daily = market_data.get_strict_daily_candles("PETR4", allow_fallback=False)
+            self.assertEqual(strict_daily["status"], "indisponível")
+            self.assertEqual(strict_daily["last_price"], "indisponível")
+            self.assertEqual(strict_daily["candles"], "indisponível")
+            self.assertFalse(strict_daily["is_simulated"])
+
+            # CDI BCB SGS sem rede e sem cache retorna 'indisponível' (nunca 11,25% fixo)
+            tmp_cdi_cache = Path(tempfile.mktemp(suffix=".json"))
+            cdi_fail = market_data.fetch_bcb_cdi_series(allow_cache=False, cache_path=tmp_cdi_cache)
+            self.assertEqual(cdi_fail["status"], "indisponível")
+            self.assertEqual(cdi_fail["annual_rate_pct"], "indisponível")
+            self.assertEqual(cdi_fail["daily_rates"], "indisponível")
+
+        # 4. Tabelas SQLite de auditoria, versão de parâmetros e propostas
+        log_id = database.log_strategy_decision(
+            "dividendos_barsi",
+            "DY >= 6% e Payout <= 80%",
+            {"BBAS3": {"dy": 9.8, "payout": 45.0}},
+            "Ativo aprovado no filtro determinístico",
+            actor="teste_fase1",
+        )
+        self.assertGreater(log_id, 0)
+        logs = database.list_strategy_logs("dividendos_barsi", limit=5)
+        self.assertGreaterEqual(len(logs), 1)
+        self.assertEqual(logs[0]["actor"], "teste_fase1")
+
+        prop = database.create_strategy_proposal(
+            strategy_id="indexacao_bogle",
+            proposal_type="REBALANCEAMENTO",
+            rule_triggered="Desvio > 5,0 pp em Exterior (IVVB11)",
+            before_data=[{"symbol": "IVVB11", "weight": 36.2}],
+            after_data=[{"symbol": "IVVB11", "weight": 30.0}],
+            rationale="Realinhar IVVB11 para o alvo de 30%",
+        )
+        self.assertEqual(prop["status"], "PENDENTE")
+        decided = database.decide_strategy_proposal(prop["id"], "APROVADA", "admin")
+        self.assertEqual(decided["status"], "APROVADA")
+        self.assertEqual(decided["decided_by"], "admin")
+
+        ver = database.record_strategy_param_version(
+            "dividendos_barsi",
+            "admin",
+            {"min_dy_12m_pct": 6.0},
+            {"min_dy_12m_pct": 6.5},
+            reason="Ajuste de filtro mínimo de DY",
+        )
+        self.assertEqual(ver["new_params"]["min_dy_12m_pct"], 6.5)
+
+    def test_phase1_prerequisites_and_phase2a_deterministic_engine(self):
+        import sqlite3
+        from pathlib import Path
+        import strategies_engine
+        from tests.fixtures_strategies import make_offline_market_ctx
+
+        # Pré-requisito 1: fallback simulado desligado por padrão em config.py
+        default_db = config._default_database_path()
+        self.assertNotIn("Meu Drive", default_db)
+        self.assertIn("Heuristika", default_db)
+
+        # Pré-requisito 2: triggers SQLite impedem UPDATE e DELETE em strategy_audit_log
+        lid = database.log_strategy_decision(
+            "indexacao_bogle",
+            "Regra teste imutabilidade",
+            {"step": "init"},
+            "Decisão registrada",
+            actor="teste_imutavel",
+        )
+        conn = database.get_connection()
+        with self.assertRaises(sqlite3.DatabaseError):
+            conn.execute("UPDATE strategy_audit_log SET decision = 'hacked' WHERE id = ?;", (lid,))
+        with self.assertRaises(sqlite3.DatabaseError):
+            conn.execute("DELETE FROM strategy_audit_log WHERE id = ?;", (lid,))
+        conn.close()
+
+        # Pré-requisito 3: backup do SQLite funciona
+        bkp_dir = tempfile.mkdtemp(prefix="hk_bkp_")
+        try:
+            bkp_file = database.backup_database(backup_dir=bkp_dir)
+            self.assertTrue(Path(bkp_file).is_file())
+            self.assertGreater(Path(bkp_file).stat().st_size, 0)
+        finally:
+            import shutil
+            shutil.rmtree(bkp_dir, ignore_errors=True)
+
+        # Pré-requisito 4: snapshot B3 possui flag verified=false até o Auditor registrar evidência
+        import market_data
+        fund = market_data.load_b3_fundamentals(reference_today="2026-11-23")
+        self.assertFalse(fund["stocks_by_symbol"]["BBAS3"]["verified"])
+        self.assertFalse(fund["stocks_by_symbol"]["CSAN3"]["verified"])
+
+        # Etapa 2A + 2B: Catálogo completo (6 Fase 1 ativas + 3 Fase 2)
+        strats = strategies_engine.list_strategies()
+        self.assertEqual(len(strats), 9)
+
+        ctx = make_offline_market_ctx(with_gap=True)
+        from tests.fixtures_strategies import make_verified_b3_fundamentals
+        ctx["fundamentals"] = make_verified_b3_fundamentals(12)
+
+        # Estratégia 1: Dividendos / Barsi (point-in-time, sem backtest histórico)
+        res_div = strategies_engine.run_strategy("dividendos_barsi", market_ctx=ctx, persist=True)
+        self.assertFalse(res_div["backtest"]["available"])
+        self.assertEqual(res_div["backtest"]["mode"], "prospective_paper_only")
+        weights_div = res_div["target_weights"]
+        self.assertGreaterEqual(len(weights_div), 10)
+        self.assertLessEqual(len(weights_div), 15)
+        sector_sums = {}
+        for item in weights_div:
+            self.assertLessEqual(item["target_weight_pct"], 10.0)
+            self.assertGreaterEqual(item["dy_12m_pct"], 6.0)
+            self.assertLessEqual(item["payout_pct"], 80.0)
+            self.assertGreaterEqual(item["years_paying"], 5)
+            self.assertLessEqual(item["net_debt_ebitda"], 3.0)
+            sec = item["sector"]
+            sector_sums[sec] = sector_sums.get(sec, 0.0) + item["target_weight_pct"]
+        for sec, tot in sector_sums.items():
+            self.assertLessEqual(tot, 25.01, f"Setor {sec} ultrapassou 25%: {tot}%")
+        self.assertAlmostEqual(sum(x["target_weight_pct"] for x in weights_div), 100.0, delta=0.2)
+
+        # Estratégia 2: Indexação / Bogle (backtest base 100 t+1 + benchmarks ajustados)
+        res_bogle = strategies_engine.run_strategy("indexacao_bogle", market_ctx=ctx, persist=True)
+        bt_bogle = res_bogle["backtest"]
+        self.assertTrue(bt_bogle["available"])
+        self.assertEqual(bt_bogle["curve"][0]["value"], 100.0)
+        self.assertGreater(len(bt_bogle["calendar_gaps"]), 0)
+        self.assertIn("CDI", bt_bogle["benchmarks"])
+        self.assertIn("BOVA11", bt_bogle["benchmarks"])
+        self.assertIn("IVVB11", bt_bogle["benchmarks"])
+        self.assertIn("IBOV_PRICE", bt_bogle["benchmarks"])
+        self.assertIn("índice de preço, sem dividendos", bt_bogle["benchmarks"]["IBOV_PRICE"]["label"])
+        self.assertIsInstance(bt_bogle["metrics"]["sharpe_vs_cdi"], float)
+
+        # Estratégia 3: Trend Following / Turtles (backtest base 100 t+1, limiting_asset)
+        res_turtles = strategies_engine.run_strategy("trend_following_turtles", market_ctx=ctx, persist=True)
+        bt_turtles = res_turtles["backtest"]
+        self.assertTrue(bt_turtles["available"])
+        self.assertEqual(bt_turtles["curve"][0]["value"], 100.0)
+        self.assertEqual(bt_turtles["limiting_asset"], "PETR4")
+        self.assertGreater(len(res_turtles["target_weights"]), 0)
+
+        # Governança: proposta pendente e aprovação por Admin
+        prop_res = strategies_engine.propose_rebalance("indexacao_bogle", market_ctx=ctx, actor="agente_teste")
+        self.assertTrue(prop_res["created"])
+        prop = prop_res["proposal"]
+        self.assertEqual(prop["status"], "PENDENTE")
+        decided = strategies_engine.approve_or_reject_proposal(prop["id"], "APROVADA", "admin_master", is_admin=True)
+        self.assertEqual(decided["status"], "APROVADA")
+        self.assertEqual(decided["decided_by"], "admin_master")
+
+    def test_dividendos_excludes_evento_corporativo(self):
+        import strategies_engine
+        from tests.fixtures_strategies import make_offline_market_ctx, make_verified_b3_fundamentals
+
+        ctx = make_offline_market_ctx(with_gap=False)
+        fund = make_verified_b3_fundamentals(12)
+        # Mesmo com todos os campos verificados e aprovados, evento_corporativo=True exclui o ativo
+        bbas_synth = dict(fund["stocks"][0])
+        bbas_synth["symbol"] = "BBAS3"
+        bbas_synth["evento_corporativo"] = True
+        bbas_synth["corporate_event_reason"] = "Redução de payout anunciada"
+        bbas_synth["values"] = {"dy_12m_pct": 12.5, "payout_pct": 40.0, "years_paying": 15, "net_debt_ebitda": 0.0, "roe_pct": 18.0}
+        fund["stocks"][0] = bbas_synth
+        fund["stocks_by_symbol"]["BBAS3"] = bbas_synth
+        ctx["fundamentals"] = fund
+
+        res = strategies_engine.run_strategy("dividendos_barsi", market_ctx=ctx, persist=False)
+        selected_syms = {w["symbol"] for w in res.get("target_weights", [])}
+        self.assertNotIn("BBAS3", selected_syms)
+
 
 if __name__ == "__main__":
     unittest.main()
