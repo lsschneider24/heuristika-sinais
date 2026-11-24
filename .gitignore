@@ -4,5 +4,9 @@ __pycache__/
 .env
 bin/
 *.log
+*.db*
 sinais_vip.db*
+backups/
+data/cdi_sgs_cache.json
+data/collector_cache/
 site_dist/

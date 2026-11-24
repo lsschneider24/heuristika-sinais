@@ -1,0 +1,1345 @@
+{
+  "schema_version": "1.1.0",
+  "reference_date": "2026-11-24",
+  "collected_at": "2026-11-24T07:16:52",
+  "max_age_days": 90,
+  "origin_type": "automated_public_collector",
+  "schedule_cadence": "monthly",
+  "jcp_treatment_note": "Eventos de dividendos do Yahoo Finance agregam Dividendos e JCP pelo valor declarado por ação (JCP bruto, sem dedução automática dos 15% de IRRF retidos na fonte). Divergências por tratamento bruto vs líquido de JCP são registradas sem marcar erro de código.",
+  "terms_compliance": {
+    "yahoo_finance": "Permitido para consulta pontual de séries históricas/dividendos (já utilizado por market_data.py); 1 ativo por vez com pausa e cache.",
+    "fundamentus": "robots.txt ausente (HTTP 404); usado apenas como checagem cruzada pontual com pausa >= 1,2s e cache local de 24h.",
+    "statusinvest": "REMOVIDO do coletor automatizado: robots.txt retornou HTTP 403 Forbidden e termos de uso restringem coleta automatizada.",
+    "cvm_dados_abertos": "Permitido (dados públicos oficiais em dados.cvm.gov.br)."
+  },
+  "ticker_aliases": {
+    "ELET3": {
+      "canonical": "AXIA3",
+      "yahoo_symbol": "AXIA3.SA",
+      "name": "Axia Energia ON (ex-Eletrobras)",
+      "reason": "Rebranding Eletrobras -> Axia Energia em 10/11/2025 (comunicado oficial B3/RI)."
+    },
+    "CPLE6": {
+      "canonical": "CPLE3",
+      "yahoo_symbol": "CPLE3.SA",
+      "name": "Copel ON",
+      "reason": "Migração Copel ao Novo Mercado e unificação de ações PNB (CPLE6) em ON (CPLE3)."
+    },
+    "IRANI3": {
+      "canonical": "RANI3",
+      "yahoo_symbol": "RANI3.SA",
+      "name": "Irani Papel e Embalagem ON",
+      "reason": "Código oficial de negociação na B3 é RANI3."
+    }
+  },
+  "discontinued_tickers": [],
+  "universe_description": "Snapshot auditável de 35 ações líquidas da B3 para o Laboratório de Estudos (Estratégia Dividendos / Barsi). Campos sem dado confiável permanecem como null e são tratados como 'indisponível' pelo motor.",
+  "default_field_sources": {
+    "dy_12m_pct": "B3 / RI Companhias (Acumulado 12m ref. ITR 3T26)",
+    "payout_pct": "DFP / ITR CVM (Proventos / Lucro Líquido Ajustado)",
+    "years_paying": "Histórico de Proventos B3 (Anos consecutivos com distribuição)",
+    "net_debt_ebitda": "ITR 3T26 CVM (Dívida Líquida / EBITDA 12m; 0.0 para Bancos/Seguradoras sem dívida corporativa EBITDA)",
+    "sector": "Classificação Setorial B3"
+  },
+  "stocks": [
+    {
+      "symbol": "BBAS3",
+      "yahoo_symbol": "BBAS3.SA",
+      "name": "Banco do Brasil ON",
+      "sector": "Bancos",
+      "liquid_b3": true,
+      "evento_corporativo": true,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 4.61,
+          "source": "Yahoo Finance (div 12m / preço R$ 14.2 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 45.0,
+          "source": "Fato Relevante Payout BB 2026",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 11,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 0.0,
+          "source": "Instituição Financeira (Basileia > 15%)",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false,
+      "corporate_event_reason": "Redução anunciada do payout de 2026 para 25% e cancelamento de proventos intermediários em 10/11/2026 (RI Banco do Brasil)."
+    },
+    {
+      "symbol": "ITUB4",
+      "yahoo_symbol": "ITUB4.SA",
+      "name": "Itaú Unibanco PN",
+      "sector": "Bancos",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 0.05,
+          "source": "Yahoo Finance (div 12m / preço R$ 39.73 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 7.8% @ R$ 39.73 em 23/11/2026]",
+          "date": "2026-11-24",
+          "verified": false
+        },
+        "payout_pct": {
+          "value": 60.0,
+          "source": "ITR 3T26 Itaú",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 10,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 0.0,
+          "source": "Instituição Financeira (Basileia > 16%)",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "SANB11",
+      "yahoo_symbol": "SANB11.SA",
+      "name": "Santander Brasil Unit",
+      "sector": "Bancos",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 7.69,
+          "source": "Yahoo Finance (div 12m / preço R$ 28.25 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 52.0,
+          "source": "ITR 3T26 Santander",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 10,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 0.0,
+          "source": "Instituição Financeira",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "BBDC4",
+      "yahoo_symbol": "BBDC4.SA",
+      "name": "Bradesco PN",
+      "sector": "Bancos",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 0.14,
+          "source": "Yahoo Finance (div 12m / preço R$ 13.71 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 11.1% @ R$ 13.71 em 23/11/2026]",
+          "date": "2026-11-24",
+          "verified": false
+        },
+        "payout_pct": {
+          "value": 58.0,
+          "source": "ITR 3T26 Bradesco",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 11,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 0.0,
+          "source": "Instituição Financeira",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "ABCB4",
+      "yahoo_symbol": "ABCB4.SA",
+      "name": "Banco ABC Brasil PN",
+      "sector": "Bancos",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 11.65,
+          "source": "Yahoo Finance (div 12m / preço R$ 23.07 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 10.9% @ R$ 23.07 em 23/11/2026]",
+          "date": "2026-11-24",
+          "verified": false
+        },
+        "payout_pct": {
+          "value": 42.0,
+          "source": "ITR 3T26 ABC Brasil",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 10,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 0.0,
+          "source": "Instituição Financeira",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "TAEE11",
+      "yahoo_symbol": "TAEE11.SA",
+      "name": "Taesa Unit",
+      "sector": "Energia Elétrica",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 7.92,
+          "source": "Yahoo Finance (div 12m / preço R$ 39.46 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 75.0,
+          "source": "Política de Dividendos Taesa (Lucro Regulatório)",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 11,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 2.7,
+          "source": "ITR 3T26 Taesa",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "EGIE3",
+      "yahoo_symbol": "EGIE3.SA",
+      "name": "Engie Brasil ON",
+      "sector": "Energia Elétrica",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 4.5,
+          "source": "Yahoo Finance (div 12m / preço R$ 24.79 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 4.1% @ R$ 24.79 em 23/11/2026]",
+          "date": "2026-11-24",
+          "verified": false
+        },
+        "payout_pct": {
+          "value": 65.0,
+          "source": "ITR 3T26 Engie Brasil",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 10,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 2.4,
+          "source": "ITR 3T26 Engie Brasil",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "CPFE3",
+      "yahoo_symbol": "CPFE3.SA",
+      "name": "CPFL Energia ON",
+      "sector": "Energia Elétrica",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 6.52,
+          "source": "Yahoo Finance (div 12m / preço R$ 43.28 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 8.6% @ R$ 43.28 em 23/11/2026]",
+          "date": "2026-11-24",
+          "verified": false
+        },
+        "payout_pct": {
+          "value": 72.0,
+          "source": "ITR 3T26 CPFL",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 8,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 1.9,
+          "source": "ITR 3T26 CPFL",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "CMIG4",
+      "yahoo_symbol": "CMIG4.SA",
+      "name": "Cemig PN",
+      "sector": "Energia Elétrica",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 10.57,
+          "source": "Yahoo Finance (div 12m / preço R$ 10.78 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 9.5% @ R$ 10.78 em 23/11/2026]",
+          "date": "2026-11-24",
+          "verified": false
+        },
+        "payout_pct": {
+          "value": 55.0,
+          "source": "ITR 3T26 Cemig",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 11,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 1.1,
+          "source": "ITR 3T26 Cemig",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "ISAE4",
+      "yahoo_symbol": "ISAE4.SA",
+      "name": "ISA Energia Brasil PN",
+      "sector": "Energia Elétrica",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 7.76,
+          "source": "Yahoo Finance (div 12m / preço R$ 25.83 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 74.0,
+          "source": "ITR 3T26 ISA Energia",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 10,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 2.5,
+          "source": "ITR 3T26 ISA Energia",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "CPLE3",
+      "yahoo_symbol": "CPLE3.SA",
+      "name": "Copel ON",
+      "sector": "Energia Elétrica",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 7.07,
+          "source": "Yahoo Finance (div 12m / preço R$ 15.04 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 62.0,
+          "source": "ITR 3T26 Copel",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 9,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 1.8,
+          "source": "ITR 3T26 Copel",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false,
+      "aliased_from": "CPLE6"
+    },
+    {
+      "symbol": "AXIA3",
+      "yahoo_symbol": "AXIA3.SA",
+      "name": "Axia Energia ON (ex-Eletrobras)",
+      "sector": "Energia Elétrica",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 0.0,
+          "source": "Yahoo Finance (div 12m / preço R$ 45.52 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 40.0,
+          "source": "ITR 3T26 Eletrobras",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 7,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 2.2,
+          "source": "ITR 3T26 Eletrobras",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false,
+      "aliased_from": "ELET3"
+    },
+    {
+      "symbol": "AURE3",
+      "yahoo_symbol": "AURE3.SA",
+      "name": "Auren Energia ON",
+      "sector": "Energia Elétrica",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 0.0,
+          "source": "Yahoo Finance (div 12m / preço R$ 11.69 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 95.0,
+          "source": "ITR 3T26 Auren",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 4,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 3.6,
+          "source": "ITR 3T26 Auren (pós-aquisição)",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "BBSE3",
+      "yahoo_symbol": "BBSE3.SA",
+      "name": "BB Seguridade ON",
+      "sector": "Seguros",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 12.57,
+          "source": "Yahoo Finance (div 12m / preço R$ 36.51 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 78.0,
+          "source": "ITR 3T26 BB Seguridade",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 10,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 0.0,
+          "source": "Seguradora (Caixa Líquido)",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "CXSE3",
+      "yahoo_symbol": "CXSE3.SA",
+      "name": "Caixa Seguridade ON",
+      "sector": "Seguros",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 6.76,
+          "source": "Yahoo Finance (div 12m / preço R$ 20.44 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 76.0,
+          "source": "ITR 3T26 Caixa Seguridade",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 6,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 0.0,
+          "source": "Seguradora (Caixa Líquido)",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "PSSA3",
+      "yahoo_symbol": "PSSA3.SA",
+      "name": "Porto Seguro ON",
+      "sector": "Seguros",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 6.99,
+          "source": "Yahoo Finance (div 12m / preço R$ 42.91 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 50.0,
+          "source": "ITR 3T26 Porto",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 11,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 0.0,
+          "source": "Seguradora (Caixa Líquido)",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "SAPR11",
+      "yahoo_symbol": "SAPR11.SA",
+      "name": "Sanepar Unit",
+      "sector": "Saneamento",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 1.63,
+          "source": "Yahoo Finance (div 12m / preço R$ 33.84 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 48.0,
+          "source": "ITR 3T26 Sanepar",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 9,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 1.6,
+          "source": "ITR 3T26 Sanepar",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "CSMG3",
+      "yahoo_symbol": "CSMG3.SA",
+      "name": "Copasa ON",
+      "sector": "Saneamento",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 3.52,
+          "source": "Yahoo Finance (div 12m / preço R$ 56.68 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 64.0,
+          "source": "ITR 3T26 Copasa",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 10,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 1.5,
+          "source": "ITR 3T26 Copasa",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "SBSP3",
+      "yahoo_symbol": "SBSP3.SA",
+      "name": "Sabesp ON",
+      "sector": "Saneamento",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 5.21,
+          "source": "Yahoo Finance (div 12m / preço R$ 27.7 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 28.0,
+          "source": "ITR 3T26 Sabesp (Ciclo de Capex)",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 10,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 1.7,
+          "source": "ITR 3T26 Sabesp",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "VIVT3",
+      "yahoo_symbol": "VIVT3.SA",
+      "name": "Telefônica Brasil (Vivo) ON",
+      "sector": "Telecom",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 7.35,
+          "source": "Yahoo Finance (div 12m / preço R$ 34.97 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 77.0,
+          "source": "ITR 3T26 Vivo",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 10,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 0.6,
+          "source": "ITR 3T26 Vivo",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "TIMS3",
+      "yahoo_symbol": "TIMS3.SA",
+      "name": "TIM ON",
+      "sector": "Telecom",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 6.72,
+          "source": "Yahoo Finance (div 12m / preço R$ 21.92 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 70.0,
+          "source": "ITR 3T26 TIM",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 10,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 0.8,
+          "source": "ITR 3T26 TIM",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "PETR4",
+      "yahoo_symbol": "PETR4.SA",
+      "name": "Petrobras PN",
+      "sector": "Petróleo & Gás",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 8.87,
+          "source": "Yahoo Finance (div 12m / preço R$ 41.3 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 62.0,
+          "source": "Política de Remuneração Petrobras (45% FCL)",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 9,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 0.9,
+          "source": "ITR 3T26 Petrobras",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "PRIO3",
+      "yahoo_symbol": "PRIO3.SA",
+      "name": "PRIO ON",
+      "sector": "Petróleo & Gás",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 0.0,
+          "source": "Yahoo Finance (div 12m / preço R$ 58.22 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 10.0,
+          "source": "ITR 3T26 PRIO (Foco em M&A e Recompra)",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 1,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 1.2,
+          "source": "ITR 3T26 PRIO",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "VALE3",
+      "yahoo_symbol": "VALE3.SA",
+      "name": "Vale ON",
+      "sector": "Mineração & Siderurgia",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 9.61,
+          "source": "Yahoo Finance (div 12m / preço R$ 58.41 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 54.0,
+          "source": "ITR 3T26 Vale",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 11,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 0.8,
+          "source": "ITR 3T26 Vale",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "CMIN3",
+      "yahoo_symbol": "CMIN3.SA",
+      "name": "CSN Mineração ON",
+      "sector": "Mineração & Siderurgia",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 4.44,
+          "source": "Yahoo Finance (div 12m / preço R$ 4.94 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 18.7% @ R$ 4.94 em 23/11/2026]",
+          "date": "2026-11-24",
+          "verified": false
+        },
+        "payout_pct": {
+          "value": 88.0,
+          "source": "ITR 3T26 CSN Mineração (Payout > 80%)",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 6,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": -0.3,
+          "source": "ITR 3T26 CSN Mineração (Caixa Líquido)",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "GGBR4",
+      "yahoo_symbol": "GGBR4.SA",
+      "name": "Gerdau PN",
+      "sector": "Mineração & Siderurgia",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 3.35,
+          "source": "Yahoo Finance (div 12m / preço R$ 25.34 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 36.0,
+          "source": "ITR 3T26 Gerdau",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 10,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 0.5,
+          "source": "ITR 3T26 Gerdau",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "KLBN11",
+      "yahoo_symbol": "KLBN11.SA",
+      "name": "Klabin Unit",
+      "sector": "Papel & Celulose",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 5.47,
+          "source": "Yahoo Finance (div 12m / preço R$ 16.51 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 58.0,
+          "source": "ITR 3T26 Klabin",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 9,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 3.4,
+          "source": "ITR 3T26 Klabin (Alavancagem > 3,0x)",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "SUZB3",
+      "yahoo_symbol": "SUZB3.SA",
+      "name": "Suzano ON",
+      "sector": "Papel & Celulose",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 2.03,
+          "source": "Yahoo Finance (div 12m / preço R$ 55.19 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 0.0% @ R$ 55.19 em 23/11/2026]",
+          "date": "2026-11-24",
+          "verified": false
+        },
+        "payout_pct": {
+          "value": 25.0,
+          "source": "ITR 3T26 Suzano",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 8,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 3.1,
+          "source": "ITR 3T26 Suzano",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "RANI3",
+      "yahoo_symbol": "RANI3.SA",
+      "name": "Irani Papel e Embalagem ON",
+      "sector": "Papel & Celulose",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 5.36,
+          "source": "Yahoo Finance (div 12m / preço R$ 7.81 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 50.0,
+          "source": "ITR 3T26 Irani",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 9,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 2.1,
+          "source": "ITR 3T26 Irani",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false,
+      "aliased_from": "IRANI3"
+    },
+    {
+      "symbol": "WEGE3",
+      "yahoo_symbol": "WEGE3.SA",
+      "name": "WEG ON",
+      "sector": "Indústria",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 4.01,
+          "source": "Yahoo Finance (div 12m / preço R$ 49.91 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 52.0,
+          "source": "ITR 3T26 WEG",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 11,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": -0.4,
+          "source": "ITR 3T26 WEG (Caixa Líquido)",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "LEVE3",
+      "yahoo_symbol": "LEVE3.SA",
+      "name": "Mahle Metal Leve ON",
+      "sector": "Indústria",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 9.84,
+          "source": "Yahoo Finance (div 12m / preço R$ 30.57 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 68.0,
+          "source": "ITR 3T26 Metal Leve",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 10,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 0.9,
+          "source": "ITR 3T26 Metal Leve",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "ABEV3",
+      "yahoo_symbol": "ABEV3.SA",
+      "name": "Ambev ON",
+      "sector": "Consumo & Bebidas",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 5.31,
+          "source": "Yahoo Finance (div 12m / preço R$ 15.94 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 72.0,
+          "source": "ITR 3T26 Ambev",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 11,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": -0.5,
+          "source": "ITR 3T26 Ambev (Caixa Líquido)",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "B3SA3",
+      "yahoo_symbol": "B3SA3.SA",
+      "name": "B3 ON",
+      "sector": "Serviços Financeiros",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 6.37,
+          "source": "Yahoo Finance (div 12m / preço R$ 14.16 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 65.0,
+          "source": "ITR 3T26 B3",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 11,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 1.1,
+          "source": "ITR 3T26 B3",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "RADL3",
+      "yahoo_symbol": "RADL3.SA",
+      "name": "RD Saúde ON",
+      "sector": "Saúde & Farmácias",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 3.07,
+          "source": "Yahoo Finance (div 12m / preço R$ 14.69 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": 34.0,
+          "source": "ITR 3T26 RD Saúde",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 11,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": 1.3,
+          "source": "ITR 3T26 RD Saúde",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    },
+    {
+      "symbol": "CSAN3",
+      "yahoo_symbol": "CSAN3.SA",
+      "name": "Cosan ON",
+      "sector": "Holding & Energia",
+      "liquid_b3": true,
+      "evento_corporativo": false,
+      "fields": {
+        "dy_12m_pct": {
+          "value": 0.0,
+          "source": "Yahoo Finance (div 12m / preço R$ 3.14 em 2026-11-24; JCP bruto)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "payout_pct": {
+          "value": null,
+          "source": "Dado não consolidado no snapshot",
+          "date": "2026-11-15",
+          "verified": false
+        },
+        "years_paying": {
+          "value": 9,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
+          "date": "2026-11-24",
+          "verified": true
+        },
+        "net_debt_ebitda": {
+          "value": null,
+          "source": "Dado não consolidado no snapshot",
+          "date": "2026-11-15",
+          "verified": false
+        }
+      },
+      "origin_type": "automated_public_collector",
+      "collected_at": "2026-11-24",
+      "verified": false
+    }
+  ]
+}
