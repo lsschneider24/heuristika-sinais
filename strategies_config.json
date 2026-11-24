@@ -183,6 +183,8 @@
         "atr_stop_multiplier": 2.0,
         "max_weight_per_asset_pct": 25.0,
         "rebalance_period_days": 7,
+        "rebalance_band_pct": 25.0,
+        "min_order_pct": 2.0,
         "drift_threshold_pp": 5.0,
         "max_drawdown_alert_pct": 20.0,
         "universe": [
@@ -286,6 +288,8 @@
       "parametros": {
         "lookback_days": 252,
         "rebalance_period_days": 30,
+        "rebalance_band_pct": 25.0,
+        "min_order_pct": 2.0,
         "base_currency": "BRL",
         "candidates": [
           {"symbol": "IVV", "yahoo_symbol": "IVV", "currency": "USD", "region": "EUA", "br_equivalent": "IVVB11.SA"},

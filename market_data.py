@@ -226,10 +226,21 @@ def fetch_bcb_cdi_series(
     )
 
     try:
-        resp12 = requests.get(url_s12, headers=_HTTP_HEADERS, timeout=timeout)
-        resp12.raise_for_status()
-        rows12 = resp12.json()
-        if not isinstance(rows12, list) or len(rows12) == 0:
+        rows12: list[dict[str, Any]] = []
+        cur_start = dt_start
+        while cur_start <= dt_end:
+            cur_end = min(dt_end, cur_start + timedelta(days=3200))
+            url_chunk = (
+                f"https://api.bcb.gov.br/dados/serie/bcdata.sgs.{BCB_SGS_CDI_DAILY_SERIES}/dados"
+                f"?formato=json&dataInicial={cur_start.strftime('%d/%m/%Y')}&dataFinal={cur_end.strftime('%d/%m/%Y')}"
+            )
+            resp12 = requests.get(url_chunk, headers=_HTTP_HEADERS, timeout=timeout)
+            resp12.raise_for_status()
+            chunk_rows = resp12.json()
+            if isinstance(chunk_rows, list):
+                rows12.extend(chunk_rows)
+            cur_start = cur_end + timedelta(days=1)
+        if not rows12:
             raise ValueError("Série 12 do BCB retornou lista vazia.")
 
         daily_rates: list[dict[str, Any]] = []
