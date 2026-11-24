@@ -382,6 +382,7 @@ def get_strict_daily_candles(
     stooq_symbol: str | None = None,
     limit: int = 300,
     allow_fallback: bool = False,
+    range_str: str = "2y",
 ) -> dict[str, Any]:
     """Busca candles diários reais para estratégias e benchmarks.
     REGRA DE GOVERNANÇA: com allow_fallback=False (padrão obrigatório nas estratégias),
@@ -396,7 +397,7 @@ def get_strict_daily_candles(
 
     if y_sym:
         try:
-            candles, price_adjusted = _fetch_yahoo_daily_candles(y_sym)
+            candles, price_adjusted = _fetch_yahoo_daily_candles(y_sym, range_str=range_str)
             sliced = candles[-limit:] if limit else candles
             return {
                 "status": "ok",
