@@ -979,7 +979,7 @@ class SinaisVIPTestCase(unittest.TestCase):
         # Pré-requisito 1: fallback simulado desligado por padrão em config.py
         default_db = config._default_database_path()
         self.assertNotIn("Meu Drive", default_db)
-        self.assertIn("Heuristika", default_db)
+        self.assertIn("heuristika", default_db.lower())
 
         # Pré-requisito 2: triggers SQLite impedem UPDATE e DELETE em strategy_audit_log
         lid = database.log_strategy_decision(
