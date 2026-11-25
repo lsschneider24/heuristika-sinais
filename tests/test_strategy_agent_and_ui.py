@@ -135,6 +135,22 @@ class StrategyAgentAndUITestCase(unittest.TestCase):
         self.assertNotIn("btnAtualizarLab", admin_html)
         self.assertNotIn("/api/admin/atualizar-laboratorio", admin_html)
 
+    def test_telegram_notifier_skips_without_token_and_formats_signal(self) -> None:
+        import telegram_notifier
+        msg = telegram_notifier.format_signal_message({
+            "ativo": "BTC/USD",
+            "direcao": "COMPRA",
+            "categoria": "CRIPTO",
+            "entrada": 90000,
+            "stop_loss": 88000,
+            "alvo_1": 93000,
+            "alvo_2": 96000,
+        })
+        self.assertIn("BTC/USD", msg)
+        self.assertIn("COMPRA", msg)
+        res = telegram_notifier.send_telegram_message(msg, chat_id="")
+        self.assertIn("ok", res)
+
 
 if __name__ == "__main__":
     unittest.main()
