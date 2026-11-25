@@ -1398,11 +1398,22 @@ def api_strategies_agent_chat():
     return jsonify({"ok": True, **res})
 
 
+_LAB_UPDATE_LAST_TS: float = 0.0
+_LAB_UPDATE_MIN_INTERVAL_SEC: float = 60.0
+
+
 @app.route("/api/admin/atualizar-laboratorio", methods=["POST"])
 def api_admin_atualizar_laboratorio():
     """UM BOTÃO (somente Admin): coleta, estratégias, radar, propostas, relatório e auditoria rápida."""
+    global _LAB_UPDATE_LAST_TS
     if not session.get("is_admin"):
         return jsonify({"ok": False, "error": "Acesso restrito ao Admin"}), 403
+    import time as _time
+    now_ts = _time.monotonic()
+    if _LAB_UPDATE_LAST_TS > 0 and (now_ts - _LAB_UPDATE_LAST_TS) < _LAB_UPDATE_MIN_INTERVAL_SEC:
+        wait_s = int(round(_LAB_UPDATE_MIN_INTERVAL_SEC - (now_ts - _LAB_UPDATE_LAST_TS)))
+        return jsonify({"ok": False, "error": f"Limite de frequência ativo. Aguarde {max(1, wait_s)}s antes de atualizar novamente."}), 429
+    _LAB_UPDATE_LAST_TS = now_ts
     import data_collector
     import market_data
     import strategies_engine

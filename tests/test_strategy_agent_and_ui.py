@@ -93,7 +93,9 @@ class StrategyAgentAndUITestCase(unittest.TestCase):
         self.assertEqual(r_chat.status_code, 200)
         self.assertTrue(r_chat.get_json()["refused"])
 
-        # Com Admin: botão único executa sequência com mocks offline
+        # Com Admin: botão único executa sequência com mocks offline e aplica limite de frequência (429)
+        import app as app_module
+        app_module._LAB_UPDATE_LAST_TS = 0.0
         with self.client.session_transaction() as sess:
             sess["is_admin"] = True
         ctx = make_offline_market_ctx(with_gap=False)
@@ -108,11 +110,30 @@ class StrategyAgentAndUITestCase(unittest.TestCase):
             self.assertTrue(payload["ok"])
             self.assertGreaterEqual(len(payload["summary"]["passed"]), 4)
 
+            r_rate = self.client.post("/api/admin/atualizar-laboratorio")
+            self.assertEqual(r_rate.status_code, 429)
+
+    def test_risk_parity_caps_and_brl_conversion_regression(self) -> None:
+        import strategies_engine
+        ctx = make_offline_market_ctx(with_gap=False)
+        res = strategies_engine.run_strategy("risk_parity_simplified", market_ctx=ctx, persist=False)
+        self.assertTrue(res["backtest"]["available"])
+        cls_totals: dict[str, float] = {}
+        for tw in res["target_weights"]:
+            self.assertLessEqual(tw["target_weight_pct"], 35.01)
+            cl = tw["asset_class"]
+            cls_totals[cl] = cls_totals.get(cl, 0.0) + tw["target_weight_pct"]
+        for cl, tot in cls_totals.items():
+            self.assertLessEqual(tot, 50.01, f"Classe {cl} excedeu 50%: {tot}%")
+
     def test_static_github_pages_disables_chat_and_admin(self) -> None:
         out_dir = self.tmp_dir / "site_dist"
         build_github_pages.build_static_site(output_dir=out_dir)
         cart_html = (out_dir / "carteiras" / "index.html").read_text(encoding="utf-8")
         self.assertIn("const IS_STATIC = true;", cart_html)
+        admin_html = (out_dir / "admin" / "index.html").read_text(encoding="utf-8")
+        self.assertNotIn("btnAtualizarLab", admin_html)
+        self.assertNotIn("/api/admin/atualizar-laboratorio", admin_html)
 
 
 if __name__ == "__main__":

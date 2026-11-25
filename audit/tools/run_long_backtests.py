@@ -86,6 +86,14 @@ def _compute_extended_metrics(
         "median_pct": round(rolling_sorted[len(rolling_sorted) // 2], 2) if rolling_sorted else None,
         "max_pct": round(rolling_sorted[-1], 2) if rolling_sorted else None,
     }
+    rolling_36m = [((vals[i] / vals[i - 756]) ** (1.0 / 3.0) - 1.0) * 100.0 for i in range(756, len(vals))] if len(vals) > 756 else []
+    r36_sorted = sorted(rolling_36m)
+    roll36_summary = {
+        "count": len(r36_sorted),
+        "min_ann_pct": round(r36_sorted[0], 2) if r36_sorted else None,
+        "median_ann_pct": round(r36_sorted[len(r36_sorted) // 2], 2) if r36_sorted else None,
+        "max_ann_pct": round(r36_sorted[-1], 2) if r36_sorted else None,
+    }
 
     return {
         "start_date": dates[0],
@@ -102,6 +110,7 @@ def _compute_extended_metrics(
         "annual_cost_pct": round(total_cost_pct / years, 2),
         "calendar_years": cal_years,
         "rolling_12m": roll_summary,
+        "rolling_36m_ann": roll36_summary,
     }
 
 
@@ -450,26 +459,46 @@ def _run_risk_parity_long(
             inv_vols: dict[str, float] = {}
             for s in syms:
                 p_list = hist_px[s]
-                if len(p_list) >= 64 and d_cur in px_brl[s]:
+                # Usa último preço conhecido (forward-fill em feriados EUA/B3) para não excluir ativos em feriados locais
+                if len(p_list) >= 64:
                     rets = [p_list[k] / p_list[k - 1] - 1.0 for k in range(-63, 0)]
                     mu = sum(rets) / len(rets)
                     sd = math.sqrt(sum((r - mu) ** 2 for r in rets) / max(1, len(rets) - 1)) * math.sqrt(252)
                     if sd > 0:
                         inv_vols[s] = 1.0 / sd
             tot_iv = sum(inv_vols.values())
-            raw_w = {s: min(0.35, v / tot_iv) for s, v in inv_vols.items()} if tot_iv > 0 else {}
-            # Cap por classe <= 50%
-            cls_tot: dict[str, float] = {}
-            for s, w in raw_w.items():
-                c = asset_classes[s]
-                cls_tot[c] = cls_tot.get(c, 0.0) + w
-            for s in list(raw_w.keys()):
-                c = asset_classes[s]
-                if cls_tot[c] > 0.50:
-                    raw_w[s] *= 0.50 / cls_tot[c]
-            tot_w = sum(raw_w.values())
-            if tot_w > 0:
-                pending_w = {s: w / tot_w for s, w in raw_w.items()}
+            raw_w = {s: v / tot_iv for s, v in inv_vols.items()} if tot_iv > 0 else {}
+            # Water-filling iterativo respeitando teto <= 35% por ativo e <= 50% por classe sem estourar após normalização
+            for _ in range(15):
+                for s in list(raw_w.keys()):
+                    if raw_w[s] > 0.35:
+                        raw_w[s] = 0.35
+                cls_tot: dict[str, float] = {}
+                for s, w in raw_w.items():
+                    c = asset_classes[s]
+                    cls_tot[c] = cls_tot.get(c, 0.0) + w
+                for s in list(raw_w.keys()):
+                    c = asset_classes[s]
+                    if cls_tot[c] > 0.50:
+                        raw_w[s] *= 0.50 / cls_tot[c]
+                rem = 1.0 - sum(raw_w.values())
+                if rem <= 1e-6:
+                    break
+                cls_tot = {}
+                for s, w in raw_w.items():
+                    c = asset_classes[s]
+                    cls_tot[c] = cls_tot.get(c, 0.0) + w
+                elig = [s for s in raw_w if raw_w[s] < 0.35 - 1e-6 and cls_tot[asset_classes[s]] < 0.50 - 1e-6]
+                if not elig:
+                    break
+                e_tot = sum(raw_w[s] for s in elig)
+                for s in elig:
+                    room_a = 0.35 - raw_w[s]
+                    room_c = 0.50 - cls_tot[asset_classes[s]]
+                    add = min(room_a, room_c, rem * (raw_w[s] / e_tot if e_tot > 0 else 1.0 / len(elig)))
+                    raw_w[s] += max(0.0, add)
+            if raw_w:
+                pending_w = raw_w
             last_reb = cur_dt
 
     bt_dates = [p["date"] for p in curve]
@@ -653,6 +682,7 @@ def main() -> int:
                 f"  - `{bk}`: Retorno `{bm['total_return_pct']}%` | CAGR `{bm['cagr_pct']}%` | Vol `{bm['volatility_ann_pct']}%` | MaxDD `{bm['max_drawdown_pct']}%` | Sharpe `{bm['sharpe_vs_cdi']}`"
             )
         lines.append(f"- **Janelas móveis 12m ({m['rolling_12m']['count']}):** mín `{m['rolling_12m']['min_pct']}%`, mediana `{m['rolling_12m']['median_pct']}%`, máx `{m['rolling_12m']['max_pct']}%`")
+        lines.append(f"- **Janelas móveis 3 anos anualizadas ({m['rolling_36m_ann']['count']}):** mín `{m['rolling_36m_ann']['min_ann_pct']}% a.a.`, mediana `{m['rolling_36m_ann']['median_ann_pct']}% a.a.`, máx `{m['rolling_36m_ann']['max_ann_pct']}% a.a.`")
         lines.append(f"- **Por ano calendário:** `{m['calendar_years']}`")
         lines.append("")
 
@@ -683,10 +713,19 @@ def main() -> int:
         "",
         "## 4. Rastreio Recente `radar_top_n`",
         *[f"- `{x}`" for x in tr_rad],
+        "",
+        "## 5. Dependência de Cripto, Viés de Seleção e Janelas Móveis (Etapa 2F)",
+        f"- **Aviso obrigatório:** O universo atual de ativos foi escolhido hoje (viés de sobrevivência e viés de seleção). Em `trend_following_turtles` (CAGR `{m_trt['cagr_pct']}%` c/ BTC vs `{m_trt_nc['cagr_pct']}%` s/ BTC; diferença `{round(m_trt['cagr_pct'] - m_trt_nc['cagr_pct'], 2)} pp`) e `radar_top_n` (CAGR `{m_rad['cagr_pct']}%` c/ BTC+ETH vs `{m_rad_nc['cagr_pct']}%` s/ cripto; diferença `{round(m_rad['cagr_pct'] - m_rad_nc['cagr_pct'], 2)} pp`), criptoativos concentram parcela relevante do retorno histórico.",
+        f"- **Decomposição do giro em `trend_following_turtles`:** sem banda (`891%/ano`: `78.9%` por entrada/saída semanal de sinal e `21.1%` por ajuste `1/ATR`); com banda de `25%` (`815.6%/ano`: `85.3%` por mudança de sinal semanal e `14.7%` por ajuste `1/ATR`). Como a banda não bloqueia sinais de entrada/saída da estratégia, reduzir o giro abaixo de ~700%/ano exigiria alterar a regra de verificação semanal (escalado ao usuário).",
+        "- **`dual_momentum_global` (pior drawdown `-39.61%`):** pico em `2020-02-19` (`308.08`) e vale em `2020-03-23` (`186.05`, 33 dias). Na janela mensal de 21 pregões, estava em `BOVA11.SA` no início do crash COVID; em `2020-03-17`, `IVV` em BRL ainda exibia `+31.8%` em 12m (vs CDI `+5.6%`) devido à alta prévia de 2019 e disparada do dólar, evitando a rotação defensiva para CDI.",
+        "- **`risk_parity_simplified` (correção de bug):** corrigido bug de feriado EUA/B3 (que descartava os 5 ETFs dos EUA em feriados americanos e alocava 100% em `BOVA11.SA` por um trimestre) e corrigida a normalização pós-teto via water-filling (`<=35%` ativo e `<=50%` classe).",
     ])
 
-    out_path = BASE_DIR / "audit" / "reports" / "backtest_long_2026-11-24.md"
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    out_path = BASE_DIR / "audit" / "reports" / f"backtest_long_{today_str}.md"
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    from audit.run_audit import _update_reports_manifest
+    _update_reports_manifest(BASE_DIR / "audit" / "reports", out_path)
     print(f"LONG_REPORT={out_path}")
     for name, m, _ in results:
         print(f"STRAT {name}: {m['start_date']}..{m['end_date']} ({m['years']}y) cagr={m['cagr_pct']}% vol={m['volatility_ann_pct']}% dd={m['max_drawdown_pct']}% sharpe={m['sharpe_vs_cdi']} turn={m['annual_turnover_pct']}%")

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.1.0",
   "reference_date": "2026-11-25",
-  "collected_at": "2026-11-25T07:12:04",
+  "collected_at": "2026-11-25T08:26:28",
   "max_age_days": 90,
   "origin_type": "automated_public_collector",
   "schedule_cadence": "monthly",
@@ -1138,8 +1138,8 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 4245.5,
-          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 004170, método DFC (6.03.*), base 2026-09-30] [alerta: payout LTM > 300% por lucro comprimido — requer revisão]",
+          "value": null,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 004170, base 2026-09-30]: indisponível (Lucro LTM comprimido por resultado atípico no 4T25 (LTM=556,000 mil vs DFP25=11,811,000 mil / 9M26=23,776,000 mil; payout bruto=4245.5%))",
           "date": "2026-11-25",
           "data_base": "2026-09-30",
           "verified": false

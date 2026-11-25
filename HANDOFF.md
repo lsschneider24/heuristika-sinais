@@ -188,3 +188,43 @@
    - `audit/run_audit.py` atualizado (justificativa: inclusão da suíte offline `tests/test_strategy_agent_and_ui.py` e hash de `strategy_agent.py`).
    - Resultado: **`AUDIT_EXIT_CODE=0` (`PASS`)** com `28/28` testes passando.
 4. **Etapa 3:** Criado `AUDITOR_RUN.md` com a checklist de auditoria independente.
+
+
+---
+
+## Etapa 2F — Execução Autônoma e Correções (2026-11-25)
+
+### 1. Backups Pré-Execução
+- `backups_repo/sinais_repo_2026-11-25_0814.bundle` e `backups_db/sinais_vip_backup_20261125_081417.db`
+- ZIP completo em `C:\Dev\Backups\SinaisFinanceiros_pre2F_2026-11-25_0814.zip`
+
+### 2. Paridade de Risco (`risk_parity_simplified`) — Bug Encontrado e Corrigido
+- **Causa raiz do resultado anterior (`CAGR 4.27%`, `Vol 16.4%`, `MaxDD -51.18%`, `Sharpe -0.24`):**
+  1. **Bug de feriado EUA vs B3 em `audit/tools/run_long_backtests.py`:** a condição `if len(p_list) >= 64 and d_cur in px_brl[s]` excluía todos os 5 ETFs americanos (`IVV`, `TLT`, `SHY`, `GLD`, `DBC`) nos dias úteis em que a B3 abria mas os EUA estavam fechados (ex.: Memorial Day `2013-05-27`, `2014-05-26` e Presidents' Day `2020-02-17`), concentrando **100% da carteira em `BOVA11.SA`** por um trimestre inteiro (inclusive na queda da COVID de `2020-02-17` a `2020-03-23`, gerando `-51.18%`).
+  2. **Violação de tetos pós-normalização:** em `run_long_backtests.py` e `strategies_engine.py`, `w / tot_w` após os tetos de 35%/ativo e 50%/classe re-estourava os limites.
+  3. **Conversão USD→BRL em `strategies_engine.py`:** `RiskParitySimplifiedStrategy.run` agora converte ativos USD via `_build_base_currency_series(..., fx_map)` e aplica water-filling iterativo respeitando `<=35%`/ativo e `<=50%`/classe.
+- **Resultado após correção (`2012-02-28` a `2026-11-24`, `14.74` anos):**
+  - `CAGR 13.13%` | `Vol 12.12%` | `MaxDD -14.62%` | `Sharpe 0.28` | `Giro 29.06%/ano`.
+- **Teste de regressão adicionado:** `test_risk_parity_caps_and_brl_conversion_regression` em `tests/test_strategy_agent_and_ui.py`.
+
+### 3. Giro do `trend_following_turtles` (Escalação de Regra de Estratégia)
+- **Decomposição do giro:** sem banda (`891.0%/ano`): `703.0%/ano (78.9%)` vêm de entradas/saídas semanais do sinal e `188.0%/ano (21.1%)` de ajuste `1/ATR`. Com banda de `25%` (`815.6%/ano`): `695.4%/ano (85.3%)` vêm de entradas/saídas semanais e `120.2%/ano (14.7%)` de ajuste `1/ATR`.
+- **Proposta para decisão do usuário (não aplicada por ser mudança de REGRA):** alterar a verificação semanal (7 dias) para mensal (21 pregões) ou adicionar histerese na entrada/saída (`MM50/MM200` + stop ATR), única forma de reduzir o giro de sinal abaixo de ~700%/ano.
+
+### 4. Dependência de Cripto e `dual_momentum_global`
+- **Cripto (`trend_following_turtles` e `radar_top_n`):**
+  - `turtles`: `12.31%` a.a. c/ `BTC-USD` vs `8.45%` a.a. s/ cripto (`+3.86 pp`).
+  - `radar_top_n`: `19.41%` a.a. c/ `BTC-USD`/`ETH-USD` vs `8.87%` a.a. s/ cripto (`+10.54 pp`).
+  - Aviso explícito de viés de sobrevivência/seleção e concentração em cripto adicionado em `templates/carteiras.html` e `audit/reports/backtest_long_2026-11-25.md`.
+- **`dual_momentum_global` (pior drawdown `-39.61%`):** pico em `2020-02-19` (`308.08`), vale em `2020-03-23` (`186.05`, 33 dias). Estava comprado em `BOVA11.SA` antes do rebalanceamento mensal (21 pregões); em `2020-03-17`, `IVV` em BRL ainda tinha `+31.8%` em 12m (vs CDI `+5.6%`) devido à alta de 2019 e alta do dólar, impedindo a ida para CDI.
+
+### 5. Dados CVM, Varredura 35 Ativos e Evidências
+- **Causa do `4245.5%` na `VALE3`:** `DFP 2025 (3.11=11.811 bi) - ITR 9M25 (35.031 bi) + ITR 9M26 (23.776 bi) = 556 mi` (compressão pelo prejuízo/impairment do 4T25 de `-23.22 bi`). Varredura LTM vs DFP 2025 nos 35 ativos mostrou variações >30 pp em payout em `VALE3` (`+4076.4 pp`), `KLBN11` (`+252.8 pp`), `GGBR4` (`-78.8 pp`) e `AXIA3` (`-61.5 pp`).
+- **Correção em `cvm_pipeline.py` e `data_collector.py`:** quando `LTM net_inc < 15%` de `max(DFP25, 9M26)` e `payout_raw > 200%` (`VALE3`, `KLBN11`), `payout_pct` é marcado como `None` (`indisponível`, `verified=False`) com o motivo exato registrado.
+- **Evidências dos 9 elegíveis (`ABCB4`, `CMIG4`, `LEVE3`, `VIVT3`, `PSSA3`, `CPLE3`, `CXSE3`, `TIMS3`, `B3SA3`):** gravadas em `audit/evidence/fundamentals_evidence.json`.
+- **10 ativos com `evento_corporativo=true`:** `AURE3`, `AXIA3`, `BBAS3`, `BBDC4`, `CMIN3`, `CSMG3`, `PETR4`, `RANI3`, `SAPR11`, `SUZB3`.
+
+### 6. Relatórios, Botão Único e Justificativa em Testes
+- Gerado `audit/reports/backtest_long_2026-11-25.md` (preservando `backtest_long_2026-11-24.md`) com hash registrado em `audit/reports/MANIFEST.json`.
+- Adicionado rate-limit (`60s`, HTTP `429`) em `/api/admin/atualizar-laboratorio` (`app.py`) e removido o botão/script administrativo da exportação estática em `build_github_pages.py`.
+- Justificativa de testes adicionados em `tests/test_strategy_agent_and_ui.py`: teste de `429` (rate-limit), teste de ausência do botão na versão estática e teste de regressão de `risk_parity_simplified` (BRL + tetos 35%/50%).

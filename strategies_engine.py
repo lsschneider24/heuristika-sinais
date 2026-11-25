@@ -1216,6 +1216,15 @@ class RiskParitySimplifiedStrategy(BaseStrategy):
 
         cdi_data = ctx.get("cdi_data") or market_data.fetch_bcb_cdi_series()
         candles_cache = ctx.get("candles_by_symbol") or {}
+        base_curr = str(self.gov.get("base_currency", "BRL")).upper()
+        fx_res = candles_cache.get("USDBRL=X")
+        if fx_res is None and any(str(u.get("currency", "USD")).upper() != base_curr for u in universe):
+            fx_res = market_data.get_strict_daily_candles("USDBRL=X", yahoo_symbol="USDBRL=X", limit=360, allow_fallback=False)
+        fx_map = (
+            {c["date"]: float(c["close"]) for c in fx_res["candles"]}
+            if isinstance(fx_res, dict) and fx_res.get("status") == "ok" and isinstance(fx_res.get("candles"), list)
+            else None
+        )
         series_map: dict[str, list[dict[str, Any]]] = {}
         meta_by_sym: dict[str, dict[str, Any]] = {}
         alerts: list[dict[str, str]] = []
@@ -1225,7 +1234,12 @@ class RiskParitySimplifiedStrategy(BaseStrategy):
             meta_by_sym[sym] = item
             c_res = candles_cache.get(sym) or market_data.get_strict_daily_candles(sym, yahoo_symbol=item.get("yahoo_symbol", sym), limit=360, allow_fallback=False)
             if c_res.get("status") == "ok" and isinstance(c_res.get("candles"), list) and len(c_res["candles"]) > vol_win + 5:
-                series_map[sym] = c_res["candles"]
+                asset_curr = str(item.get("currency", "USD")).upper()
+                conv = _build_base_currency_series(c_res["candles"], asset_curr, base_curr, fx_map)
+                if conv and len(conv) > vol_win + 5:
+                    series_map[sym] = conv
+                else:
+                    alerts.append({"level": "info", "code": "MISSING_FX", "message": f"{sym}: câmbio {base_curr} {INDISPONIVEL}."})
             else:
                 alerts.append({"level": "info", "code": "MISSING_ASSET", "message": f"{sym}: {INDISPONIVEL}."})
 
@@ -1267,45 +1281,44 @@ class RiskParitySimplifiedStrategy(BaseStrategy):
             tot = sum(inv_vols.values())
             w_pct = {s: (val / tot) * 100.0 for s, val in inv_vols.items()}
 
-            # Aplica teto por ativo (35%) e teto por classe (50%) iterativamente
-            for _ in range(6):
-                # 1. Teto por ativo
-                excess = 0.0
-                uncapped = []
+            # Aplica teto por ativo (35%) e teto por classe (50%) com water-filling sem violar tetos
+            for _ in range(12):
                 for s in list(w_pct.keys()):
                     if w_pct[s] > max_asset_pct:
-                        excess += w_pct[s] - max_asset_pct
                         w_pct[s] = max_asset_pct
-                    else:
-                        uncapped.append(s)
-                if excess > 0.01 and uncapped:
-                    u_tot = sum(w_pct[s] for s in uncapped) or len(uncapped)
-                    for s in uncapped:
-                        w_pct[s] += excess * (w_pct[s] / u_tot if sum(w_pct[x] for x in uncapped) > 0 else 1.0 / len(uncapped))
-
-                # 2. Teto por classe
                 cls_sums: dict[str, float] = {}
                 for s, w in w_pct.items():
                     cl = meta_by_sym[s].get("asset_class", "Outros")
                     cls_sums[cl] = cls_sums.get(cl, 0.0) + w
-                cls_excess = 0.0
-                other_syms = []
                 for s in list(w_pct.keys()):
                     cl = meta_by_sym[s].get("asset_class", "Outros")
                     if cls_sums[cl] > max_class_pct and cls_sums[cl] > 0:
-                        new_val = w_pct[s] * (max_class_pct / cls_sums[cl])
-                        cls_excess += w_pct[s] - new_val
-                        w_pct[s] = new_val
-                    elif w_pct[s] < max_asset_pct - 0.01:
-                        other_syms.append(s)
-                if cls_excess > 0.01 and other_syms:
-                    o_tot = sum(w_pct[s] for s in other_syms) or len(other_syms)
-                    for s in other_syms:
-                        add = cls_excess * (w_pct[s] / o_tot)
-                        w_pct[s] = min(max_asset_pct, w_pct[s] + add)
+                        w_pct[s] *= max_class_pct / cls_sums[cl]
+                rem = 100.0 - sum(w_pct.values())
+                if rem <= 0.01:
+                    break
+                cls_sums = {}
+                for s, w in w_pct.items():
+                    cl = meta_by_sym[s].get("asset_class", "Outros")
+                    cls_sums[cl] = cls_sums.get(cl, 0.0) + w
+                elig = [
+                    s for s in w_pct
+                    if w_pct[s] < max_asset_pct - 0.01 and cls_sums[meta_by_sym[s].get("asset_class", "Outros")] < max_class_pct - 0.01
+                ]
+                if not elig:
+                    break
+                e_tot = sum(w_pct[s] for s in elig)
+                for s in elig:
+                    cl = meta_by_sym[s].get("asset_class", "Outros")
+                    room_a = max_asset_pct - w_pct[s]
+                    room_c = max_class_pct - cls_sums[cl]
+                    add = min(room_a, room_c, rem * (w_pct[s] / e_tot if e_tot > 0 else 1.0 / len(elig)))
+                    w_pct[s] += max(0.0, add)
 
-            final_sum = sum(w_pct.values()) or 100.0
-            return {s: w / final_sum for s, w in w_pct.items()}
+            final_sum = sum(w_pct.values())
+            if final_sum > 100.0001:
+                return {s: w / final_sum for s, w in w_pct.items()}
+            return {s: w / 100.0 for s, w in w_pct.items()}
 
         start_idx = vol_win
         bt_dates = all_dates[start_idx:]

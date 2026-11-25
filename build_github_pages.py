@@ -669,7 +669,20 @@ def build_static_site(
   </div>
 </div>
 """
-    admin_wrapped = admin_authed_html.replace(
+    import re as _re
+    admin_clean = _re.sub(
+        r'<button[^>]*id="btnAtualizarLab"[^>]*>.*?</button>',
+        "",
+        admin_authed_html,
+        flags=_re.DOTALL,
+    )
+    admin_clean = _re.sub(
+        r'<div id="labUpdateSummary"[^>]*>.*?</div>\s*<script>.*?atualizar-laboratorio.*?</script>',
+        "",
+        admin_clean,
+        flags=_re.DOTALL,
+    )
+    admin_wrapped = admin_clean.replace(
         "<main>",
         "<main>\n" + admin_gate_html + '\n<div id="staticAdminContent" style="display:none;">',
         1,
