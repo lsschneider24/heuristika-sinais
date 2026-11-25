@@ -38,3 +38,11 @@ Para cada ativo do universo B3:
 - O que **não pôde ser verificado** e o motivo.
 - Lista curta de **exceções** que exigem decisão humana.
 - **Custo zero:** usar apenas fontes públicas gratuitas, sem cadastro pago.
+
+
+---
+
+## Auditoria por Gatilho (Kit de Eficiência)
+- **Mudança em motor, dados, regras, métricas, governança ou acesso:** exige verificação completa do módulo afetado + reconciliação independente (`audit/independent/`).
+- **Mudança apenas visual ou de texto:** exige verificação leve (`test_rapido.ps1` nos módulos afetados).
+- **Marco / Entrega:** auditoria independente completa (`audit/run_audit.py` + `AUDITOR_RUN.md` por agente em contexto limpo) continua obrigatória.

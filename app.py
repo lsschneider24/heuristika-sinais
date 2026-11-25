@@ -1419,10 +1419,12 @@ def api_admin_atualizar_laboratorio():
     import strategies_engine
     import strategy_agent
 
-    summary = {"passed": [], "indisponivel": [], "pending_proposals": 0}
+    body = request.get_json(silent=True) or {}
+    force_all = bool(body.get("force", False))
+    summary = {"passed": [], "indisponivel": [], "pending_proposals": 0, "force_all": force_all}
     try:
-        col = data_collector.collect_b3_fundamentals(enable_crosscheck=True, use_cache=True)
-        summary["passed"].append(f"Coleta B3/CVM: {len(col.get('stocks', []))} ativos (base {col.get('reference_date')})")
+        col = data_collector.collect_b3_fundamentals(enable_crosscheck=True, use_cache=not force_all)
+        summary["passed"].append(f"Coleta B3/CVM ({'forçada' if force_all else 'cache incremental'}): {len(col.get('stocks', []))} ativos (base {col.get('reference_date')})")
     except Exception as exc:
         summary["indisponivel"].append(f"Coleta B3/CVM: indisponível ({exc})")
 

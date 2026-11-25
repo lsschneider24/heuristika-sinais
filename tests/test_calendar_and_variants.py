@@ -63,6 +63,19 @@ class CalendarAndQualityRegressionTestCase(unittest.TestCase):
         self.assertEqual(filled["B3"][dates[4]], px["B3"][dates[3]])
         self.assertEqual(filled["EUA"][dates[5]], px["EUA"][dates[4]])
 
+    def test_local_cache_integrity_and_stale_flag(self) -> None:
+        import local_cache
+        key = "test_cache_key_unit"
+        p = local_cache.save_cache_entry("unit_test", key, {"x": 42})
+        hit = local_cache.load_cache_entry("unit_test", key, max_age_hours=24.0)
+        self.assertTrue(hit["hit"])
+        self.assertFalse(hit["stale"])
+        self.assertEqual(hit["payload"]["x"], 42)
+        stale_hit = local_cache.load_cache_entry("unit_test", key, max_age_hours=-1.0)
+        self.assertTrue(stale_hit["hit"])
+        self.assertTrue(stale_hit["stale"])
+        p.unlink(missing_ok=True)
+
 
 if __name__ == "__main__":
     unittest.main()

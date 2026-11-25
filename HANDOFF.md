@@ -256,3 +256,23 @@
 ### 4. Dividendos (9 Elegíveis) e `radar_top_n` vs Pesos Iguais
 - Conferência externa dos 9 elegíveis em fontes primárias (RI + CVM DFP 2025/ITR 3T26) e causas dos 10 `evento_corporativo=true` gravadas em `audit/evidence/fundamentals_evidence.json`.
 - **`radar_top_n` vs Pesos Iguais (`2012-11-14..2026-11-25`):** c/ cripto `18.23%` vs `12.06%` (`+6.17 p.p.` efeito seleção); s/ cripto `7.75%` vs `7.24%` (`+0.51 p.p.` efeito seleção).
+
+
+---
+
+## Etapa 3 — Parte 2: Kit de Eficiência e Cronometragem (2026-11-25)
+
+### 1. Arquivos Criados/Atualizados
+- `PROJECT_RULES.md` (raiz) + `.agent/rules/project-rules.md` (referência automática de workspace): regras permanentes, política de decisão, limites, portabilidade, testes e mapa de paralelismo seguro.
+- `LESSONS.md`: lições aprendidas consolidadas (dado ausente nunca vira zero, calendário unificado, fixtures sintéticas, mesma janela de benchmarks, distorção não recorrente, viés de seleção em cripto, *water-filling* e higiene do Drive).
+- `BACKLOG.md`: backlog priorizado (`BL-01` a `BL-07`) com critério de aceite, verificação e estado.
+- `test_rapido.ps1`: camada rápida de testes (módulos afetados).
+- `local_cache.py`: cache local versionado fora do Drive (`%LOCALAPPDATA%\Heuristika\cache\`) com SHA-256 e flag `stale`, sem substituir o modo estrito.
+- `coleta_noturna.ps1`: coleta agendada gratuita via Agendador de Tarefas do Windows; `/api/admin/atualizar-laboratorio` usa cache por padrão e aceita `force=true`.
+- `AUDITOR.md`: adicionada seção de Auditoria por Gatilho.
+- `audit/independent/run_checks.py`: ferramentas permanentes de checagem independente.
+
+### 2. Cronometragem e Gargalos
+- **Etapa 2F (diagnóstico + correções + backtest longo + auditoria):** ~10 min no total; o maior gargalo foi a execução de `run_long_backtests.py` (~45s por execução devido ao download/processamento de 15 anos de séries no Yahoo Finance) e a auditoria independente completa (~5 min).
+- **Etapa 3 Parte 1 (variantes Turtles + regra payout + testes calendário + auditoria):** ~7 min no total; maior gargalo: `run_long_backtests.py` (~50s) + suíte completa.
+- **Melhoria aplicada (camadas):** `test_rapido.ps1` roda apenas os módulos afetados em ~10–15s (vs suíte completa + `run_audit.py` em ~35–45s), e `local_cache.py` evita redownload repetido de séries/CVM.
