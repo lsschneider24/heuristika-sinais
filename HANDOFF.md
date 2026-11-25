@@ -170,3 +170,21 @@
   ```powershell
   & "$env:LOCALAPPDATA\Heuristika\venv-sinais\Scripts\python.exe" audit\tools\backup_drive_state.py
   ```
+
+---
+
+# HANDOFF — Etapa 2 (Agente, Interface, Botão Único) e Checkpoint 2
+
+## O que foi feito na Etapa 2
+1. **Camada do Agente (`strategy_agent.py`):**
+   - Modo determinístico como padrão (`LLM_ENABLED=false`), adaptador LLM opcional com rate-limiter e fallback automático.
+   - 12 ferramentas (`list_strategies`, `run_strategy`, `get_portfolio`, `propose_rebalance`, `get_metrics`, `compare_strategies`, `get_log`, `generate_report`, `scan_global_opportunities`, `get_market_regime`, `get_correlation`, `explain_candidate`).
+   - Recusa recomendação personalizada; rotula candidatos como `CANDIDATO A ESTUDO`.
+2. **Interface (`/carteiras`, `/admin`) e GitHub Pages (`build_github_pages.py`):**
+   - Painel *Gerente de Estratégias & Radar Global* em `templates/carteiras.html` com comparador, fila de propostas (aprovação só Admin), Radar Global, relatórios e chat determinístico, com avisos obrigatórios e estados carregando/vazio/erro.
+   - `build_github_pages.py` exporta `/carteiras` com `IS_STATIC = true` (desabilita chat e aprovação Admin no bundle estático).
+   - Botão único **"Atualizar laboratório"** no `/admin` (`POST /api/admin/atualizar-laboratorio`) + `atualizar_tudo.ps1`.
+3. **Checkpoint 2 (`audit_2026-11-25_0722.md`):**
+   - `audit/run_audit.py` atualizado (justificativa: inclusão da suíte offline `tests/test_strategy_agent_and_ui.py` e hash de `strategy_agent.py`).
+   - Resultado: **`AUDIT_EXIT_CODE=0` (`PASS`)** com `28/28` testes passando.
+4. **Etapa 3:** Criado `AUDITOR_RUN.md` com a checklist de auditoria independente.

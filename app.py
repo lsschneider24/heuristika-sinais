@@ -823,6 +823,7 @@ def carteiras():
         "carteiras.html",
         subscriber=sub,
         has_annual_access=has_annual_access,
+        is_admin=bool(session.get("is_admin")),
         horizontes=horizontes,
         perfis=perfis,
         horizonte_ativo=horizonte,
@@ -1280,6 +1281,176 @@ def api_cron_audit():
     if database.get_setting("auto_scan_enabled", "0") == "1":
         scan_res = signals_engine.scan_and_generate_signals()
     return jsonify({"ok": True, "audit": audit_res, "scan": scan_res})
+
+
+# ==============================================================================
+# LABORATÓRIO DE ESTRATÉGIAS, RADAR GLOBAL, AGENTE E BOTÃO ÚNICO (FASES 3 & 4)
+# ==============================================================================
+@app.route("/api/strategies/overview")
+def api_strategies_overview():
+    import global_radar
+    import market_data
+    import strategies_engine
+    import strategy_agent
+
+    cfg = market_data.load_strategies_config()
+    fund = market_data.load_b3_fundamentals()
+    agent = strategy_agent.StrategyAgent()
+    strats = agent.list_strategies()
+    details = []
+    for s in strats:
+        sid = s["id"]
+        port = database.get_strategy_portfolio(sid)
+        if s.get("enabled"):
+            try:
+                run_res = strategies_engine.run_strategy(sid, persist=False)
+            except Exception as exc:
+                run_res = {"strategy_id": sid, "error": str(exc), "target_weights": [], "backtest": {"available": False}, "alerts": []}
+        else:
+            run_res = {"strategy_id": sid, "target_weights": [], "backtest": {"available": False}, "alerts": []}
+        details.append({
+            "meta": s,
+            "portfolio": port,
+            "run": run_res,
+        })
+
+    try:
+        radar = agent.scan_global_opportunities()
+    except Exception:
+        radar = {"regime": {"regime": market_data.INDISPONIVEL, "availability_label": "0 de 4 sinais disponíveis", "signals": []}, "candidates": [], "correlation_matrix": {}, "governance_warnings": []}
+
+    proposals = database.list_strategy_proposals(limit=30)
+    logs = database.list_strategy_logs(limit=25)
+    return jsonify({
+        "ok": True,
+        "is_admin": bool(session.get("is_admin")),
+        "governance": cfg.get("governance") or {},
+        "fundamentals_meta": {
+            "reference_date": fund.get("reference_date"),
+            "is_stale": fund.get("is_stale"),
+            "freshness_label": fund.get("freshness_label"),
+            "universe_count": fund.get("universe_count"),
+        },
+        "strategies": details,
+        "radar": radar,
+        "proposals": proposals,
+        "audit_log": logs,
+    })
+
+
+@app.route("/api/strategies/propose", methods=["POST"])
+def api_strategies_propose():
+    import strategies_engine
+
+    data = request.get_json(silent=True) or {}
+    sid = str(data.get("strategy_id") or "").strip()
+    symbol = str(data.get("symbol") or "").strip()
+    if symbol and not sid:
+        sid = "radar_top_n"
+    if not sid:
+        return jsonify({"ok": False, "error": "strategy_id obrigatório"}), 400
+    actor = "admin" if session.get("is_admin") else "lab_user"
+    res = strategies_engine.propose_rebalance(sid, actor=actor)
+    if symbol:
+        database.log_strategy_decision(
+            sid,
+            "Proposta simulada via Radar Global (CANDIDATO A ESTUDO)",
+            {"symbol": symbol, "label": "CANDIDATO A ESTUDO"},
+            f"Proposta pendente criada para estudo de {symbol}",
+            actor=actor,
+        )
+    return jsonify({"ok": True, "result": res})
+
+
+@app.route("/api/admin/strategies/proposals/<int:prop_id>/decide", methods=["POST"])
+def api_admin_decide_proposal(prop_id: int):
+    if not session.get("is_admin"):
+        return jsonify({"ok": False, "error": "Acesso restrito ao Admin"}), 403
+    import strategies_engine
+
+    data = request.get_json(silent=True) or {}
+    decision = str(data.get("decision") or "").upper()
+    if decision not in ("APROVADA", "REJEITADA"):
+        return jsonify({"ok": False, "error": "Decisão deve ser APROVADA ou REJEITADA"}), 400
+    try:
+        decided = strategies_engine.approve_or_reject_proposal(
+            prop_id,
+            decision=decision,
+            admin_user="admin_master",
+            is_admin=True,
+            note=str(data.get("note") or ""),
+        )
+        return jsonify({"ok": True, "proposal": decided})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.route("/api/strategies/agent/chat", methods=["POST"])
+def api_strategies_agent_chat():
+    import strategy_agent
+
+    data = request.get_json(silent=True) or {}
+    msg = str(data.get("message") or "").strip()
+    if not msg:
+        return jsonify({"ok": False, "error": "Mensagem vazia"}), 400
+    agent = strategy_agent.StrategyAgent()
+    res = agent.chat(msg)
+    return jsonify({"ok": True, **res})
+
+
+@app.route("/api/admin/atualizar-laboratorio", methods=["POST"])
+def api_admin_atualizar_laboratorio():
+    """UM BOTÃO (somente Admin): coleta, estratégias, radar, propostas, relatório e auditoria rápida."""
+    if not session.get("is_admin"):
+        return jsonify({"ok": False, "error": "Acesso restrito ao Admin"}), 403
+    import data_collector
+    import market_data
+    import strategies_engine
+    import strategy_agent
+
+    summary = {"passed": [], "indisponivel": [], "pending_proposals": 0}
+    try:
+        col = data_collector.collect_b3_fundamentals(enable_crosscheck=True, use_cache=True)
+        summary["passed"].append(f"Coleta B3/CVM: {len(col.get('stocks', []))} ativos (base {col.get('reference_date')})")
+    except Exception as exc:
+        summary["indisponivel"].append(f"Coleta B3/CVM: indisponível ({exc})")
+
+    cdi = market_data.fetch_bcb_cdi_series()
+    if cdi.get("status") == "ok":
+        summary["passed"].append(f"CDI BCB SGS: {cdi.get('annual_rate_pct')}% a.a.")
+    else:
+        summary["indisponivel"].append("CDI BCB SGS: indisponível")
+
+    agent = strategy_agent.StrategyAgent()
+    for s in agent.list_strategies():
+        if not s.get("enabled"):
+            continue
+        sid = s["id"]
+        res = strategies_engine.run_strategy(sid, persist=True)
+        if res.get("target_weights"):
+            summary["passed"].append(f"Estratégia {sid}: OK ({len(res['target_weights'])} posições)")
+        else:
+            summary["indisponivel"].append(f"Estratégia {sid}: indisponível")
+
+    rad = agent.scan_global_opportunities()
+    reg = (rad.get("regime") or {}).get("regime", market_data.INDISPONIVEL)
+    if reg != market_data.INDISPONIVEL:
+        summary["passed"].append(f"Radar Global: regime {reg} ({rad['regime'].get('availability_label')})")
+    else:
+        summary["indisponivel"].append("Radar Global: indisponível")
+
+    rep = agent.generate_report("semanal")
+    summary["passed"].append(f"Relatório semanal gerado ({rep.get('generated_at')})")
+    summary["pending_proposals"] = len(database.list_strategy_proposals(status="PENDENTE", limit=50))
+
+    database.log_strategy_decision(
+        "laboratorio_geral",
+        "Botão único: Atualizar laboratório",
+        summary,
+        f"Executado por Admin: {len(summary['passed'])} OK, {len(summary['indisponivel'])} indisponível, {summary['pending_proposals']} pendentes.",
+        actor="admin_master",
+    )
+    return jsonify({"ok": True, "summary": summary, "report_markdown": rep.get("markdown")})
 
 
 if __name__ == "__main__":

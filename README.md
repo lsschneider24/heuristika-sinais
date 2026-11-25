@@ -38,3 +38,8 @@ python -m unittest discover -s tests -v
 
 - **Link rápido gratuito:** Execute `publicar_tunnel.bat` (gera uma URL `https://*.trycloudflare.com` na hora).
 - **Domínio próprio fixo:** Configure `cloudflared-config.yml` a partir de `cloudflared-config.example.yml` e execute `publicar_dominio_fixo.bat`.
+
+## Laboratório de Estratégias, Agente e Botão Único
+- **Interface:** `/carteiras` inclui o painel *Gerente de Estratégias & Radar Global* (comparador, fila de propostas com aprovação Admin, Radar Global e chat determinístico). No bundle estático do GitHub Pages, chat e aprovação ficam desabilitados.
+- **Agente (`strategy_agent.py`):** modo determinístico por padrão (`LLM_ENABLED=false`), 12 ferramentas e recusa de recomendação personalizada.
+- **Botão Único ("Atualizar laboratório"):** disponível no `/admin` (`POST /api/admin/atualizar-laboratorio`) e via `powershell -ExecutionPolicy Bypass -File .\atualizar_tudo.ps1`.

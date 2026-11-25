@@ -608,6 +608,8 @@ def build_static_site(
     # 4. Carteiras (/carteiras/index.html demo + /carteiras/anual.html desbloqueado)
     (out_path / "carteiras").mkdir(parents=True, exist_ok=True)
     # No banner "Já sou Assinante Anual", passa ?next=carteiras para voltar direto às carteiras liberadas
+    carteiras_demo_html = carteiras_demo_html.replace("const IS_STATIC = false;", "const IS_STATIC = true;")
+    carteiras_anual_html = carteiras_anual_html.replace("const IS_STATIC = false;", "const IS_STATIC = true;")
     carteiras_demo_html = carteiras_demo_html.replace(
         'href="/login" class="btn btn-sm btn-outline">Já sou Assinante Anual',
         'href="/login?next=carteiras" class="btn btn-sm btn-outline">Já sou Assinante Anual',

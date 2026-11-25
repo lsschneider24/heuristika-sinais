@@ -22,11 +22,35 @@
       </span>
     </div>
   </div>
-  <form method="POST" action="{{ url_for('admin_logout') }}" style="margin:0;">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
-    <button type="submit" class="btn btn-sm">Sair do Admin</button>
-  </form>
+  <div style="display:flex; gap:8px; align-items:center;">
+    <button type="button" id="btnAtualizarLab" class="btn btn-sm btn-primary">⚡ Atualizar laboratório</button>
+    <form method="POST" action="{{ url_for('admin_logout') }}" style="margin:0;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+      <button type="submit" class="btn btn-sm">Sair do Admin</button>
+    </form>
+  </div>
 </div>
+<div id="labUpdateSummary" class="mono" style="display:none; margin:10px 0; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:0.78rem; white-space:pre-wrap;"></div>
+<script>
+document.getElementById("btnAtualizarLab")?.addEventListener("click", async () => {
+  const btn = document.getElementById("btnAtualizarLab");
+  const box = document.getElementById("labUpdateSummary");
+  btn.disabled = true;
+  box.style.display = "block";
+  box.textContent = "Executando coleta, estratégias, radar, propostas e relatório...";
+  try {
+    const r = await fetch("/api/admin/atualizar-laboratorio", { method: "POST" });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error || "Erro");
+    const s = d.summary || {};
+    box.textContent = "PASSOU:\n- " + (s.passed || []).join("\n- ") + "\nINDISPONÍVEL:\n- " + ((s.indisponivel || []).join("\n- ") || "nenhum") + `\nPROPOSTAS PENDENTES: ${s.pending_proposals || 0}`;
+  } catch (err) {
+    box.textContent = "Falha: " + err.message;
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
 
 <!-- Navegação por Abas -->
 <div class="tabs">

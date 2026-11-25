@@ -141,6 +141,13 @@ def run_all_checks() -> int:
         f"exit_code={rc_glob}",
     ))
 
+    rc_agent, out_agent = _run_unittest_file(BASE_DIR / "tests" / "test_strategy_agent_and_ui.py")
+    checks.append((
+        "Testes offline Agente/UI/Botão (tests/test_strategy_agent_and_ui.py)",
+        "PASS" if rc_agent == 0 else "FAIL",
+        f"exit_code={rc_agent}",
+    ))
+
     # 2. Configuração e segurança
     checks.append((
         "ENABLE_SIMULATION_FALLBACK desligado por padrão",
@@ -335,6 +342,7 @@ def run_all_checks() -> int:
         BASE_DIR / "database.py",
         BASE_DIR / "market_data.py",
         BASE_DIR / "global_radar.py",
+        BASE_DIR / "strategy_agent.py",
         BASE_DIR / "strategies_engine.py",
         BASE_DIR / "strategies_config.json",
         BASE_DIR / "data" / "b3_fundamentals.json",
@@ -342,6 +350,7 @@ def run_all_checks() -> int:
         BASE_DIR / "tests" / "test_basic.py",
         BASE_DIR / "tests" / "test_audit_specifics.py",
         BASE_DIR / "tests" / "test_global_radar.py",
+        BASE_DIR / "tests" / "test_strategy_agent_and_ui.py",
     ]
     hashes_lines = [f"- `{p.relative_to(BASE_DIR)}`: `{_file_sha256(p)}`" for p in key_files]
     table_lines = [
@@ -379,6 +388,11 @@ def run_all_checks() -> int:
         "## Saída Bruta — tests/test_global_radar.py",
         "```text",
         out_glob,
+        "```",
+        "",
+        "## Saída Bruta — tests/test_strategy_agent_and_ui.py",
+        "```text",
+        out_agent,
         "```",
         "",
     ])

@@ -776,7 +776,244 @@
     });
   }
 
+  </div>
+  <!-- FIM TERMINAL/MATRIX -->
+
+  <!-- LABORATÓRIO DE ESTRATÉGIAS, RADAR GLOBAL & AGENTE (FASES 3 & 4) -->
+  <div id="strategyLabSection" class="term-panel" style="margin-top:28px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+      <div>
+        <div class="term-kicker">LABORATÓRIO DE ESTRATÉGIAS &amp; RADAR GLOBAL (MODO ESTRITO • PAPER TRADING)</div>
+        <h2 style="margin:4px 0 0; font-size:1.3rem;">Gerente de Estratégias, Propostas &amp; Agente</h2>
+      </div>
+      <div class="seg-group" id="labTabs" role="tablist">
+        <button type="button" class="seg-btn active" data-labtab="strategies">Estratégias</button>
+        <button type="button" class="seg-btn" data-labtab="radar">Radar Global</button>
+        <button type="button" class="seg-btn" data-labtab="proposals">Propostas &amp; Log</button>
+        <button type="button" class="seg-btn" data-labtab="agent">Agente &amp; Relatórios</button>
+      </div>
+    </div>
+
+    <div id="labDisclaimers" class="paywall-bar-pro" style="margin-bottom:16px; font-size:0.82rem;">
+      <div>
+        <strong>Avisos Obrigatórios:</strong> Laboratório educativo de carteiras simuladas (sem ordens reais e sem recomendação personalizada). Impostos (IR, dividendos, IOF, come-cotas) não modelados; universo atual sujeito a viés de sobrevivência. Score do Radar Global é heurístico, sem poder preditivo comprovado.
+        <span id="labStaleBadge" class="badge badge-warn" style="display:none; margin-left:8px;">Snapshot desatualizado</span>
+        <span id="labDataBaseBadge" class="badge badge-cat" style="margin-left:8px;">Data-base CVM: carregando...</span>
+      </div>
+    </div>
+
+    <div id="labLoadingState" class="mono" style="padding:18px; color:var(--text-soft);">Carregando estratégias, curvas base 100 e Radar Global...</div>
+    <div id="labErrorState" class="badge badge-warn" style="display:none; padding:12px; margin-bottom:12px;"></div>
+
+    <!-- Tab 1: Estratégias & Comparador -->
+    <div id="labTabStrategies" class="lab-tab-pane">
+      <div id="labStrategyCards" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:14px; margin-bottom:18px;"></div>
+      <h3 style="margin:12px 0 8px; font-size:1rem;">Comparador de Estratégias Ativas</h3>
+      <div style="overflow-x:auto;">
+        <table class="table-pro" id="labCompareTable">
+          <thead><tr><th>Estratégia</th><th>Status</th><th>Janela</th><th>Retorno</th><th>Volatilidade</th><th>Max DD</th><th>Sharpe vs CDI</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab 2: Radar Global -->
+    <div id="labTabRadar" class="lab-tab-pane" style="display:none;">
+      <div id="labRegimeBox" style="margin-bottom:14px; padding:12px; border:1px solid var(--border); border-radius:10px;"></div>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
+        <input type="text" id="radarFilterInput" placeholder="Filtrar ativo/classe (ex: EUA, Ouro, IVV)..." style="padding:7px 10px; border-radius:8px; border:1px solid var(--border); background:var(--panel-2); color:var(--text);" />
+        <span class="mono" style="font-size:0.78rem; color:var(--text-soft);" id="radarCorrSummary"></span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="table-pro" id="radarRankingTable">
+          <thead><tr><th>Ativo</th><th>Classe</th><th>Score Heurístico</th><th>A FAVOR / CONTRA</th><th>Ação</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab 3: Propostas & Audit Log -->
+    <div id="labTabProposals" class="lab-tab-pane" style="display:none;">
+      <h3 style="margin:0 0 8px; font-size:1rem;">Fila de Propostas (Aprovação exclusiva de Admin)</h3>
+      <div id="labProposalsList" style="margin-bottom:16px;"></div>
+      <h3 style="margin:0 0 8px; font-size:1rem;">Audit Log Imutável</h3>
+      <div id="labAuditLogList" class="mono" style="font-size:0.78rem; max-height:240px; overflow-y:auto;"></div>
+    </div>
+
+    <!-- Tab 4: Chat com Agente & Relatórios -->
+    <div id="labTabAgent" class="lab-tab-pane" style="display:none;">
+      <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+        <input type="text" id="agentChatInput" placeholder="Pergunte sobre regime, radar, comparação ou estratégia (modo determinístico)..." style="flex:1; min-width:240px; padding:9px 12px; border-radius:8px; border:1px solid var(--border); background:var(--panel-2); color:var(--text);" />
+        <button type="button" id="agentSendBtn" class="btn btn-sm btn-electric">Enviar ao Agente</button>
+        <button type="button" id="agentWeeklyBtn" class="btn btn-sm btn-outline">Relatório Semanal</button>
+        <button type="button" id="agentMonthlyBtn" class="btn btn-sm btn-outline">Relatório Mensal</button>
+      </div>
+      <div id="agentReplyBox" class="mono" style="padding:12px; border:1px solid var(--border); border-radius:10px; white-space:pre-wrap; font-size:0.82rem; min-height:60px;">Pronto para consultas determinísticas (custo zero).</div>
+    </div>
+  </div>
+
+<script>
   updateAll();
+})();
+
+// Script independente do Laboratório de Estratégias (/api/strategies/*)
+(function() {
+  const labSec = document.getElementById("strategyLabSection");
+  if (!labSec) return;
+  const IS_STATIC = {{ 'true' if is_static_export|default(false) else 'false' }};
+  const tabBtns = document.querySelectorAll("#labTabs .seg-btn");
+  const panes = {
+    strategies: document.getElementById("labTabStrategies"),
+    radar: document.getElementById("labTabRadar"),
+    proposals: document.getElementById("labTabProposals"),
+    agent: document.getElementById("labTabAgent"),
+  };
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const target = btn.getAttribute("data-labtab");
+      Object.entries(panes).forEach(([k, el]) => { if (el) el.style.display = (k === target) ? "block" : "none"; });
+    });
+  });
+
+  if (IS_STATIC) {
+    document.getElementById("labLoadingState").textContent = "Bundle estático GitHub Pages: chat e aprovações Admin desabilitados (somente relatórios pré-gerados).";
+    const agentTab = document.querySelector('[data-labtab="agent"]');
+    if (agentTab) agentTab.style.display = "none";
+    return;
+  }
+
+  let overviewData = null;
+  function renderOverview(d) {
+    overviewData = d;
+    document.getElementById("labLoadingState").style.display = "none";
+    const fm = d.fundamentals_meta || {};
+    document.getElementById("labDataBaseBadge").textContent = `Base snapshot: ${fm.reference_date || 'indisponível'} (${fm.universe_count || 0} ativos)`;
+    if (fm.is_stale) document.getElementById("labStaleBadge").style.display = "inline-block";
+
+    // Cards e Comparador
+    const cardsEl = document.getElementById("labStrategyCards");
+    const compBody = document.querySelector("#labCompareTable tbody");
+    cardsEl.innerHTML = "";
+    compBody.innerHTML = "";
+    (d.strategies || []).forEach(item => {
+      const m = item.meta || {}, run = item.run || {}, bt = run.backtest || {}, met = bt.metrics || {};
+      const statusBadge = m.enabled ? (bt.available ? "Ativa • Backtest t+1" : "Ativa • Prospectiva") : "Fase 2 (Preparada)";
+      const weights = (run.target_weights || []).slice(0, 5).map(w => `${w.symbol} (${w.target_weight_pct}%)`).join(", ") || "indisponível";
+      const card = document.createElement("div");
+      card.style.cssText = "border:1px solid var(--border); border-radius:10px; padding:12px; background:var(--panel-2);";
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:6px;">
+          <strong>${m.nome || m.id}</strong>
+          <span class="badge badge-cat">${statusBadge}</span>
+        </div>
+        <div style="font-size:0.8rem; color:var(--text-soft); margin-bottom:6px;">${m.principal_risco || ''}</div>
+        <div class="mono" style="font-size:0.76rem; margin-bottom:8px;">Alocação: ${weights}</div>
+        ${m.enabled ? `<button type="button" class="btn btn-sm btn-outline prop-btn" data-sid="${m.id}">Propor Rebalanceamento</button>` : ""}
+      `;
+      cardsEl.appendChild(card);
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td><code>${m.id}</code></td><td>${statusBadge}</td><td>${bt.start_date ? bt.start_date + '..' + bt.end_date : 'point-in-time'}</td><td>${met.total_return_pct ?? '—'}%</td><td>${met.volatility_ann_pct ?? '—'}%</td><td>${met.max_drawdown_pct ?? '—'}%</td><td>${met.sharpe_vs_cdi ?? '—'}</td>`;
+      compBody.appendChild(tr);
+    });
+
+    cardsEl.querySelectorAll(".prop-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const sid = btn.getAttribute("data-sid");
+        await fetch("/api/strategies/propose", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({strategy_id: sid}) });
+        loadOverview();
+      });
+    });
+
+    // Radar Global
+    const rad = d.radar || {}, reg = rad.regime || {};
+    const sigHtml = (reg.signals || []).map(s => `<span class="badge badge-cat" style="margin-right:6px;">${s.name}: ${s.value} (${s.signal})</span>`).join("");
+    document.getElementById("labRegimeBox").innerHTML = `<strong>Regime: ${reg.regime || 'indisponível'}</strong> (${reg.availability_label || '0 de 4 sinais'})<div style="margin-top:6px;">${sigHtml}</div>`;
+    const corr = rad.correlation_matrix || {};
+    const pairs = corr.high_correlation_pairs || [];
+    document.getElementById("radarCorrSummary").textContent = `Correlação (${rad.correlation_window_days || 126}d): ${pairs.length} par(es) >= 0.75`;
+    renderRadarRows("");
+
+    // Propostas e Log
+    const pEl = document.getElementById("labProposalsList");
+    const props = d.proposals || [];
+    if (!props.length) {
+      pEl.innerHTML = `<div class="mono" style="color:var(--text-soft);">Nenhuma proposta registrada.</div>`;
+    } else {
+      pEl.innerHTML = props.map(p => `
+        <div style="border:1px solid var(--border); border-radius:8px; padding:8px 10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+          <span class="mono" style="font-size:0.78rem;">#${p.id} <strong>${p.strategy_id}</strong> • ${p.status} • ${p.created_at}</span>
+          ${d.is_admin && p.status === 'PENDENTE' ? `<span><button type="button" class="btn btn-sm btn-primary dec-btn" data-id="${p.id}" data-dec="APROVADA">Aprovar</button> <button type="button" class="btn btn-sm btn-outline dec-btn" data-id="${p.id}" data-dec="REJEITADA">Rejeitar</button></span>` : ''}
+        </div>
+      `).join("");
+      pEl.querySelectorAll(".dec-btn").forEach(b => {
+        b.addEventListener("click", async () => {
+          await fetch(`/api/admin/strategies/proposals/${b.getAttribute("data-id")}/decide`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({decision: b.getAttribute("data-dec")}) });
+          loadOverview();
+        });
+      });
+    }
+    const logEl = document.getElementById("labAuditLogList");
+    logEl.innerHTML = (d.audit_log || []).map(l => `<div>[${l.created_at}] <strong>${l.strategy_id}</strong> (${l.actor}): ${l.decision}</div>`).join("") || "Sem registros.";
+  }
+
+  function renderRadarRows(filter) {
+    const tbody = document.querySelector("#radarRankingTable tbody");
+    if (!overviewData) return;
+    const f = (filter || "").toLowerCase();
+    const cands = ((overviewData.radar || {}).candidates || []).filter(c => !f || `${c.symbol} ${c.name} ${c.asset_class}`.toLowerCase().includes(f));
+    if (!cands.length) {
+      tbody.innerHTML = `<tr><td colspan="5" class="mono">Nenhum candidato encontrado.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = cands.slice(0, 12).map(c => `
+      <tr>
+        <td><strong>${c.symbol}</strong><br><small>${c.label || 'CANDIDATO A ESTUDO'}</small></td>
+        <td>${c.asset_class || ''}</td>
+        <td class="mono">${c.score ?? '—'}</td>
+        <td style="font-size:0.76rem;"><strong>+</strong> ${(c.a_favor||[])[0] || ''}<br><strong>-</strong> ${(c.contra||[])[0] || ''}</td>
+        <td><button type="button" class="btn btn-sm btn-outline prop-cand-btn" data-sym="${c.symbol}">Propor posição simulada</button></td>
+      </tr>
+    `).join("");
+    tbody.querySelectorAll(".prop-cand-btn").forEach(b => {
+      b.addEventListener("click", async () => {
+        await fetch("/api/strategies/propose", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({strategy_id: "radar_top_n", symbol: b.getAttribute("data-sym")}) });
+        loadOverview();
+      });
+    });
+  }
+
+  const rFilter = document.getElementById("radarFilterInput");
+  if (rFilter) rFilter.addEventListener("input", e => renderRadarRows(e.target.value));
+
+  async function loadOverview() {
+    try {
+      const r = await fetch("/api/strategies/overview");
+      const d = await r.json();
+      if (!d.ok) throw new Error(d.error || "Falha ao carregar");
+      renderOverview(d);
+    } catch (err) {
+      document.getElementById("labLoadingState").style.display = "none";
+      const errEl = document.getElementById("labErrorState");
+      errEl.style.display = "block";
+      errEl.textContent = "Erro ao carregar Laboratório: " + err.message;
+    }
+  }
+
+  async function sendAgent(msg) {
+    const box = document.getElementById("agentReplyBox");
+    box.textContent = "Consultando agente determinístico...";
+    const r = await fetch("/api/strategies/agent/chat", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({message: msg}) });
+    const d = await r.json();
+    box.textContent = d.reply || d.error || "Sem resposta.";
+  }
+  document.getElementById("agentSendBtn")?.addEventListener("click", () => sendAgent(document.getElementById("agentChatInput").value));
+  document.getElementById("agentWeeklyBtn")?.addEventListener("click", () => sendAgent("gerar relatório semanal"));
+  document.getElementById("agentMonthlyBtn")?.addEventListener("click", () => sendAgent("gerar relatório mensal"));
+
+  loadOverview();
 })();
 </script>
 {% endblock %}
