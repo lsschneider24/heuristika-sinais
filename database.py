@@ -1,4 +1,6 @@
 import hmac
+import json
+import os
 import sqlite3
 import secrets
 from datetime import datetime, timedelta
@@ -7,6 +9,9 @@ import config
 
 
 def get_connection():
+    db_dir = os.path.dirname(os.path.abspath(config.DB_PATH))
+    if db_dir:
+        os.makedirs(db_dir, exist_ok=True)
     conn = sqlite3.connect(config.DB_PATH, timeout=15)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL;")
@@ -112,6 +117,87 @@ def init_db():
             emitido_em TEXT NOT NULL,
             FOREIGN KEY(student_id) REFERENCES academy_students(id)
         );
+        """
+    )
+
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS strategy_portfolios (
+            strategy_id TEXT PRIMARY KEY,
+            target_weights_json TEXT NOT NULL DEFAULT '[]',
+            current_weights_json TEXT NOT NULL DEFAULT '[]',
+            metrics_json TEXT NOT NULL DEFAULT '{}',
+            alerts_json TEXT NOT NULL DEFAULT '[]',
+            status TEXT NOT NULL DEFAULT 'EM_DIA',
+            updated_at TEXT NOT NULL
+        );
+        """
+    )
+
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS strategy_proposals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            strategy_id TEXT NOT NULL,
+            proposal_type TEXT NOT NULL DEFAULT 'REBALANCEAMENTO',
+            rule_triggered TEXT NOT NULL,
+            before_json TEXT NOT NULL DEFAULT '[]',
+            after_json TEXT NOT NULL DEFAULT '[]',
+            rationale TEXT NOT NULL,
+            data_snapshot_json TEXT NOT NULL DEFAULT '{}',
+            status TEXT NOT NULL DEFAULT 'PENDENTE',
+            created_at TEXT NOT NULL,
+            decided_at TEXT,
+            decided_by TEXT
+        );
+        """
+    )
+
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS strategy_param_versions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            strategy_id TEXT NOT NULL,
+            changed_by TEXT NOT NULL,
+            changed_at TEXT NOT NULL,
+            old_params_json TEXT NOT NULL,
+            new_params_json TEXT NOT NULL,
+            reason TEXT DEFAULT ''
+        );
+        """
+    )
+
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS strategy_audit_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            created_at TEXT NOT NULL,
+            strategy_id TEXT NOT NULL,
+            actor TEXT NOT NULL,
+            rule_ref TEXT NOT NULL,
+            data_used_json TEXT NOT NULL,
+            decision TEXT NOT NULL
+        );
+        """
+    )
+
+    cur.execute(
+        """
+        CREATE TRIGGER IF NOT EXISTS trg_strategy_audit_log_no_update
+        BEFORE UPDATE ON strategy_audit_log
+        BEGIN
+            SELECT RAISE(ABORT, 'strategy_audit_log is append-only: UPDATE forbidden');
+        END;
+        """
+    )
+
+    cur.execute(
+        """
+        CREATE TRIGGER IF NOT EXISTS trg_strategy_audit_log_no_delete
+        BEFORE DELETE ON strategy_audit_log
+        BEGIN
+            SELECT RAISE(ABORT, 'strategy_audit_log is append-only: DELETE forbidden');
+        END;
         """
     )
 
@@ -852,3 +938,322 @@ def get_certificate_by_code(codigo: str):
     ).fetchone()
     conn.close()
     return dict(row) if row else None
+
+
+# ==============================================================================
+# GERENTE DE ESTRATÉGIAS DE INVESTIMENTO (LABORATÓRIO DE ESTUDOS - AUDITORIA)
+# ==============================================================================
+def _safe_json_loads(raw: str, default):
+    if not raw:
+        return default
+    try:
+        return json.loads(raw)
+    except Exception:
+        return default
+
+
+def log_strategy_decision(
+    strategy_id: str,
+    rule_ref: str,
+    data_used,
+    decision: str,
+    actor: str = "motor_deterministico",
+) -> int:
+    conn = get_connection()
+    try:
+        payload = data_used if isinstance(data_used, str) else json.dumps(data_used, ensure_ascii=False)
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO strategy_audit_log (created_at, strategy_id, actor, rule_ref, data_used_json, decision)
+            VALUES (?, ?, ?, ?, ?, ?);
+            """,
+            (now_str(), strategy_id, actor, rule_ref, payload, decision),
+        )
+        lid = cur.lastrowid
+        conn.commit()
+        return lid
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+
+def list_strategy_logs(strategy_id: str = None, limit: int = 100) -> list[dict]:
+    conn = get_connection()
+    try:
+        if strategy_id and strategy_id != "Todas":
+            rows = conn.execute(
+                "SELECT * FROM strategy_audit_log WHERE strategy_id = ? ORDER BY id DESC LIMIT ?;",
+                (strategy_id, int(limit)),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT * FROM strategy_audit_log ORDER BY id DESC LIMIT ?;",
+                (int(limit),),
+            ).fetchall()
+        result = []
+        for r in rows:
+            item = dict(r)
+            item["data_used"] = _safe_json_loads(item.get("data_used_json"), {})
+            result.append(item)
+        return result
+    finally:
+        conn.close()
+
+
+def upsert_strategy_portfolio(
+    strategy_id: str,
+    target_weights: list,
+    current_weights: list,
+    metrics: dict,
+    alerts: list,
+    status: str = "EM_DIA",
+) -> dict:
+    conn = get_connection()
+    try:
+        ts = now_str()
+        conn.execute(
+            """
+            INSERT INTO strategy_portfolios (
+                strategy_id, target_weights_json, current_weights_json,
+                metrics_json, alerts_json, status, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(strategy_id) DO UPDATE SET
+                target_weights_json = excluded.target_weights_json,
+                current_weights_json = excluded.current_weights_json,
+                metrics_json = excluded.metrics_json,
+                alerts_json = excluded.alerts_json,
+                status = excluded.status,
+                updated_at = excluded.updated_at;
+            """,
+            (
+                strategy_id,
+                json.dumps(target_weights, ensure_ascii=False),
+                json.dumps(current_weights, ensure_ascii=False),
+                json.dumps(metrics, ensure_ascii=False),
+                json.dumps(alerts, ensure_ascii=False),
+                status,
+                ts,
+            ),
+        )
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+    return get_strategy_portfolio(strategy_id)
+
+
+def get_strategy_portfolio(strategy_id: str) -> dict | None:
+    conn = get_connection()
+    try:
+        row = conn.execute(
+            "SELECT * FROM strategy_portfolios WHERE strategy_id = ?;",
+            (strategy_id,),
+        ).fetchone()
+        if not row:
+            return None
+        d = dict(row)
+        d["target_weights"] = _safe_json_loads(d.get("target_weights_json"), [])
+        d["current_weights"] = _safe_json_loads(d.get("current_weights_json"), [])
+        d["metrics"] = _safe_json_loads(d.get("metrics_json"), {})
+        d["alerts"] = _safe_json_loads(d.get("alerts_json"), [])
+        return d
+    finally:
+        conn.close()
+
+
+def list_strategy_portfolios() -> list[dict]:
+    conn = get_connection()
+    try:
+        rows = conn.execute("SELECT strategy_id FROM strategy_portfolios ORDER BY strategy_id;").fetchall()
+        ids = [r["strategy_id"] for r in rows]
+    finally:
+        conn.close()
+    return [get_strategy_portfolio(sid) for sid in ids if sid]
+
+
+def create_strategy_proposal(
+    strategy_id: str,
+    proposal_type: str,
+    rule_triggered: str,
+    before_data,
+    after_data,
+    rationale: str,
+    data_snapshot: dict = None,
+) -> dict:
+    conn = get_connection()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO strategy_proposals (
+                strategy_id, proposal_type, rule_triggered, before_json, after_json,
+                rationale, data_snapshot_json, status, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDENTE', ?);
+            """,
+            (
+                strategy_id,
+                proposal_type,
+                rule_triggered,
+                json.dumps(before_data, ensure_ascii=False),
+                json.dumps(after_data, ensure_ascii=False),
+                rationale,
+                json.dumps(data_snapshot or {}, ensure_ascii=False),
+                now_str(),
+            ),
+        )
+        pid = cur.lastrowid
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+    return get_strategy_proposal_by_id(pid)
+
+
+def get_strategy_proposal_by_id(proposal_id: int) -> dict | None:
+    conn = get_connection()
+    try:
+        row = conn.execute(
+            "SELECT * FROM strategy_proposals WHERE id = ?;",
+            (proposal_id,),
+        ).fetchone()
+        if not row:
+            return None
+        d = dict(row)
+        d["before"] = _safe_json_loads(d.get("before_json"), [])
+        d["after"] = _safe_json_loads(d.get("after_json"), [])
+        d["data_snapshot"] = _safe_json_loads(d.get("data_snapshot_json"), {})
+        return d
+    finally:
+        conn.close()
+
+
+def list_strategy_proposals(status: str = None, strategy_id: str = None, limit: int = 100) -> list[dict]:
+    conn = get_connection()
+    try:
+        query = "SELECT id FROM strategy_proposals WHERE 1=1"
+        params = []
+        if status:
+            query += " AND status = ?"
+            params.append(status)
+        if strategy_id:
+            query += " AND strategy_id = ?"
+            params.append(strategy_id)
+        query += " ORDER BY id DESC LIMIT ?;"
+        params.append(int(limit))
+        rows = conn.execute(query, params).fetchall()
+        ids = [r["id"] for r in rows]
+    finally:
+        conn.close()
+    return [get_strategy_proposal_by_id(pid) for pid in ids]
+
+
+def decide_strategy_proposal(proposal_id: int, new_status: str, decided_by: str) -> dict | None:
+    if new_status not in ("APROVADA", "REJEITADA"):
+        raise ValueError("Status de decisão inválido. Use APROVADA ou REJEITADA.")
+    prop = get_strategy_proposal_by_id(proposal_id)
+    if not prop:
+        return None
+    conn = get_connection()
+    try:
+        conn.execute(
+            """
+            UPDATE strategy_proposals
+            SET status = ?, decided_at = ?, decided_by = ?
+            WHERE id = ?;
+            """,
+            (new_status, now_str(), decided_by, proposal_id),
+        )
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+    return get_strategy_proposal_by_id(proposal_id)
+
+
+def record_strategy_param_version(
+    strategy_id: str,
+    changed_by: str,
+    old_params: dict,
+    new_params: dict,
+    reason: str = "",
+) -> dict:
+    conn = get_connection()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO strategy_param_versions (
+                strategy_id, changed_by, changed_at, old_params_json, new_params_json, reason
+            ) VALUES (?, ?, ?, ?, ?, ?);
+            """,
+            (
+                strategy_id,
+                changed_by,
+                now_str(),
+                json.dumps(old_params, ensure_ascii=False),
+                json.dumps(new_params, ensure_ascii=False),
+                reason,
+            ),
+        )
+        vid = cur.lastrowid
+        conn.commit()
+        row = conn.execute("SELECT * FROM strategy_param_versions WHERE id = ?;", (vid,)).fetchone()
+        d = dict(row)
+        d["old_params"] = _safe_json_loads(d.get("old_params_json"), {})
+        d["new_params"] = _safe_json_loads(d.get("new_params_json"), {})
+        return d
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+
+def list_strategy_param_versions(strategy_id: str = None, limit: int = 50) -> list[dict]:
+    conn = get_connection()
+    try:
+        if strategy_id:
+            rows = conn.execute(
+                "SELECT * FROM strategy_param_versions WHERE strategy_id = ? ORDER BY id DESC LIMIT ?;",
+                (strategy_id, int(limit)),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT * FROM strategy_param_versions ORDER BY id DESC LIMIT ?;",
+                (int(limit),),
+            ).fetchall()
+        out = []
+        for r in rows:
+            d = dict(r)
+            d["old_params"] = _safe_json_loads(d.get("old_params_json"), {})
+            d["new_params"] = _safe_json_loads(d.get("new_params_json"), {})
+            out.append(d)
+        return out
+    finally:
+        conn.close()
+
+
+def backup_database(backup_dir: str | None = None) -> str:
+    """Cria backup consistente a quente do SQLite fora do Google Drive."""
+    db_abs = os.path.abspath(config.DB_PATH)
+    target_dir = backup_dir or os.path.join(os.path.dirname(db_abs), "backups")
+    os.makedirs(target_dir, exist_ok=True)
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    dest_path = os.path.join(target_dir, f"sinais_vip_backup_{stamp}.db")
+    src_conn = get_connection()
+    dst_conn = sqlite3.connect(dest_path)
+    try:
+        src_conn.backup(dst_conn)
+    finally:
+        dst_conn.close()
+        src_conn.close()
+    return dest_path

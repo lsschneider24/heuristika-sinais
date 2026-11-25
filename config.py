@@ -1,10 +1,33 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.getenv("DB_PATH", os.path.join(BASE_DIR, "sinais_vip.db"))
+
+
+def _default_env_path() -> str:
+    if os.name == "nt":
+        local_app = os.getenv("LOCALAPPDATA") or os.path.expanduser("~")
+        return os.path.join(local_app, "Heuristika", ".env")
+    return os.path.join(os.path.expanduser("~"), ".config", "heuristika", ".env")
+
+
+ENV_PATH = os.getenv("HEURISTIKA_ENV_PATH") or _default_env_path()
+if os.path.isfile(ENV_PATH):
+    load_dotenv(ENV_PATH, override=False)
+else:
+    load_dotenv(override=False)
+
+
+def _default_database_path() -> str:
+    """Mantém o SQLite fora do Google Drive para evitar corrupção por sincronização."""
+    if os.name == "nt":
+        local_app = os.getenv("LOCALAPPDATA") or os.path.expanduser("~")
+        return os.path.join(local_app, "Heuristika", "sinais_vip.db")
+    return os.path.join(os.path.expanduser("~"), ".local", "share", "heuristika", "sinais_vip.db")
+
+
+DATABASE_PATH = os.getenv("DATABASE_PATH") or os.getenv("DB_PATH") or _default_database_path()
+DB_PATH = DATABASE_PATH
 
 SECRET_KEY = os.getenv("SECRET_KEY", "sinais-vip-dev-secret-key")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
@@ -79,7 +102,15 @@ ATR_PERIOD = 14
 ANTI_DUPLICATE_MINUTES = int(os.getenv("ANTI_DUPLICATE_MINUTES", "60"))
 SCAN_INTERVAL_SECONDS = int(os.getenv("SCAN_INTERVAL_SECONDS", "60"))
 AUDIT_INTERVAL_SECONDS = int(os.getenv("AUDIT_INTERVAL_SECONDS", "30"))
-ENABLE_SIMULATION_FALLBACK = os.getenv("ENABLE_SIMULATION_FALLBACK", "true").lower() == "true"
+ENABLE_SIMULATION_FALLBACK = os.getenv("ENABLE_SIMULATION_FALLBACK", "false").lower() == "true"
+
+# Camada opcional de LLM do Gerente de Estratégias (desligada por padrão - Custo Zero)
+LLM_ENABLED = os.getenv("LLM_ENABLED", "false").lower() == "true"
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini_free").strip()
+LLM_API_KEY = os.getenv("LLM_API_KEY", "").strip()
+LLM_MAX_RPM = int(os.getenv("LLM_MAX_RPM", "5"))
+LLM_MAX_RPD = int(os.getenv("LLM_MAX_RPD", "50"))
+LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "450"))
 
 # Planos comerciais exibidos na vitrine (pagamento exclusivo via Pix)
 PLANOS = [

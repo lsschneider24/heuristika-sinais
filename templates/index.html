@@ -175,7 +175,7 @@
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
                   </div>
                   <div>
-                    <div class="inst-sym">{{ t_item.symbol }}</div>
+                    <div class="inst-sym">{{ t_item.symbol }} <span class="badge badge-warn" style="font-size:0.6rem; padding:1px 5px; vertical-align:middle;">SIMULADO</span></div>
                     <div class="inst-px">{{ t_item.categoria }} • {{ t_item.price|fmt_price(t_item.categoria, t_item.symbol) }}</div>
                   </div>
                 </div>
@@ -229,6 +229,9 @@
               <span class="badge {% if s.direcao == 'COMPRA' %}badge-buy{% else %}badge-sell{% endif %}">{{ t.buy if s.direcao == 'COMPRA' else t.sell }}</span>
               <span class="badge badge-open mono">R:R 1:{{ '%.1f'|format(rr_val) }}</span>
               <span class="badge badge-cat">{{ t.showcase }}</span>
+              {% if 'SIMULADO' in (s.observacao or '')|upper or 'CONTINGÊNCIA' in (s.observacao or '')|upper %}
+                <span class="badge badge-warn">SIMULADO</span>
+              {% endif %}
             </div>
           </div>
           <h3 class="asset-title">{{ s.ativo }}</h3>

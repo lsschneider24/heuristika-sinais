@@ -20,9 +20,12 @@ import tempfile
 BASE_DIR = Path(__file__).resolve().parent.parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
-VENV_SITE = BASE_DIR / ".venv" / "Lib" / "site-packages"
+EXT_VENV_SITE = Path(os.environ.get("LOCALAPPDATA", "")) / "Heuristika" / "venv-sinais" / "Lib" / "site-packages"
+LOCAL_VENV_SITE = BASE_DIR / ".venv" / "Lib" / "site-packages"
+VENV_SITE = EXT_VENV_SITE if EXT_VENV_SITE.is_dir() else LOCAL_VENV_SITE
 if VENV_SITE.is_dir() and str(VENV_SITE) not in sys.path:
     sys.path.insert(0, str(VENV_SITE))
+os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
 
 import config  # noqa: E402
 import database  # noqa: E402
@@ -99,6 +102,7 @@ def _get_git_head() -> str:
 def _run_unittest_file(test_file: Path) -> tuple[int, str]:
     env = os.environ.copy()
     env["PYTHONPATH"] = f"{BASE_DIR};{VENV_SITE}"
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
     proc = subprocess.run(
         [sys.executable, str(test_file), "-v"],
         capture_output=True,
@@ -167,11 +171,47 @@ def run_all_checks() -> int:
     ))
 
     gi_text = (BASE_DIR / ".gitignore").read_text(encoding="utf-8") if (BASE_DIR / ".gitignore").is_file() else ""
-    gi_ok = all(tok in gi_text for tok in ("*.db*", ".env", "backups/", "cdi_sgs_cache.json"))
+    gi_ok = all(tok in gi_text for tok in ("*.db*", ".env", "backups/", "cdi_sgs_cache.json", ".venv/", "__pycache__/"))
     checks.append((
-        ".gitignore cobre *.db*, .env, backups e caches",
+        ".gitignore cobre *.db*, .env, .venv, __pycache__, backups e caches",
         "PASS" if gi_ok else "FAIL",
         "Verificado em .gitignore",
+    ))
+
+    # 2b. Integridade Git e ausência de conflitos de sincronização do Drive
+    git_fsck_ok = True
+    git_fsck_detail = "git fsck OK"
+    try:
+        r_fsck = subprocess.run(
+            ["git", "-C", str(BASE_DIR), "fsck", "--no-dangling"],
+            capture_output=True, text=True, timeout=30,
+        )
+        if r_fsck.returncode != 0:
+            git_fsck_ok = False
+            git_fsck_detail = f"git fsck exit={r_fsck.returncode}: {(r_fsck.stderr or r_fsck.stdout)[:120]}"
+    except Exception as exc:
+        git_fsck_ok = False
+        git_fsck_detail = str(exc)
+
+    conflict_hits = []
+    for p in BASE_DIR.rglob("*"):
+        if ".git" in p.parts or ".venv" in p.parts:
+            continue
+        nl = p.name.lower()
+        if "conflicted copy" in nl or "cópia em conflito" in nl or nl.endswith((" (1).py", " (2).py", " (1).json", " (1).md")):
+            conflict_hits.append(str(p.relative_to(BASE_DIR)))
+    checks.append((
+        "Integridade Git (fsck) e sem conflitos de sincronização",
+        "PASS" if (git_fsck_ok and not conflict_hits) else "FAIL",
+        f"{git_fsck_detail} | conflitos={len(conflict_hits)}",
+    ))
+
+    drive_venv_exists = (BASE_DIR / ".venv").exists()
+    drive_pycache = [str(p.relative_to(BASE_DIR)) for p in BASE_DIR.rglob("__pycache__") if ".git" not in p.parts]
+    checks.append((
+        "Ausência de .venv e __pycache__ dentro do Drive",
+        "PASS" if (not drive_venv_exists and not drive_pycache) else "FAIL",
+        f"venv_in_drive={drive_venv_exists} | pycache_count={len(drive_pycache)}",
     ))
 
     # 3. Banco SQLite: tabelas strategy_*, triggers reais em cópia temporária e backup datado

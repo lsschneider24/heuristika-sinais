@@ -127,3 +127,46 @@
 1. Executar `python audit/run_audit.py` e confirmar `EXIT 0` + `MANIFEST.json`.
 2. Validar o novo relatório completo `audit/reports/backtest_long_2026-11-24.md` (todas as 5 estratégias, 12+ anos, sensibilidade da banda).
 3. Executar a reconciliação independente do Auditor (a partir de `README.md` e `strategies_config.json`).
+
+## Parecer do Auditor (Revisão Etapa 2E)
+- **`audit/run_audit.py`:** **PASS (`exit_code=0`)** — Relatório: `audit/reports/audit_2026-11-24_1403.md`.
+- **Parecer Etapa 2E:** **FAIL** — apesar de `run_audit.py`, backtests 12+ anos, banda de `25%`, regra de zero indevido e detectores `evento_corporativo` (`BBAS3` pego pelo IPE 90d) estarem aprovados, a **amostragem externa** revelou erro de escala/moeda no `cvm_pipeline.py`:
+  1. `VALE3` está com `payout_pct=4245.5%`, `roe_pct=0.28%` e `verified=true` (divergência de moeda/escala entre DFC e DRE).
+  2. Bancos (`ITUB4` `roe=1.95%` vs `23.6%` RI 3T26, `SANB11` `1.23%`, `BBDC4` `5.59%`) com `ESCALA_MOEDA` / conta incorreta no LTM.
+- **Pendência para o Construtor:** normalizar `ESCALA_MOEDA` (`MIL` vs `UNIDADE`) e `MOEDA` no `cvm_pipeline.py` (e adicionar sanity check para `payout > 200%` ou `roe` implausível não virarem `verified=true`).
+
+---
+
+# Fluxo de Trabalho em Dois PCs (Projeto no Google Drive)
+
+> **Decisão:** o repositório permanece no Google Drive para trabalho alternado entre dois PCs (um de cada vez).
+
+## Regras Operacionais (Obrigatórias)
+1. **Um PC por vez:** nunca abra o projeto nem rode o servidor nos dois PCs simultaneamente.
+2. **Disponível offline:** marque a pasta do projeto como **"Disponível offline"** no Google Drive Desktop nos dois PCs.
+3. **Antes de trocar de PC:** feche o servidor Flask e o Antigravity, remova `WORKING_PC.lock` (se ainda existir) e **aguarde o Google Drive indicar "Sincronizado"**.
+4. **Trava de sessão (`WORKING_PC.lock`):**
+   - `run.ps1` cria `WORKING_PC.lock` (nome do PC + horário ISO) ao iniciar e apaga ao encerrar.
+   - Se encontrar um `WORKING_PC.lock` de outro PC com menos de **12 horas**, exibe aviso antes de continuar.
+5. **Estado do banco SQLite (carteiras simuladas):**
+   - O banco vivo fica sempre fora do Drive em `%LOCALAPPDATA%\Heuristika\sinais_vip.db` (e o `.env` em `%LOCALAPPDATA%\Heuristika\.env`).
+   - O PC principal guarda o estado oficial; para transferir o estado ao segundo PC, gere um backup com `audit/tools/backup_drive_state.py` (salva em `backups_db/` e `backups_repo/`) e restaure no outro PC copiando o `.db` de `backups_db/` para `%LOCALAPPDATA%\Heuristika\sinais_vip.db`.
+
+## Comandos em Cada PC
+- **Preparar um PC novo (1ª vez):**
+  ```powershell
+  powershell -ExecutionPolicy Bypass -File .\setup_pc.ps1
+  ```
+- **Subir o servidor Flask (usando venv externo):**
+  ```powershell
+  powershell -ExecutionPolicy Bypass -File .\run.ps1
+  ```
+- **Rodar a auditoria completa (usando venv externo):**
+  ```powershell
+  $env:PYTHONDONTWRITEBYTECODE="1"
+  & "$env:LOCALAPPDATA\Heuristika\venv-sinais\Scripts\python.exe" audit\run_audit.py
+  ```
+- **Gerar backup portátil (`git bundle` + `backup_database()`):**
+  ```powershell
+  & "$env:LOCALAPPDATA\Heuristika\venv-sinais\Scripts\python.exe" audit\tools\backup_drive_state.py
+  ```

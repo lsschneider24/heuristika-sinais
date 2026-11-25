@@ -81,8 +81,11 @@ def _generate_simulated_candles(base_price: float, count: int = 60):
     return highs, lows, closes
 
 
-def get_candles(categoria: str, ativo: str):
-    """Retorna (highs, lows, closes, fonte) para o ativo."""
+def get_candles(categoria: str, ativo: str, allow_fallback: bool | None = None):
+    """Retorna (highs, lows, closes, fonte) para o ativo.
+    Quando allow_fallback=False (modo estrito para estratégias), nunca gera candles simulados
+    e retorna ('indisponível', 'indisponível', 'indisponível', 'indisponível') se falhar.
+    """
     item = config.find_asset_config(categoria, ativo) or {}
     fallback = float(item.get("fallback_price", 100.0))
 
@@ -100,15 +103,21 @@ def get_candles(categoria: str, ativo: str):
         except Exception as exc:
             logger.debug("Yahoo falhou para %s: %s", ativo, exc)
 
-    if config.ENABLE_SIMULATION_FALLBACK:
+    if allow_fallback is False:
+        return "indisponível", "indisponível", "indisponível", "indisponível"
+
+    use_sim = config.ENABLE_SIMULATION_FALLBACK if allow_fallback is None else bool(allow_fallback)
+    if use_sim:
         h, l, c = _generate_simulated_candles(fallback)
-        return h, l, c, "Contingência Local"
+        return h, l, c, "SIMULADO (Contingência Local)"
 
     raise RuntimeError(f"Sem fonte de dados disponível para {ativo}")
 
 
-def get_current_price(categoria: str, ativo: str) -> tuple:
-    """Retorna (preco_atual, fonte)."""
+def get_current_price(categoria: str, ativo: str, allow_fallback: bool | None = None) -> tuple:
+    """Retorna (preco_atual, fonte).
+    Quando allow_fallback=False (modo estrito), retorna ('indisponível', 'indisponível') se falhar.
+    """
     item = config.find_asset_config(categoria, ativo) or {}
     fallback = float(item.get("fallback_price", 100.0))
 
@@ -138,11 +147,15 @@ def get_current_price(categoria: str, ativo: str) -> tuple:
         except Exception:
             pass
 
-    if config.ENABLE_SIMULATION_FALLBACK:
-        jitter = random.uniform(-0.004, 0.004)
-        return round(fallback * (1 + jitter), item.get("decimals", 2)), "Contingência Local"
+    if allow_fallback is False:
+        return "indisponível", "indisponível"
 
-    return fallback, "Fallback Estático"
+    use_sim = config.ENABLE_SIMULATION_FALLBACK if allow_fallback is None else bool(allow_fallback)
+    if use_sim:
+        jitter = random.uniform(-0.004, 0.004)
+        return round(fallback * (1 + jitter), item.get("decimals", 2)), "SIMULADO (Contingência Local)"
+
+    return fallback, "SIMULADO (Fallback Estático)"
 
 
 def calc_ema(values: list, period: int) -> list:

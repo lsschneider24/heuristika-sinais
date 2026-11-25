@@ -208,6 +208,9 @@
               <span class="badge {% if s.direcao == 'COMPRA' %}badge-buy{% else %}badge-sell{% endif %}">{{ s.direcao }}</span>
               <span class="badge badge-open mono">R:R 1:{{ '%.1f'|format(rr_val) }}</span>
               <span class="badge badge-vip">{{ s.destino }}</span>
+              {% if 'SIMULADO' in (s.observacao or '')|upper or 'CONTINGÊNCIA' in (s.observacao or '')|upper %}
+                <span class="badge badge-warn">SIMULADO</span>
+              {% endif %}
             </div>
           </div>
 

@@ -28,6 +28,12 @@ python app.py
 python -m unittest discover -s tests -v
 ```
 
+## Auditoria Automática & Gate de Fases (Regra Obrigatória)
+
+- **NENHUMA fase pode ser declarada concluída** sem executar `python audit/run_audit.py` e obter um relatório em `audit/reports/audit_AAAA-MM-DD_HHMM.md` com **`exit code 0`** gerado naquele momento.
+- Se o script de auditoria falhar, corrija o problema e execute novamente até retornar `exit code 0`. Nunca declare "testes OK" sem citar o caminho do relatório gerado.
+- Instruções do Agente Auditor independente estão em [AUDITOR.md](AUDITOR.md).
+
 ## Publicação Gratuita (Cloudflare Tunnel)
 
 - **Link rápido gratuito:** Execute `publicar_tunnel.bat` (gera uma URL `https://*.trycloudflare.com` na hora).

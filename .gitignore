@@ -7,6 +7,9 @@ bin/
 *.db*
 sinais_vip.db*
 backups/
+backups_db/
+backups_repo/
 data/cdi_sgs_cache.json
 data/collector_cache/
 site_dist/
+WORKING_PC.lock

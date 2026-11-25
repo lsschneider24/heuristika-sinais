@@ -1,0 +1,835 @@
+{
+  "tolerance_pct": 5.0,
+  "tolerance_pp": 0.3,
+  "checked_at": "2026-11-23",
+  "verification_rule": "verified=true somente com fonte primária (RI/CVM) dentro da tolerância OU duas fontes secundárias independentes concordando.",
+  "records": [
+    {
+      "symbol": "BBAS3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 9.8,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 4.8,
+        "price_used": 14.3,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=BBAS3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 4.81,
+        "price_used": 14.33,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/bbas3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "BBAS3",
+      "field": "payout_pct",
+      "snapshot_value": 45.0,
+      "observed_value": 25.0,
+      "url": "https://ri.bb.com.br/",
+      "checked_at": "2026-11-23",
+      "status": "divergente: Conselho do BB reduziu payout de 2026 para 25% em 10/11/2026 (snapshot marcava 45%)",
+      "passed": false
+    },
+    {
+      "symbol": "ITUB4",
+      "field": "dy_12m_pct",
+      "snapshot_value": 8.4,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 7.8,
+        "price_used": 40.07,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=ITUB4",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 7.85,
+        "price_used": 39.82,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/itub4",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "SANB11",
+      "field": "dy_12m_pct",
+      "snapshot_value": 6.5,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 7.7,
+        "price_used": 28.15,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=SANB11",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 7.73,
+        "price_used": 28.11,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/sanb11",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "BBDC4",
+      "field": "dy_12m_pct",
+      "snapshot_value": 7.1,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 11.0,
+        "price_used": 13.83,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=BBDC4",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 11.75,
+        "price_used": 13.68,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/bbdc4",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "ABCB4",
+      "field": "dy_12m_pct",
+      "snapshot_value": 7.6,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 11.0,
+        "price_used": 22.92,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=ABCB4",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 11.64,
+        "price_used": 23.19,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/abcb4",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "TAEE11",
+      "field": "dy_12m_pct",
+      "snapshot_value": 9.5,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 7.8,
+        "price_used": 40.17,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=TAEE11",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 5.25,
+        "price_used": 39.35,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/taee11",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "EGIE3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 7.9,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 4.0,
+        "price_used": 25.32,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=EGIE3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 4.53,
+        "price_used": 24.7,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/egie3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "CPFE3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 8.6,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 8.5,
+        "price_used": 43.78,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=CPFE3",
+        "within_tolerance": true
+      },
+      "observed_statusinvest": {
+        "value": 8.61,
+        "price_used": 43.31,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/cpfe3",
+        "within_tolerance": true
+      },
+      "checked_at": "2026-11-23",
+      "status": "aprovado: duas fontes secundárias independentes (Fundamentus e StatusInvest) concordam dentro da tolerância (±5% rel. ou ±0,3 pp)",
+      "passed": true
+    },
+    {
+      "symbol": "CPFE3",
+      "field": "net_debt_ebitda",
+      "snapshot_value": 1.9,
+      "formula_snapshot": "ITR 3T26 CVM / IFRS LTM (Dívida Líquida / EBITDA 12m)",
+      "observed_value": 2.46,
+      "formula_observed": "RI CPFL 3T26 — Dívida Líquida / EBITDA Pro Forma (critério covenants financeiros)",
+      "url": "https://www.cpfl.com.br/ri",
+      "checked_at": "2026-11-23",
+      "status": "divergente por metodologia (covenants Pro Forma 2,46x vs IFRS/mercado ~1,9x-1,94x)",
+      "passed": false
+    },
+    {
+      "symbol": "CMIG4",
+      "field": "dy_12m_pct",
+      "snapshot_value": 9.2,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 9.3,
+        "price_used": 10.94,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=CMIG4",
+        "within_tolerance": true
+      },
+      "observed_statusinvest": {
+        "value": 7.34,
+        "price_used": 10.73,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/cmig4",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "ISAE4",
+      "field": "dy_12m_pct",
+      "snapshot_value": 8.1,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 7.3,
+        "price_used": 26.05,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=ISAE4",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 7.79,
+        "price_used": 25.71,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/isae4",
+        "within_tolerance": true
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "CPLE6",
+      "field": "dy_12m_pct",
+      "snapshot_value": 6.8,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 0.0,
+        "price_used": 14.26,
+        "price_date": "07/11/2025",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=CPLE6",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": null,
+        "price_used": 14.22,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/cple6",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "não verificado: ticker CPLE6 convertido/migrado para CPLE3 (última cotação Fundamentus 07/11/2025; DY nulo no StatusInvest)",
+      "passed": false
+    },
+    {
+      "symbol": "ELET3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 4.2,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": null,
+        "price_used": null,
+        "price_date": null,
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=ELET3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": null,
+        "price_used": null,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/elet3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "não verificado: ticker ELET3 descontinuado em 10/11/2025 (renomeado para AXIA3 / Axia Energia; HTTP 404 no StatusInvest e nulo no Fundamentus)",
+      "passed": false
+    },
+    {
+      "symbol": "AURE3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 7.4,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 0.0,
+        "price_used": 11.91,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=AURE3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": null,
+        "price_used": 11.61,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/aure3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "BBSE3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 10.1,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 12.6,
+        "price_used": 36.99,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=BBSE3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 12.58,
+        "price_used": 36.47,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/bbse3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "CXSE3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 8.9,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 6.7,
+        "price_used": 20.57,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=CXSE3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 6.74,
+        "price_used": 20.45,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/cxse3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "PSSA3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 6.4,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 6.8,
+        "price_used": 43.96,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=PSSA3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 6.94,
+        "price_used": 43.23,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/pssa3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "SAPR11",
+      "field": "dy_12m_pct",
+      "snapshot_value": 8.3,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 1.6,
+        "price_used": 34.14,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=SAPR11",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 1.62,
+        "price_used": 34.1,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/sapr11",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "CSMG3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 9.1,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 3.6,
+        "price_used": 56.09,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=CSMG3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 3.53,
+        "price_used": 56.67,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/csmg3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "SBSP3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 3.5,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 5.2,
+        "price_used": 27.35,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=SBSP3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 5.22,
+        "price_used": 27.66,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/sbsp3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "VIVT3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 7.8,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 7.3,
+        "price_used": 35.22,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=VIVT3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 3.42,
+        "price_used": 35.15,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/vivt3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "TIMS3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 7.5,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 6.8,
+        "price_used": 22.0,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=TIMS3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 6.65,
+        "price_used": 22.04,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/tims3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "PETR4",
+      "field": "dy_12m_pct",
+      "snapshot_value": 12.4,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 8.5,
+        "price_used": 42.67,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=PETR4",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 8.84,
+        "price_used": 41.48,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/petr4",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "PRIO3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 0.8,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 0.0,
+        "price_used": 60.2,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=PRIO3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": null,
+        "price_used": 58.44,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/prio3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "VALE3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 8.7,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 9.6,
+        "price_used": 58.48,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=VALE3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 9.56,
+        "price_used": 58.63,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/vale3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "CMIN3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 11.2,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 18.4,
+        "price_used": 5.02,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=CMIN3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 4.53,
+        "price_used": 4.86,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/cmin3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "GGBR4",
+      "field": "dy_12m_pct",
+      "snapshot_value": 6.2,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 3.3,
+        "price_used": 25.86,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=GGBR4",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 3.36,
+        "price_used": 25.28,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/ggbr4",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "KLBN11",
+      "field": "dy_12m_pct",
+      "snapshot_value": 6.9,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 5.3,
+        "price_used": 16.94,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=KLBN11",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 5.54,
+        "price_used": 16.45,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/klbn11",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "SUZB3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 3.1,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 0.0,
+        "price_used": 55.32,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=SUZB3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 2.03,
+        "price_used": 55.08,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/suzb3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "IRANI3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 7.2,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 5.2,
+        "price_used": 8.01,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=RANI3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 5.39,
+        "price_used": 7.77,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/rani3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "WEGE3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 1.9,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 3.9,
+        "price_used": 51.13,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=WEGE3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 2.36,
+        "price_used": 49.75,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/wege3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "LEVE3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 8.0,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 9.8,
+        "price_used": 30.8,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=LEVE3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 9.82,
+        "price_used": 30.66,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/leve3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "ABEV3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 6.3,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 5.4,
+        "price_used": 16.08,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=ABEV3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 7.86,
+        "price_used": 15.9,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/abev3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "B3SA3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 4.8,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 6.4,
+        "price_used": 14.28,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=B3SA3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 5.34,
+        "price_used": 14.16,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/b3sa3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "RADL3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 1.4,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 3.3,
+        "price_used": 13.72,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=RADL3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": 3.08,
+        "price_used": 14.73,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/radl3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    },
+    {
+      "symbol": "CSAN3",
+      "field": "dy_12m_pct",
+      "snapshot_value": 5.1,
+      "snapshot_date": "2026-11-15",
+      "observed_fundamentus": {
+        "value": 0.0,
+        "price_used": 3.08,
+        "price_date": "19/11/2026",
+        "url": "https://www.fundamentus.com.br/detalhes.php?papel=CSAN3",
+        "within_tolerance": false
+      },
+      "observed_statusinvest": {
+        "value": null,
+        "price_used": 3.14,
+        "price_date": "2026-11-23",
+        "url": "https://statusinvest.com.br/acoes/csan3",
+        "within_tolerance": false
+      },
+      "checked_at": "2026-11-23",
+      "status": "divergente: snapshot (2026-11-15) diverge das fontes públicas consultadas (possível defasagem de data/cotação ou alteração de payout)",
+      "passed": false
+    }
+  ]
+}
