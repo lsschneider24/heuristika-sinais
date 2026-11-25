@@ -110,12 +110,17 @@ def _parse_cvm_csv(
                 val = float(row.get("VL_CONTA") or 0.0)
             except ValueError:
                 continue
+            escala = (row.get("ESCALA_MOEDA") or "MIL").upper()
+            if escala == "UNIDADE":
+                val = val / 1000.0
             dest = cur if ordem == "ÚLTIMO" else prev
             bucket = dest.setdefault(cvm, {})
             conta = row.get("CD_CONTA", "")
             bucket[conta] = val
 
             ds = (row.get("DS_CONTA") or "").upper()
+            if "BPP" in filename and len(conta) == 4 and ("PATRIMÔNIO LÍQUIDO" in ds or "PATRIMONIO LIQUIDO" in ds):
+                bucket["__PL__"] = val
             if "DFC" in filename:
                 if ("DEPREC" in ds or "AMORT" in ds) and val != 0.0:
                     bucket["__DA__"] = bucket.get("__DA__", 0.0) + abs(val)
@@ -240,7 +245,7 @@ def load_cvm_fundamentals(cache_dir: Path) -> dict[str, dict[str, Any]]:
         bpp_cur = bpp3t26.get(cvm) or bpp25.get(cvm, {})
         bpa_cur = bpa3t26.get(cvm) or bpa25.get(cvm, {})
 
-        pl = bpp_cur.get("2.03")
+        pl = bpp_cur.get("__PL__") if bpp_cur.get("__PL__") is not None else bpp_cur.get("2.03")
         roe = round((net_inc / pl) * 100.0, 2) if (net_inc is not None and pl is not None and pl > 0.0) else None
 
         has_cash = "1.01.01" in bpa_cur
