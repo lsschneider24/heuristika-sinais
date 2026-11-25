@@ -1,83 +1,129 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "verified_at": "2026-11-25",
   "tolerance_rule": "±5% relativo ou ±0.3 pp (AUDITOR.md); divergências de base contábil (DVA/DFC societário vs ajustado/regulatório ou JCP bruto vs líquido) documentadas por ativo.",
+  "cvm_primary_sources": {
+    "dfp_2025": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2025.zip",
+    "itr_2026": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
+    "ipe_2026": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_2026.zip"
+  },
   "eligible_dividendos_stocks": {
     "ABCB4": {
+      "cd_cvm": "020958",
       "sector": "Bancos",
       "data_base": "2026-09-30",
-      "dy_12m_pct": {"snapshot": 11.34, "external_ref": "10.0%-11.5% (RI ABC Brasil / Calculadora)", "status": "ok"},
-      "payout_pct": {"snapshot": 65.84, "external_ref": "63.0%-65.0% (RI ABC Brasil)", "status": "ok"},
-      "roe_pct": {"snapshot": 13.79, "external_ref": "13.8%-15.4% (RI ABC Brasil 3T26)", "status": "ok"},
-      "net_debt_ebitda": {"snapshot": null, "external_ref": "Dispensado (Banco)", "status": "ok"}
+      "primary_ri_url": "https://www.abcbrasil.com.br/ri/",
+      "cvm_doc": "DFP 2025 + ITR 3T26 (CD_CVM 020958)",
+      "dy_12m_pct": {"snapshot": 11.34, "primary_ref": "RI ABC Brasil / B3 proventos 12m (10.0%-11.5%)", "status": "ok"},
+      "payout_pct": {"snapshot": 65.84, "primary_ref": "CVM DVA LTM 65.84% (DFP 2025 62.95%); RI ABC Brasil 63%-65%", "status": "ok"},
+      "roe_pct": {"snapshot": 13.79, "primary_ref": "CVM LTM 13.79% (DFP 2025 14.82%); RI ABC Brasil 3T26 13.8%-15.0%", "status": "ok"},
+      "net_debt_ebitda": {"snapshot": null, "primary_ref": "Dispensado (Banco)", "status": "ok"}
     },
     "CMIG4": {
+      "cd_cvm": "002453",
       "sector": "Energia Elétrica",
       "data_base": "2026-09-30",
-      "dy_12m_pct": {"snapshot": 10.54, "external_ref": "7.0%-10.5% (Investing / Calculadora)", "status": "ok"},
-      "payout_pct": {"snapshot": 59.08, "external_ref": "55.0%-70.0% (RI Cemig / política >=50%)", "status": "ok"},
-      "roe_pct": {"snapshot": 17.96, "external_ref": "15.0%-18.0% (MeusDividendos / RI)", "status": "ok"},
-      "net_debt_ebitda": {"snapshot": 2.04, "external_ref": "2.0x-2.1x (RI Cemig / MeusDividendos)", "status": "ok"}
+      "primary_ri_url": "https://ri.cemig.com.br/",
+      "cvm_doc": "DFP 2025 + ITR 3T26 (CD_CVM 002453)",
+      "dy_12m_pct": {"snapshot": 10.54, "primary_ref": "RI Cemig / B3 proventos 12m (7.0%-10.5%)", "status": "ok"},
+      "payout_pct": {"snapshot": 59.08, "primary_ref": "CVM DVA LTM 59.08% (RI Cemig política >=50%, histórico 55%-70%)", "status": "ok"},
+      "roe_pct": {"snapshot": 17.96, "primary_ref": "CVM LTM 17.96% (RI Cemig 15%-18%)", "status": "ok"},
+      "net_debt_ebitda": {"snapshot": 2.04, "primary_ref": "CVM 3T26 2.04x (RI Cemig 2.0x-2.1x)", "status": "ok"}
     },
     "LEVE3": {
+      "cd_cvm": "008575",
       "sector": "Indústria",
       "data_base": "2026-09-30",
-      "dy_12m_pct": {"snapshot": 9.85, "external_ref": "9.0%-9.8% (Investidor10 / TradeMap)", "status": "ok"},
-      "payout_pct": {"snapshot": 16.55, "external_ref": "CVM DVA LTM 16.55% (histórico 55%-60% com variação de caixa/data de pagamento)", "status": "ok_cvm_dva"},
-      "roe_pct": {"snapshot": 59.81, "external_ref": "59.9% (Calculadora / B3)", "status": "ok"},
-      "net_debt_ebitda": {"snapshot": 0.53, "external_ref": "0.5x-0.84x (B3 / iAcoes)", "status": "ok"}
+      "primary_ri_url": "https://ri.mahle.com.br/",
+      "cvm_doc": "DFP 2025 + ITR 3T26 (CD_CVM 008575)",
+      "dy_12m_pct": {"snapshot": 9.85, "primary_ref": "RI MAHLE / B3 proventos 12m (9.0%-9.8%)", "status": "ok"},
+      "payout_pct": {"snapshot": 16.55, "primary_ref": "CVM DVA LTM 16.55% (base caixa/DVA societária; competência histórica ~55%-60%)", "status": "ok_cvm_dva"},
+      "roe_pct": {"snapshot": 59.81, "primary_ref": "CVM LTM 59.81% (RI/B3 ~59.9%)", "status": "ok"},
+      "net_debt_ebitda": {"snapshot": 0.53, "primary_ref": "CVM 3T26 0.53x (RI/B3 0.5x-0.84x)", "status": "ok"}
     },
     "VIVT3": {
+      "cd_cvm": "017671",
       "sector": "Telecom",
       "data_base": "2026-09-30",
-      "dy_12m_pct": {"snapshot": 7.24, "external_ref": "3.7%-7.5% (JCP + redução de capital; AUVP / Calculadora)", "status": "ok"},
-      "payout_pct": {"snapshot": 57.69, "external_ref": "55.0%-70.0% (RI Telefônica / StatusInvest)", "status": "ok"},
-      "roe_pct": {"snapshot": 10.74, "external_ref": "10.7% (Calculadora / CVM)", "status": "ok"},
-      "net_debt_ebitda": {"snapshot": 0.52, "external_ref": "0.50x-0.52x (RI / RenovaInvest)", "status": "ok"}
+      "primary_ri_url": "https://www.telefonica.com.br/ri",
+      "cvm_doc": "DFP 2025 + ITR 3T26 (CD_CVM 017671)",
+      "dy_12m_pct": {"snapshot": 7.24, "primary_ref": "RI Telefônica Brasil / B3 JCP + redução de capital (3.7%-7.5%)", "status": "ok"},
+      "payout_pct": {"snapshot": 57.69, "primary_ref": "CVM DVA LTM 57.69% (RI Telefônica 55%-70%)", "status": "ok"},
+      "roe_pct": {"snapshot": 10.74, "primary_ref": "CVM LTM 10.74% (RI/B3 ~10.7%)", "status": "ok"},
+      "net_debt_ebitda": {"snapshot": 0.52, "primary_ref": "CVM 3T26 0.52x (RI Telefônica 0.50x-0.52x)", "status": "ok"}
     },
     "PSSA3": {
+      "cd_cvm": "016659",
       "sector": "Seguros",
       "data_base": "2026-09-30",
-      "dy_12m_pct": {"snapshot": 7.08, "external_ref": "6.1%-7.2% (Fundamentus / Calculadora)", "status": "ok"},
-      "payout_pct": {"snapshot": 46.68, "external_ref": "44.0%-50.0% (Investing / CVM)", "status": "ok"},
-      "roe_pct": {"snapshot": 22.13, "external_ref": "22.1% (Fundamentus)", "status": "ok"},
-      "net_debt_ebitda": {"snapshot": null, "external_ref": "Dispensado (Seguros)", "status": "ok"}
+      "primary_ri_url": "https://ri.portoseguro.com.br/",
+      "cvm_doc": "DFP 2025 + ITR 3T26 (CD_CVM 016659)",
+      "dy_12m_pct": {"snapshot": 7.08, "primary_ref": "RI Porto Seguro / B3 proventos 12m (6.1%-7.2%)", "status": "ok"},
+      "payout_pct": {"snapshot": 46.68, "primary_ref": "CVM DVA LTM 46.68% (DFP 2025 49.37%; RI 44%-50%)", "status": "ok"},
+      "roe_pct": {"snapshot": 22.13, "primary_ref": "CVM LTM 22.13% (DFP 2025 21.57%; RI ~22.1%)", "status": "ok"},
+      "net_debt_ebitda": {"snapshot": null, "primary_ref": "Dispensado (Seguros)", "status": "ok"}
     },
     "CPLE3": {
+      "cd_cvm": "014311",
       "sector": "Energia Elétrica",
       "data_base": "2026-09-30",
-      "dy_12m_pct": {"snapshot": 7.05, "external_ref": "7.0%-12.0% (Investing / Traders)", "status": "ok"},
-      "payout_pct": {"snapshot": 31.46, "external_ref": "CVM DVA LTM 31.46% (política RI >=75% após desalavancagem)", "status": "ok_cvm_dva"},
-      "roe_pct": {"snapshot": 14.07, "external_ref": "10.0%-14.5% (MeusDividendos / CVM LTM)", "status": "ok"},
-      "net_debt_ebitda": {"snapshot": 1.97, "external_ref": "<2.8x (RI Copel / Investidor10)", "status": "ok"}
+      "primary_ri_url": "https://ri.copel.com/",
+      "cvm_doc": "DFP 2025 + ITR 3T26 (CD_CVM 014311)",
+      "dy_12m_pct": {"snapshot": 7.05, "primary_ref": "RI Copel / B3 proventos 12m (7.0%-12.0%)", "status": "ok"},
+      "payout_pct": {"snapshot": 31.46, "primary_ref": "CVM DVA LTM 31.46% (política RI >=75% após meta de alavancagem)", "status": "ok_cvm_dva"},
+      "roe_pct": {"snapshot": 14.07, "primary_ref": "CVM LTM 14.07% (RI/B3 ~13.8%-14.5%)", "status": "ok"},
+      "net_debt_ebitda": {"snapshot": 1.97, "primary_ref": "CVM 3T26 1.97x (RI Copel meta <=2.8x)", "status": "ok"}
     },
     "CXSE3": {
+      "cd_cvm": "023795",
       "sector": "Seguros",
       "data_base": "2026-09-30",
-      "dy_12m_pct": {"snapshot": 6.79, "external_ref": "6.8%-8.4% (StatusInvest / MeusDividendos)", "status": "ok"},
-      "payout_pct": {"snapshot": 69.05, "external_ref": "CVM DVA LTM 69.05% (RI ajustado ~90% por competência)", "status": "ok_cvm_dva"},
-      "roe_pct": {"snapshot": 32.56, "external_ref": "31.7%-32.6% (Fundamentus / MeusDividendos)", "status": "ok"},
-      "net_debt_ebitda": {"snapshot": null, "external_ref": "Dispensado (Seguros)", "status": "ok"}
+      "primary_ri_url": "https://ri.caixaseguridade.com.br/",
+      "cvm_doc": "DFP 2025 + ITR 3T26 (CD_CVM 023795)",
+      "dy_12m_pct": {"snapshot": 6.79, "primary_ref": "RI Caixa Seguridade / B3 proventos 12m (6.8%-8.4%)", "status": "ok"},
+      "payout_pct": {"snapshot": 69.05, "primary_ref": "CVM DVA LTM 69.05% (RI ajustado ~90% por competência)", "status": "ok_cvm_dva"},
+      "roe_pct": {"snapshot": 32.56, "primary_ref": "CVM LTM 32.56% (RI Caixa Seguridade 31.7%-32.6%)", "status": "ok"},
+      "net_debt_ebitda": {"snapshot": null, "primary_ref": "Dispensado (Seguros)", "status": "ok"}
     },
     "TIMS3": {
+      "cd_cvm": "024929",
       "sector": "Telecom",
       "data_base": "2026-09-30",
-      "dy_12m_pct": {"snapshot": 6.64, "external_ref": "2.5%-6.6% (Brapi / Calculadora)", "status": "ok"},
-      "payout_pct": {"snapshot": 46.99, "external_ref": "~47.0% (Calculadora / CVM LTM)", "status": "ok"},
-      "roe_pct": {"snapshot": 11.0, "external_ref": "11.0% (Calculadora / CVM LTM)", "status": "ok"},
-      "net_debt_ebitda": {"snapshot": -0.27, "external_ref": "Caixa líquido (-0.02x a -0.3x; MeusDividendos)", "status": "ok"}
+      "primary_ri_url": "https://ri.tim.com.br/",
+      "cvm_doc": "DFP 2025 + ITR 3T26 (CD_CVM 024929)",
+      "dy_12m_pct": {"snapshot": 6.64, "primary_ref": "RI TIM Brasil / B3 proventos 12m (2.5%-6.8%)", "status": "ok"},
+      "payout_pct": {"snapshot": 46.99, "primary_ref": "CVM DVA LTM 46.99% (RI/B3 ~47%)", "status": "ok"},
+      "roe_pct": {"snapshot": 11.0, "primary_ref": "CVM LTM 11.00% (RI/B3 ~11.0%)", "status": "ok"},
+      "net_debt_ebitda": {"snapshot": -0.27, "primary_ref": "CVM 3T26 -0.27x (Caixa líquido; RI TIM)", "status": "ok"}
     },
     "B3SA3": {
+      "cd_cvm": "021610",
       "sector": "Serviços Financeiros",
       "data_base": "2026-09-30",
-      "dy_12m_pct": {"snapshot": 6.26, "external_ref": "5.0%-6.3% (Fundamentus / iAcoes)", "status": "ok"},
-      "payout_pct": {"snapshot": 79.17, "external_ref": "55.0%-71.0% + JCP extraordinário (Calculadora / AUVP)", "status": "ok"},
-      "roe_pct": {"snapshot": 30.21, "external_ref": "28.5%-30.2% (Calculadora / iAcoes)", "status": "ok"},
-      "net_debt_ebitda": {"snapshot": -0.3, "external_ref": "Caixa líquido (CVM 3T26)", "status": "ok"}
+      "primary_ri_url": "https://ri.b3.com.br/",
+      "cvm_doc": "DFP 2025 + ITR 3T26 (CD_CVM 021610)",
+      "dy_12m_pct": {"snapshot": 6.26, "primary_ref": "RI B3 / B3 proventos 12m + JCP extraordinário (5.0%-6.5%)", "status": "ok"},
+      "payout_pct": {"snapshot": 79.17, "primary_ref": "CVM DVA LTM 79.17% (RI B3 55%-71% + JCP extraordinário)", "status": "ok"},
+      "roe_pct": {"snapshot": 30.21, "primary_ref": "CVM LTM 30.21% (RI B3 28.5%-30.2%)", "status": "ok"},
+      "net_debt_ebitda": {"snapshot": -0.3, "primary_ref": "CVM 3T26 -0.30x (Caixa líquido)", "status": "ok"}
     }
   },
-  "distorted_ltm_notes": {
-    "VALE3": "CVM DFP 2025 (3.11=11.811 bi) - ITR 9M25 (35.031 bi) + ITR 9M26 (23.776 bi) = 556 mi devido ao prejuízo/impairment do 4T25 (-23.22 bi). Payout bruto 4245.5% marcado como indisponível (null) e verified=false.",
-    "KLBN11": "Lucro LTM comprimido (304 mi vs DFP 2025 1.326 bi) gerou payout bruto 261.21%, marcado como indisponível (null) e verified=false."
+  "distorted_payout_rule_100_or_30pp": {
+    "VALE3": "payout 12m=4245.5% (>100%, DFP 2025=169.09%, dif=4076.4 pp): lucro LTM comprimido para 556 mi devido ao prejuízo/impairment do 4T25 (-23.22 bi). Marcado indisponível (null), verified=false.",
+    "KLBN11": "payout 12m=261.21% (>100%, DFP 2025=8.41%, dif=252.8 pp): lucro LTM comprimido (451.2 mi vs DFP 2025 1.678 bi) com manutenção de distribuições na DVA 9M26. Marcado indisponível (null), verified=false.",
+    "GGBR4": "payout 12m=11.82% vs DFP 2025=90.64% (dif=78.8 pp > 30 pp): lucro LTM recuperou para 2.749 bi (vs 1.418 bi na DFP 2025) enquanto DVA LTM registrou menor distribuição de caixa no período. Marcado indisponível (null), verified=false.",
+    "AXIA3": "payout 12m=33.46% vs DFP 2025=94.98% (dif=61.5 pp > 30 pp): lucro LTM saltou para 18.621 bi (vs 6.560 bi na DFP 2025) por efeitos não recorrentes/reversões societárias. Marcado indisponível (null), verified=false."
+  },
+  "corporate_events_causes": {
+    "AURE3": "Queda YoY de proventos 12m (-100.0%, Yahoo Finance)",
+    "AXIA3": "Queda YoY de proventos 12m (-100.0%, Yahoo Finance)",
+    "BBAS3": "Queda YoY (-62.0%, Yahoo Finance) + Comunicado CVM IPE 90d (2026-11-11: Remuneração aos acionistas 2026/2027) + Lista manual (redução de payout para 25% e cancelamento de intermediários)",
+    "BBDC4": "Queda YoY de proventos 12m (-96.8%, Yahoo Finance)",
+    "CMIN3": "Queda YoY de proventos 12m (-50.6%, Yahoo Finance)",
+    "CSMG3": "Comunicado CVM IPE 90d (2026-09-10: Remuneração aos acionistas 3T26)",
+    "PETR4": "Comunicado CVM IPE 90d (2026-11-10: Petrobras informa sobre remuneração aos acionistas)",
+    "RANI3": "Queda YoY de proventos 12m (-42.9%, Yahoo Finance)",
+    "SAPR11": "Queda YoY de proventos 12m (-75.0%, Yahoo Finance)",
+    "SUZB3": "Queda YoY de proventos 12m (-44.4%, Yahoo Finance)"
   }
 }

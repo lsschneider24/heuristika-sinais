@@ -1,7 +1,7 @@
 {
   "schema_version": "1.1.0",
   "reference_date": "2026-11-25",
-  "collected_at": "2026-11-25T08:26:28",
+  "collected_at": "2026-11-25T08:48:20",
   "max_age_days": 90,
   "origin_type": "automated_public_collector",
   "schedule_cadence": "monthly",
@@ -151,11 +151,11 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 105.65,
-          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 020532, método DVA, base 2026-09-30]",
+          "value": null,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 020532, base 2026-09-30]: indisponível (distorção por resultado não recorrente (payout 12m=105.65%, payout DFP 2025=98.46%, diferença=7.2 pp; lucro 12m=13,029,825 mil vs DFP 2025=12,965,123 mil))",
           "date": "2026-11-25",
           "data_base": "2026-09-30",
-          "verified": true
+          "verified": false
         },
         "years_paying": {
           "value": 10,
@@ -179,7 +179,7 @@
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-25",
-      "verified": true
+      "verified": false
     },
     {
       "symbol": "BBDC4",
@@ -572,11 +572,11 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 33.46,
-          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 002437, método DVA, base 2026-09-30]",
+          "value": null,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 002437, base 2026-09-30]: indisponível (distorção por resultado não recorrente (payout 12m=33.46%, payout DFP 2025=94.98%, diferença=61.5 pp; lucro 12m=18,620,753 mil vs DFP 2025=6,559,659 mil))",
           "date": "2026-11-25",
           "data_base": "2026-09-30",
-          "verified": true
+          "verified": false
         },
         "years_paying": {
           "value": 7,
@@ -601,7 +601,7 @@
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-25",
-      "verified": true,
+      "verified": false,
       "corporate_event_reason": "Queda YoY de proventos 12m: -100.0% (Yahoo Finance)"
     },
     {
@@ -1139,7 +1139,7 @@
         },
         "payout_pct": {
           "value": null,
-          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 004170, base 2026-09-30]: indisponível (Lucro LTM comprimido por resultado atípico no 4T25 (LTM=556,000 mil vs DFP25=11,811,000 mil / 9M26=23,776,000 mil; payout bruto=4245.5%))",
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 004170, base 2026-09-30]: indisponível (distorção por resultado não recorrente (payout 12m=4245.5%, payout DFP 2025=169.09%, diferença=4076.4 pp; lucro 12m=556,000 mil vs DFP 2025=11,811,000 mil))",
           "date": "2026-11-25",
           "data_base": "2026-09-30",
           "verified": false
@@ -1185,11 +1185,11 @@
           "verified": false
         },
         "payout_pct": {
-          "value": 108.44,
-          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 025585, método DVA, base 2026-09-30]",
+          "value": null,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 025585, base 2026-09-30]: indisponível (distorção por resultado não recorrente (payout 12m=108.44%, payout DFP 2025=84.14%, diferença=24.3 pp; lucro 12m=1,279,614 mil vs DFP 2025=1,649,159 mil))",
           "date": "2026-11-25",
           "data_base": "2026-09-30",
-          "verified": true
+          "verified": false
         },
         "years_paying": {
           "value": 6,
@@ -1233,11 +1233,11 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 11.82,
-          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 003980, método DVA, base 2026-09-30]",
+          "value": null,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 003980, base 2026-09-30]: indisponível (distorção por resultado não recorrente (payout 12m=11.82%, payout DFP 2025=90.64%, diferença=78.8 pp; lucro 12m=2,748,755 mil vs DFP 2025=1,418,438 mil))",
           "date": "2026-11-25",
           "data_base": "2026-09-30",
-          "verified": true
+          "verified": false
         },
         "years_paying": {
           "value": 10,
@@ -1262,7 +1262,7 @@
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-25",
-      "verified": true
+      "verified": false
     },
     {
       "symbol": "KLBN11",
@@ -1280,11 +1280,11 @@
           "verified": true
         },
         "payout_pct": {
-          "value": 261.21,
-          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 012653, método DFC (6.03.*), base 2026-09-30]",
+          "value": null,
+          "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 012653, base 2026-09-30]: indisponível (distorção por resultado não recorrente (payout 12m=261.21%, payout DFP 2025=8.41%, diferença=252.8 pp; lucro 12m=451,225 mil vs DFP 2025=1,678,211 mil))",
           "date": "2026-11-25",
           "data_base": "2026-09-30",
-          "verified": true
+          "verified": false
         },
         "years_paying": {
           "value": 9,
@@ -1309,7 +1309,7 @@
       },
       "origin_type": "automated_public_collector",
       "collected_at": "2026-11-25",
-      "verified": true
+      "verified": false
     },
     {
       "symbol": "SUZB3",

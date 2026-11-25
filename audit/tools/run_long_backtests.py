@@ -18,6 +18,7 @@ VENV_SITE = BASE_DIR / ".venv" / "Lib" / "site-packages"
 if VENV_SITE.is_dir() and str(VENV_SITE) not in sys.path:
     sys.path.insert(0, str(VENV_SITE))
 
+import calendar_fill  # noqa: E402
 import market_data  # noqa: E402
 import strategies_engine  # noqa: E402
 
@@ -182,7 +183,10 @@ def _run_indexacao_long(
 ) -> tuple[dict[str, Any], list[str]]:
     b_map = px_maps["BOVA11.SA"]
     i_map = px_maps["IVVB11.SA"]
-    dates = sorted(set(b_map) & set(i_map))
+    dates = sorted(d for d in (set(b_map) | set(i_map)) if datetime.strptime(d, "%Y-%m-%d").weekday() < 5 and d >= max(min(b_map), min(i_map)))
+    _f, _ = calendar_fill.ffill_price_maps({"B": b_map, "I": i_map}, dates)
+    b_map, i_map = _f["B"], _f["I"]
+    dates = [d for d in dates if d in b_map and d in i_map]
     v_cdi, v_b, v_i = 40.0, 30.0, 30.0
     curve = [{"date": dates[0], "value": 100.0}]
     last_reb = datetime.strptime(dates[0], "%Y-%m-%d").date()
@@ -216,10 +220,15 @@ def _run_turtles_progressive(
     default_cdi: float,
     cost_rate: float,
     band_rel_pct: float = 0.0,
+    variant: str = "A",
+    max_fill: int = calendar_fill.DEFAULT_MAX_FILL,
 ) -> tuple[dict[str, Any], list[str]]:
+    """Variantes autorizadas (Etapa 3): A=semanal (controle); B=mensal (21 pregões);
+    C=semanal com reentrada após stop 2xATR somente após novo máximo de 55 dias."""
     by_sym = {s: {c["date"]: c for c in raw_candles[s]} for s in symbols}
     all_dates = sorted(set().union(*(m.keys() for m in by_sym.values())))
     dates = [d for d in all_dates if datetime.strptime(d, "%Y-%m-%d").weekday() < 5]
+    by_sym, ffill_log = calendar_fill.ffill_candle_maps(by_sym, dates, max_fill)
 
     hist_bars: dict[str, list[dict[str, Any]]] = {s: [] for s in symbols}
     full_univ_date = None
@@ -247,6 +256,8 @@ def _run_turtles_progressive(
     weights: dict[str, float] = {}
     pending_w: dict[str, float] | None = None
     peaks: dict[str, float] = {}
+    stopped: dict[str, bool] = {}
+    turn_events: list[tuple[str, float]] = []
     last_reb = datetime.strptime(dates[start_bt_idx], "%Y-%m-%d").date()
     total_turnover = 0.0
     total_cost_pct = 0.0
@@ -258,6 +269,7 @@ def _run_turtles_progressive(
             if turn > 0:
                 total_turnover += turn
                 total_cost_pct += turn * 2.0 * cost_rate * 100.0
+                turn_events.append((d_cur, turn))
                 nav *= 1.0 - turn * 2.0 * cost_rate
                 weights = pending_w
             pending_w = None
@@ -278,7 +290,8 @@ def _run_turtles_progressive(
                 hist_bars[s].append(by_sym[s][d_cur])
 
         cur_dt = datetime.strptime(d_cur, "%Y-%m-%d").date()
-        if (cur_dt - last_reb).days >= 7:
+        check_now = ((idx - start_bt_idx) % 21 == 0) if variant == "B" else ((cur_dt - last_reb).days >= 7)
+        if check_now:
             inv_vols: dict[str, float] = {}
             for s in symbols:
                 bars = hist_bars[s]
@@ -294,12 +307,19 @@ def _run_turtles_progressive(
                     ]
                     atr = sum(trs) / 14.0
                     atr_pct = atr / closes[-1]
+                    if variant == "C" and stopped.get(s):
+                        if closes[-1] >= max(closes[-55:]):
+                            stopped.pop(s, None)
+                        else:
+                            continue
                     pk = peaks.get(s, closes[-1])
                     if closes[-1] >= pk - 2.0 * atr and atr_pct > 0:
                         peaks[s] = max(pk, closes[-1])
                         inv_vols[s] = 1.0 / atr_pct
                     else:
                         peaks.pop(s, None)
+                        if variant == "C":
+                            stopped[s] = True
                 else:
                     peaks.pop(s, None)
             tot_iv = sum(inv_vols.values())
@@ -310,6 +330,9 @@ def _run_turtles_progressive(
     bt_dates = [p["date"] for p in curve]
     m = _compute_extended_metrics(curve, cdi_map, default_cdi, total_turnover, total_cost_pct)
     m["full_universe_since"] = full_univ_date or bt_dates[0]
+    m["ffill_points"] = ffill_log
+    m["_curve"] = curve
+    m["_turn_events"] = turn_events
     return m, bt_dates
 
 
@@ -323,6 +346,7 @@ def _run_dual_momentum_long(
     syms = list(px_brl.keys())
     all_dates = sorted(set().union(*(m.keys() for m in px_brl.values())))
     dates = [d for d in all_dates if datetime.strptime(d, "%Y-%m-%d").weekday() < 5]
+    px_brl, _ = calendar_fill.ffill_price_maps(px_brl, dates)
 
     cdi_idx = {dates[0]: 1.0}
     for i in range(1, len(dates)):
@@ -404,6 +428,7 @@ def _run_risk_parity_long(
     syms = list(px_brl.keys())
     all_dates = sorted(set().union(*(m.keys() for m in px_brl.values())))
     dates = [d for d in all_dates if datetime.strptime(d, "%Y-%m-%d").weekday() < 5]
+    px_brl, _ = calendar_fill.ffill_price_maps(px_brl, dates)
 
     hist_px: dict[str, list[float]] = {s: [] for s in syms}
     start_idx = None
@@ -513,9 +538,12 @@ def _run_radar_top_n_long(
     cdi_map: dict[str, float],
     default_cdi: float,
     cost_rate: float,
+    equal_weight: bool = False,
 ) -> tuple[dict[str, Any], list[str], list[str]]:
     all_dates = sorted(set().union(*(px_maps[s].keys() for s in symbols if s in px_maps)))
     dates = [d for d in all_dates if datetime.strptime(d, "%Y-%m-%d").weekday() < 5]
+    px_maps, _ = calendar_fill.ffill_price_maps({s: px_maps[s] for s in symbols if s in px_maps}, dates)
+    symbols = [s for s in symbols if s in px_maps]
 
     hist_px: dict[str, list[float]] = {s: [] for s in symbols}
     start_idx = None
@@ -579,7 +607,9 @@ def _run_radar_top_n_long(
                     vol = math.sqrt(sum((r - mu) ** 2 for r in rets) / max(1, len(rets) - 1)) * math.sqrt(252)
                     scores[s] = mom_12_1 * 0.5 + trend * 0.3 - vol * 0.2
             top5 = sorted(scores, key=lambda k: scores[k], reverse=True)[:5]
-            pending_w = {s: 0.20 for s in top5}
+            if equal_weight:
+                top5 = sorted(scores)
+            pending_w = {s: 1.0 / len(top5) for s in top5} if top5 else {}
             if d_cur >= "2026-01-01":
                 trace.append(f"{d_cur}: top5={top5}")
 
@@ -611,6 +641,10 @@ def main() -> int:
             raw_candles[s] = cs
             px_maps[s] = {c["date"]: float(c["close"]) for c in cs}
             series_ranges.append(f"- `{s}`: `{cs[0]['date']}` a `{cs[-1]['date']}` ({len(cs)} barras)")
+
+    # Etapa 3: regra de calendário — grade única de dias úteis (B3 ∪ EUA ∪ cripto) com forward-fill <= 5 datas (sinalizado)
+    grid = sorted(d for d in set().union(*(m.keys() for m in px_maps.values())) if datetime.strptime(d, "%Y-%m-%d").weekday() < 5)
+    px_maps, ffill_global = calendar_fill.ffill_price_maps(px_maps, grid)
 
     fx = px_maps["USDBRL=X"]
     dm_brl = {
@@ -709,24 +743,110 @@ def main() -> int:
         lbl = "Sem banda (0%)" if b == 0 else f"{int(b)}%"
         lines.append(f"| {lbl} | {md['cagr_pct']} | {md['volatility_ann_pct']} | {md['max_drawdown_pct']} | {md['sharpe_vs_cdi']} | {md['annual_turnover_pct']} | {md['total_cost_pct']} |")
 
+    # ===== Etapa 3: variantes autorizadas do Trend Following (A controle, B mensal, C reentrada 55d) =====
+    CUT = "2022-01-01"
+
+    def _split(m: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
+        crv = m["_curve"]
+        ev = m["_turn_events"]
+        out = []
+        for lo, hi in (("0000", CUT), (CUT, "9999")):
+            sub = [p for p in crv if lo <= p["date"] < hi]
+            if lo != "0000":
+                prev = [p for p in crv if p["date"] < lo]
+                if prev:
+                    sub = [prev[-1]] + sub
+            t = sum(x for d, x in ev if lo <= d < hi)
+            out.append(_compute_extended_metrics(sub, cdi_map, default_cdi, t, t * 2.0 * cost_rate * 100.0))
+        return out[0], out[1]
+
+    def _passes(v: dict[str, Any], a: dict[str, Any]) -> tuple[bool, str]:
+        red = 1.0 - (v["annual_turnover_pct"] / a["annual_turnover_pct"]) if a["annual_turnover_pct"] > 0 else 0.0
+        ok_t = red >= 0.40
+        ok_d = v["max_drawdown_pct"] >= a["max_drawdown_pct"] - 2.0
+        ok_s = v["sharpe_vs_cdi"] >= a["sharpe_vs_cdi"]
+        return ok_t and ok_d and ok_s, f"giro -{round(red * 100, 1)}% ({'ok' if ok_t else 'falha'}), DD {v['max_drawdown_pct']} vs {a['max_drawdown_pct']} ({'ok' if ok_d else 'falha'}), Sharpe {v['sharpe_vs_cdi']} vs {a['sharpe_vs_cdi']} ({'ok' if ok_s else 'falha'})"
+
+    variants: dict[str, dict[str, Any]] = {}
+    for uni_lbl, uni in (("c/ cripto", turtles_all), ("s/ cripto", turtles_nc)):
+        for v in ("A", "B", "C"):
+            mv, _ = _run_turtles_progressive(raw_candles, uni, cdi_map, default_cdi, cost_rate, band_rel_pct=25.0, variant=v)
+            ins, oos = _split(mv)
+            variants[f"{v}|{uni_lbl}"] = {"full": mv, "ins": ins, "oos": oos}
+
+    decision_lines: list[str] = []
+    winner = "A"
+    cands = []
+    for v in ("B", "C"):
+        ok_all = True
+        for uni_lbl in ("c/ cripto", "s/ cripto"):
+            ok_i, why_i = _passes(variants[f"{v}|{uni_lbl}"]["ins"], variants[f"A|{uni_lbl}"]["ins"])
+            decision_lines.append(f"- Variante `{v}` {uni_lbl}, seleção (até 2021): {'PASSA' if ok_i else 'NÃO PASSA'} — {why_i}")
+            ok_all = ok_all and ok_i
+        if ok_all:
+            cands.append(v)
+    if cands:
+        best = max(cands, key=lambda v: variants[f"{v}|c/ cripto"]["ins"]["sharpe_vs_cdi"])
+        ok_oos = True
+        for uni_lbl in ("c/ cripto", "s/ cripto"):
+            ok_o, why_o = _passes(variants[f"{best}|{uni_lbl}"]["oos"], variants[f"A|{uni_lbl}"]["oos"])
+            decision_lines.append(f"- Confirmação fora da amostra (2022+) `{best}` {uni_lbl}: {'CONFIRMA' if ok_o else 'NÃO CONFIRMA'} — {why_o}")
+            ok_oos = ok_oos and ok_o
+        if ok_oos:
+            winner = best
+    decision_lines.append(f"- **Decisão:** variante adotada = `{winner}`" + (" (regra atual mantida)" if winner == "A" else ""))
+
+    def _row(lbl: str, mm: dict[str, Any]) -> str:
+        return f"| {lbl} | {mm['start_date']}..{mm['end_date']} | {mm['cagr_pct']} | {mm['volatility_ann_pct']} | {mm['max_drawdown_pct']} | {mm['sharpe_vs_cdi']} | {mm['annual_turnover_pct']} | {mm['annual_cost_pct']} |"
+
+    # ===== Etapa 3: radar_top_n vs pesos iguais no mesmo universo =====
+    m_ew, d_ew, _ = _run_radar_top_n_long(px_maps, radar_univ, cdi_map, default_cdi, cost_rate, equal_weight=True)
+    m_ew_nc, d_ew_nc, _ = _run_radar_top_n_long(px_maps, radar_nc, cdi_map, default_cdi, cost_rate, equal_weight=True)
+
     lines.extend([
         "",
         "## 4. Rastreio Recente `radar_top_n`",
         *[f"- `{x}`" for x in tr_rad],
         "",
-        "## 5. Dependência de Cripto, Viés de Seleção e Janelas Móveis (Etapa 2F)",
-        f"- **Aviso obrigatório:** O universo atual de ativos foi escolhido hoje (viés de sobrevivência e viés de seleção). Em `trend_following_turtles` (CAGR `{m_trt['cagr_pct']}%` c/ BTC vs `{m_trt_nc['cagr_pct']}%` s/ BTC; diferença `{round(m_trt['cagr_pct'] - m_trt_nc['cagr_pct'], 2)} pp`) e `radar_top_n` (CAGR `{m_rad['cagr_pct']}%` c/ BTC+ETH vs `{m_rad_nc['cagr_pct']}%` s/ cripto; diferença `{round(m_rad['cagr_pct'] - m_rad_nc['cagr_pct'], 2)} pp`), criptoativos concentram parcela relevante do retorno histórico.",
-        f"- **Decomposição do giro em `trend_following_turtles`:** sem banda (`891%/ano`: `78.9%` por entrada/saída semanal de sinal e `21.1%` por ajuste `1/ATR`); com banda de `25%` (`815.6%/ano`: `85.3%` por mudança de sinal semanal e `14.7%` por ajuste `1/ATR`). Como a banda não bloqueia sinais de entrada/saída da estratégia, reduzir o giro abaixo de ~700%/ano exigiria alterar a regra de verificação semanal (escalado ao usuário).",
-        "- **`dual_momentum_global` (pior drawdown `-39.61%`):** pico em `2020-02-19` (`308.08`) e vale em `2020-03-23` (`186.05`, 33 dias). Na janela mensal de 21 pregões, estava em `BOVA11.SA` no início do crash COVID; em `2020-03-17`, `IVV` em BRL ainda exibia `+31.8%` em 12m (vs CDI `+5.6%`) devido à alta prévia de 2019 e disparada do dólar, evitando a rotação defensiva para CDI.",
-        "- **`risk_parity_simplified` (correção de bug):** corrigido bug de feriado EUA/B3 (que descartava os 5 ETFs dos EUA em feriados americanos e alocava 100% em `BOVA11.SA` por um trimestre) e corrigida a normalização pós-teto via water-filling (`<=35%` ativo e `<=50%` classe).",
+        "## 5. Regra de calendário (Etapa 3)",
+        "- Grade única de dias úteis (B3 ∪ EUA ∪ cripto em dias úteis); ativo sem preço numa data usa o último preço válido por até 5 datas consecutivas (sinalizado), nunca é excluído da carteira nem do ranking.",
+        f"- Pontos preenchidos por série (grade global): `{ {k: v for k, v in sorted(ffill_global.items()) if v} }`",
+        f"- Pontos preenchidos Turtles (c/ cripto): `{ {k: v for k, v in sorted(m_trt.get('ffill_points', {}).items()) if v} }`",
+        "",
+        "## 6. Trend Following — variantes autorizadas (banda 25%, seleção até 2021, confirmação 2022+)",
+        "| Variante | Janela | CAGR (%) | Vol (%) | MaxDD (%) | Sharpe | Giro/ano (%) | Custo/ano (%) |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+    ])
+    for key, vv in variants.items():
+        for per in ("full", "ins", "oos"):
+            lines.append(_row(f"{key} [{ {'full': 'completo', 'ins': 'seleção', 'oos': 'confirmação'}[per] }]", vv[per]))
+    lines.extend(["", *decision_lines, ""])
+    lines.extend([
+        "## 7. Seleção vs Universo — `radar_top_n` vs pesos iguais (mesmo universo, mesmo rebalanceamento mensal e custos)",
+        "| Carteira | Janela | CAGR (%) | Vol (%) | MaxDD (%) | Sharpe | Giro/ano (%) | Custo/ano (%) |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+        _row("radar_top_n c/ cripto", m_rad),
+        _row("pesos iguais c/ cripto", m_ew),
+        _row("radar_top_n s/ cripto", m_rad_nc),
+        _row("pesos iguais s/ cripto", m_ew_nc),
+        f"- Efeito da seleção (Top-5 − pesos iguais): c/ cripto `{round(m_rad['cagr_pct'] - m_ew['cagr_pct'], 2)} pp`; s/ cripto `{round(m_rad_nc['cagr_pct'] - m_ew_nc['cagr_pct'], 2)} pp`.",
+        f"- Efeito do universo cripto (pesos iguais c/ − s/ cripto): `{round(m_ew['cagr_pct'] - m_ew_nc['cagr_pct'], 2)} pp`.",
+        "",
+        "## 8. Avisos",
+        f"- Universo escolhido hoje (viés de sobrevivência e de seleção). Cripto: Turtles c/ `{m_trt['cagr_pct']}%` vs s/ `{m_trt_nc['cagr_pct']}%`; Radar c/ `{m_rad['cagr_pct']}%` vs s/ `{m_rad_nc['cagr_pct']}%`.",
     ])
 
-    today_str = datetime.now().strftime("%Y-%m-%d")
-    out_path = BASE_DIR / "audit" / "reports" / f"backtest_long_{today_str}.md"
+    stamp = datetime.now().strftime("%Y-%m-%d_%H%M")
+    out_path = BASE_DIR / "audit" / "reports" / f"backtest_long_{stamp}.md"
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     from audit.run_audit import _update_reports_manifest
     _update_reports_manifest(BASE_DIR / "audit" / "reports", out_path)
     print(f"LONG_REPORT={out_path}")
+    print(f"TREND_WINNER={winner}")
+    print("\n".join(decision_lines))
+    for key, vv in variants.items():
+        print(f"VAR {key}: " + " | ".join(f"{p}: cagr={vv[p]['cagr_pct']} dd={vv[p]['max_drawdown_pct']} sh={vv[p]['sharpe_vs_cdi']} turn={vv[p]['annual_turnover_pct']}" for p in ("full", "ins", "oos")))
+    print(f"EW c/={m_ew['cagr_pct']} s/={m_ew_nc['cagr_pct']} | RADAR c/={m_rad['cagr_pct']} s/={m_rad_nc['cagr_pct']}")
     for name, m, _ in results:
         print(f"STRAT {name}: {m['start_date']}..{m['end_date']} ({m['years']}y) cagr={m['cagr_pct']}% vol={m['volatility_ann_pct']}% dd={m['max_drawdown_pct']}% sharpe={m['sharpe_vs_cdi']} turn={m['annual_turnover_pct']}%")
     return 0

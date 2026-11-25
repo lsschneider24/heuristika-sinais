@@ -7,7 +7,8 @@ Regras rígidas:
   backtest histórico retroativo; executam apenas paper trading prospectivo.
 - Estratégias baseadas em preço executam backtest diário base 100 sem look-ahead bias
   (decisão no fechamento t, execução em t+1 com corretagem + slippage).
-- Calendários alinhados por interseção de datas com detecção explícita de lacunas (> N dias).
+- Calendários: união de datas com forward-fill limitado (<= 5 datas) e sinalizado; ativo nunca é
+  excluído por diferença de calendário (B3/EUA/cripto); lacunas globais (> N dias) são detectadas.
 """
 
 from __future__ import annotations
@@ -16,11 +17,13 @@ from datetime import datetime
 import math
 from typing import Any
 
+import calendar_fill
 import database
 import global_radar
 import market_data
 
 INDISPONIVEL = market_data.INDISPONIVEL
+_MAX_FFILL = calendar_fill.DEFAULT_MAX_FILL
 
 
 # ==============================================================================
@@ -69,8 +72,30 @@ def align_price_series(
         date_maps[sym] = dmap
         earliest_by_sym[sym] = min(dmap.keys())
 
-    common_dates = sorted(set.intersection(*(set(dm.keys()) for dm in date_maps.values())))
+    # Etapa 3 (regra de calendário): união das datas a partir do início do ativo mais recente,
+    # com forward-fill limitado (calendar_fill.DEFAULT_MAX_FILL) e sinalizado; nunca exclui ativo.
     limiting_asset = max(earliest_by_sym.items(), key=lambda kv: kv[1])[0]
+    start_common = earliest_by_sym[limiting_asset]
+    union_dates = sorted(d for d in set().union(*(set(dm.keys()) for dm in date_maps.values())) if d >= start_common)
+    ffill_log: dict[str, int] = {}
+    for sym in valid_symbols:
+        dm = date_maps[sym]
+        last = None
+        run = 0
+        n_fill = 0
+        for d in union_dates:
+            if d in dm:
+                last = dm[d]
+                run = 0
+            elif last is not None and run < _MAX_FFILL:
+                c = float(last["close"])
+                dm[d] = {"date": d, "open": c, "high": c, "low": c, "close": c, "ffill": True}
+                run += 1
+                n_fill += 1
+            else:
+                run += 1
+        ffill_log[sym] = n_fill
+    common_dates = [d for d in union_dates if all(d in date_maps[s] for s in valid_symbols)]
 
     gaps: list[dict[str, Any]] = []
     # Em calendário B3/EUA fins de semana dão 3 dias corridos e feriados prolongados 4-5 dias.
@@ -96,6 +121,7 @@ def align_price_series(
         "aligned": aligned,
         "gaps": gaps,
         "limiting_asset": limiting_asset,
+        "ffill_points": ffill_log,
     }
 
 
@@ -808,7 +834,11 @@ class TrendFollowingTurtlesStrategy(BaseStrategy):
         }
         last_cdi_r = float(cdi_data.get("last_daily_rate_pct") or 0.0) / 100.0
 
-        def compute_signals_at(idx: int, active_peaks: dict[str, float]) -> dict[str, float]:
+        reentry_n = int(self.params.get("reentry_new_high_days", 0) or 0)
+        stopped_global: set[str] = set()
+
+        def compute_signals_at(idx: int, active_peaks: dict[str, float], stopped: set[str] | None = None) -> dict[str, float]:
+            stopped = stopped_global if stopped is None else stopped
             raw_inv_atr: dict[str, float] = {}
             for sym, candles in aligned_info["aligned"].items():
                 sub = candles[: idx + 1]
@@ -820,15 +850,26 @@ class TrendFollowingTurtlesStrategy(BaseStrategy):
                 if m_fast is None or m_slow is None or atr_val is None or c_now <= 0:
                     continue
 
+                if not (c_now > m_slow and m_fast > m_slow):
+                    active_peaks.pop(sym, None)
+                    continue
+                # Variante C (autorizada): após stop 2xATR, reentra só com novo máximo de N dias
+                if reentry_n and sym in stopped:
+                    if c_now >= max(closes[-reentry_n:]):
+                        stopped.discard(sym)
+                    else:
+                        continue
                 prev_peak = active_peaks.get(sym, c_now)
                 peak = max(prev_peak, c_now)
                 stop_atr = peak - (atr_mult * atr_val)
-                if c_now > m_slow and m_fast > m_slow and c_now > stop_atr:
+                if c_now > stop_atr:
                     atr_pct = max(atr_val / c_now, 0.002)
                     raw_inv_atr[sym] = 1.0 / atr_pct
                     active_peaks[sym] = peak
                 else:
                     active_peaks.pop(sym, None)
+                    if reentry_n:
+                        stopped.add(sym)
 
             if not raw_inv_atr:
                 return {"CAIXA_CDI": 1.0}
@@ -888,7 +929,7 @@ class TrendFollowingTurtlesStrategy(BaseStrategy):
                     pending_weights = next_w
 
         # Alvo atual no último pregão
-        latest_weights_map = compute_signals_at(len(all_dates) - 1, dict(peaks))
+        latest_weights_map = compute_signals_at(len(all_dates) - 1, dict(peaks), set(stopped_global))
         target_weights = []
         for sym, w in sorted(latest_weights_map.items(), key=lambda kv: kv[1], reverse=True):
             if sym == "CAIXA_CDI":
@@ -998,9 +1039,18 @@ def _build_base_currency_series(
     if not fx_map:
         return None
     converted: list[dict[str, Any]] = []
+    fx_dates = sorted(fx_map)
+    import bisect
     for c in candles:
         dt = c["date"]
         fx = fx_map.get(dt)
+        if not fx:
+            # Regra de calendário: câmbio ausente na data usa a última cotação válida (até _MAX_FFILL datas)
+            pos = bisect.bisect_left(fx_dates, dt) - 1
+            if pos >= 0 and (bisect.bisect_left(fx_dates, dt) - pos) <= 1:
+                prev_dt = fx_dates[pos]
+                if (datetime.strptime(dt, "%Y-%m-%d") - datetime.strptime(prev_dt, "%Y-%m-%d")).days <= _MAX_FFILL + 2:
+                    fx = fx_map[prev_dt]
         if not fx or fx <= 0:
             continue
         mult = fx if (asset_currency == "USD" and base_currency == "BRL") else (1.0 / fx)

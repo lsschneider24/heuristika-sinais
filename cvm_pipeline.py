@@ -241,16 +241,22 @@ def load_cvm_fundamentals(cache_dir: Path) -> dict[str, dict[str, Any]]:
                 div_method = "DFC (6.03.*)"
 
         payout_raw = round((total_div / net_inc) * 100.0, 2) if (total_div > 0.0 and net_inc is not None and net_inc > 0.0) else None
+        # Payout da DFP anual 2025 (referência para a regra geral de qualidade)
+        div_dfp25 = div_dva25 if div_dva25 > 0.0 else dfc25.get(cvm, {}).get("__DFC_DIV__", 0.0)
+        payout_dfp25 = round((div_dfp25 / ni25) * 100.0, 2) if (div_dfp25 > 0.0 and ni25 is not None and ni25 > 0.0) else None
         payout_distortion_reason = None
         payout = payout_raw
-        ni9m26 = _ni(dre9m26[cvm]) if has_ltm else None
-        ref_ni = max(x for x in (ni25, ni9m26, 0.0) if x is not None)
-        if has_ltm and payout_raw is not None and payout_raw > 200.0 and ref_ni > 0 and net_inc is not None and net_inc < 0.15 * ref_ni:
-            payout_distortion_reason = (
-                f"Lucro LTM comprimido por resultado atípico no 4T25 "
-                f"(LTM={net_inc:,.0f} mil vs DFP25={ni25:,.0f} mil / 9M26={ni9m26:,.0f} mil; payout bruto={payout_raw}%)"
-            )
-            payout = None
+        # Regra geral (Etapa 3, substitui a trava de 300%): payout > 100% OU |payout 12m - payout DFP anual| > 30 pp
+        if payout_raw is not None:
+            gap_pp = abs(payout_raw - payout_dfp25) if (has_ltm and payout_dfp25 is not None) else None
+            if payout_raw > 100.0 or (gap_pp is not None and gap_pp > 30.0):
+                payout_distortion_reason = (
+                    f"distorção por resultado não recorrente (payout 12m={payout_raw}%, payout DFP 2025="
+                    f"{payout_dfp25 if payout_dfp25 is not None else 'indisponível'}%"
+                    + (f", diferença={round(gap_pp, 1)} pp" if gap_pp is not None else "")
+                    + f"; lucro 12m={net_inc:,.0f} mil vs DFP 2025={ni25:,.0f} mil)"
+                )
+                payout = None
 
         bpp_cur = bpp3t26.get(cvm) or bpp25.get(cvm, {})
         bpa_cur = bpa3t26.get(cvm) or bpa25.get(cvm, {})
@@ -281,6 +287,7 @@ def load_cvm_fundamentals(cache_dir: Path) -> dict[str, dict[str, Any]]:
             "data_base": data_base,
             "payout_pct": payout,
             "payout_raw_pct": payout_raw,
+            "payout_dfp_2025_pct": payout_dfp25,
             "payout_distortion_reason": payout_distortion_reason,
             "div_method": div_method if payout is not None else "indisponível",
             "net_debt_ebitda": nd_ebitda,

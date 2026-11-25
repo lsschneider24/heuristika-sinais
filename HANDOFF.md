@@ -228,3 +228,31 @@
 - Gerado `audit/reports/backtest_long_2026-11-25.md` (preservando `backtest_long_2026-11-24.md`) com hash registrado em `audit/reports/MANIFEST.json`.
 - Adicionado rate-limit (`60s`, HTTP `429`) em `/api/admin/atualizar-laboratorio` (`app.py`) e removido o botão/script administrativo da exportação estática em `build_github_pages.py`.
 - Justificativa de testes adicionados em `tests/test_strategy_agent_and_ui.py`: teste de `429` (rate-limit), teste de ausência do botão na versão estática e teste de regressão de `risk_parity_simplified` (BRL + tetos 35%/50%).
+
+
+---
+
+## Etapa 3 — Parte 1: Decisões e Correções (2026-11-25)
+
+### 1. Trend Following (`trend_following_turtles`) — Variantes A, B e C
+- **Seleção (`<= 2021`) e Confirmação (`>= 2022`) com banda de 25%** em `audit/reports/backtest_long_2026-11-25_0850.md`:
+  - **A (semanal, controle):** c/ cripto full `CAGR 11.91%`, `DD -21.37%`, `Sharpe 0.17`, `Giro 742.36%/ano` (IS giro `721.25%`, Sharpe `0.33`; OOS giro `782.57%`, Sharpe `-0.19`).
+  - **B (mensal, 21 pregões):** c/ cripto full `CAGR 12.89%`, `DD -26.43%`, `Sharpe 0.23`, `Giro 274.11%/ano` (IS passou; **OOS falhou no Sharpe `-0.38 < -0.19`**).
+  - **C (semanal + reentrada após stop `2×ATR` só após novo máximo de 55 dias):**
+    - c/ cripto: full `CAGR 19.73%`, `DD -13.39%`, `Sharpe 0.77`, `Giro 335.02%/ano`. IS: giro `-52.2%`, `DD -13.39%`, `Sharpe 0.80`; OOS: giro `-59.5%`, `DD -6.85%`, `Sharpe 0.70`.
+    - s/ cripto: full `CAGR 13.72%`, `DD -13.55%`, `Sharpe 0.38`, `Giro 290.31%/ano`. IS: giro `-57.3%`, `DD -13.55%`, `Sharpe 0.29`; OOS: giro `-62.5%`, `DD -7.21%`, `Sharpe 0.56`.
+- **Decisão:** Adotada a **Variante C** (`reentry_new_high_days: 55` em `strategies_config.json` e `strategies_engine.py`, registrada em `strategy_param_versions` id `6`).
+
+### 2. Regra Geral de Qualidade de Dados (`>100%` ou `>30 p.p.`)
+- Substituída a trava de 300% em `cvm_pipeline.py` e `data_collector.py` pela regra geral: `payout > 100%` OU `|payout 12m - payout DFP 2025| > 30 p.p.` -> `payout_pct = null` (`"indisponível"`), `verified = false`, motivo `"distorção por resultado não recorrente"`.
+- **Ativos atingidos e causas:** `VALE3` (`4245.5%` vs `169.09%`, 4T25 impairment `-23.22 bi`), `KLBN11` (`261.21%` vs `8.41%`, lucro LTM comprimido para `451.2 mi` vs `1.678 bi`), `GGBR4` (`11.82%` vs `90.64%`, recuperação do lucro LTM para `2.749 bi` com menor DVA), `AXIA3` (`33.46%` vs `94.98%`, salto de lucro LTM para `18.621 bi`).
+- **Impacto na elegibilidade de `dividendos_barsi`:** Nenhum impacto nos 9 elegíveis (`ABCB4`, `CMIG4`, `LEVE3`, `VIVT3`, `PSSA3`, `CPLE3`, `CXSE3`, `TIMS3`, `B3SA3`), pois `VALE3`, `KLBN11`, `GGBR4` e `AXIA3` já eram inelegíveis por DY < 6% ou `evento_corporativo=true`.
+
+### 3. Regra de Calendário (`calendar_fill.py`) e Testes de Regressão
+- Todas as 5 estratégias (`indexacao_bogle`, `trend_following_turtles`, `dual_momentum_global`, `risk_parity_simplified`, `radar_top_n`) em `strategies_engine.py` e `audit/tools/run_long_backtests.py` utilizam grade unificada de dias úteis com forward-fill limitado (`DEFAULT_MAX_FILL = 5`, sinalizado em `ffill_points`), nunca excluindo ativos por diferença de calendário.
+- **Mudança nos backtests longos após correção:** `dual_momentum_global` passou de `2013-01-11..2026-11-24` (`CAGR 10.72%`, `MaxDD -39.61%`) para `2012-11-14..2026-11-25` (`CAGR 14.43%`, `MaxDD -30.41%`, `Sharpe 0.27`, `Giro 270.87%`); `risk_parity_simplified` `2012-02-22..2026-11-25` (`CAGR 12.73%`, `MaxDD -16.44%`, `Sharpe 0.22`).
+- **Justificativa de novo arquivo de teste:** Adicionado `tests/test_calendar_and_variants.py` cobrindo as 5 estratégias com lacunas de feriados distintos (B3, EUA, cripto) e o forward-fill limitado.
+
+### 4. Dividendos (9 Elegíveis) e `radar_top_n` vs Pesos Iguais
+- Conferência externa dos 9 elegíveis em fontes primárias (RI + CVM DFP 2025/ITR 3T26) e causas dos 10 `evento_corporativo=true` gravadas em `audit/evidence/fundamentals_evidence.json`.
+- **`radar_top_n` vs Pesos Iguais (`2012-11-14..2026-11-25`):** c/ cripto `18.23%` vs `12.06%` (`+6.17 p.p.` efeito seleção); s/ cripto `7.75%` vs `7.24%` (`+0.51 p.p.` efeito seleção).

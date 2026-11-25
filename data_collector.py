@@ -327,12 +327,11 @@ def collect_b3_fundamentals(
 
         cvm_payout = cvm_row.get("payout_pct")
         distortion_reason = cvm_row.get("payout_distortion_reason")
-        payout_sane = cvm_payout is not None and 0.0 < float(cvm_payout) <= 300.0 and not distortion_reason
+        payout_sane = cvm_payout is not None and float(cvm_payout) > 0.0 and not distortion_reason
         payout_field = {
             "value": cvm_payout,
             "source": (
                 f"{cvm_row.get('source_doc')} [CD_CVM {cvm_row.get('cd_cvm')}, método {cvm_row.get('div_method')}, base {cvm_data_base}]"
-                + ("" if payout_sane else " [alerta: payout LTM > 300% por lucro comprimido — requer revisão]")
                 if cvm_payout is not None
                 else (
                     f"{cvm_row.get('source_doc')} [CD_CVM {cvm_row.get('cd_cvm')}, base {cvm_data_base}]: indisponível ({distortion_reason})"
