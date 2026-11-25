@@ -100,6 +100,158 @@
   </div>
 </section>
 
+<!-- Simulador Real de Sinais Encerrados (por Data e Capital) -->
+<section class="container" id="simulador-rendimento" style="margin:24px auto;">
+  <div class="card" style="padding:20px; border:1px solid var(--border); border-radius:12px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+      <div>
+        <div class="mono" style="font-size:0.72rem; color:var(--electric); text-transform:uppercase;">Simulador de Sinais (Histórico Real)</div>
+        <h2 style="margin:2px 0 0; font-size:1.1rem; font-weight:700;">Se você tivesse seguido os sinais encerrados</h2>
+      </div>
+      <span id="simCountBadge" class="badge badge-cat">0 sinais no período</span>
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+      <button type="button" class="btn btn-sm btn-outline sim-preset-v" data-val="1000">R$ 1.000</button>
+      <button type="button" class="btn btn-sm btn-outline sim-preset-v" data-val="5000">R$ 5.000</button>
+      <button type="button" class="btn btn-sm btn-outline sim-preset-v" data-val="10000">R$ 10.000</button>
+      <button type="button" class="btn btn-sm btn-outline sim-preset-v" data-val="50000">R$ 50.000</button>
+      <span style="width:1px; background:rgba(148,163,184,0.25); margin:0 4px;"></span>
+      <button type="button" class="btn btn-sm btn-outline sim-preset-p" data-period="all">Desde o começo</button>
+      <button type="button" class="btn btn-sm btn-outline sim-preset-p" data-period="30">Últimos 30d</button>
+      <button type="button" class="btn btn-sm btn-outline sim-preset-p" data-period="90">Últimos 90d</button>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; align-items:end;">
+      <div>
+        <label for="simValor" style="display:block; font-size:0.78rem; color:var(--muted); margin-bottom:4px;">Capital Inicial (R$)</label>
+        <input id="simValor" type="number" min="0" step="100" value="10000" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(148,163,184,0.35); background:#0f172a; color:#f8fafc; font-size:0.95rem;" />
+      </div>
+      <div>
+        <label for="simStartDate" style="display:block; font-size:0.78rem; color:var(--muted); margin-bottom:4px;">Data Inicial</label>
+        <input id="simStartDate" type="date" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(148,163,184,0.35); background:#0f172a; color:#f8fafc; color-scheme:dark; font-size:0.95rem;" />
+      </div>
+      <div>
+        <label for="simEndDate" style="display:block; font-size:0.78rem; color:var(--muted); margin-bottom:4px;">Data Final</label>
+        <input id="simEndDate" type="date" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(148,163,184,0.35); background:#0f172a; color:#f8fafc; color-scheme:dark; font-size:0.95rem;" />
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-top:14px;">
+      <div style="padding:12px; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid var(--border);">
+        <div style="font-size:0.75rem; color:var(--muted);">Retorno Acumulado</div>
+        <div id="simOutTotalPct" class="mono" style="font-size:1.15rem; font-weight:700; color:var(--electric); margin-top:4px;">0,00%</div>
+      </div>
+      <div style="padding:12px; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid var(--border);">
+        <div style="font-size:0.75rem; color:var(--muted);">Equivalente (% ao Mês)</div>
+        <div id="simOutMes" class="mono" style="font-size:1.15rem; font-weight:700; color:var(--electric); margin-top:4px;">0,00% a.m.</div>
+      </div>
+      <div style="padding:12px; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid var(--border);">
+        <div style="font-size:0.75rem; color:var(--muted);">Equivalente (% ao Ano)</div>
+        <div id="simOutAno" class="mono" style="font-size:1.15rem; font-weight:700; color:#22c55e; margin-top:4px;">0,00% a.a.</div>
+      </div>
+      <div style="padding:12px; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid var(--border);">
+        <div style="font-size:0.75rem; color:var(--muted);">Montante Final (Lucro)</div>
+        <div id="simOutTotal" class="mono" style="font-size:1.15rem; font-weight:700; margin-top:4px;">R$ 10.000,00</div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+(() => {
+  const rawSignals = {{ closed_history|tojson }} || [];
+  const signals = rawSignals.map((s, idx) => ({
+    idx,
+    dt: String(s.closed_at || s.created_at || "").slice(0, 10),
+    pct: parseFloat(s.resultado_pct || 0) || 0,
+  }));
+  const dated = signals.filter(s => /^\d{4}-\d{2}-\d{2}$/.test(s.dt)).sort((a, b) => a.dt.localeCompare(b.dt));
+
+  const elV = document.getElementById("simValor");
+  const elS = document.getElementById("simStartDate");
+  const elE = document.getElementById("simEndDate");
+  const badge = document.getElementById("simCountBadge");
+  const outPct = document.getElementById("simOutTotalPct");
+  const outM = document.getElementById("simOutMes");
+  const outA = document.getElementById("simOutAno");
+  const outT = document.getElementById("simOutTotal");
+  if (!elV || !elS || !elE) return;
+
+  const todayIso = new Date().toISOString().slice(0, 10);
+  if (dated.length > 0) {
+    elS.value = dated[0].dt;
+    elE.value = dated[dated.length - 1].dt;
+  } else {
+    elS.value = "";
+    elE.value = todayIso;
+  }
+
+  const fmt = (n) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const fmtPct = (n) => `${n >= 0 ? "+" : ""}${n.toFixed(2).replace(".", ",")}%`;
+
+  function calc() {
+    const v = Math.max(0, parseFloat(elV.value) || 0);
+    const d0 = elS.value;
+    const d1 = elE.value;
+    const useDateFilter = Boolean(d0) && dated.length > 0;
+    const sel = useDateFilter
+      ? signals.filter(s => (!s.dt || (s.dt >= d0 && (!d1 || s.dt <= d1))))
+      : signals;
+    badge.textContent = `${sel.length} ${sel.length === 1 ? "sinal" : "sinais"} no período`;
+
+    let mult = 1.0;
+    for (const s of sel) {
+      mult *= (1.0 + s.pct / 100.0);
+    }
+    const totalRet = (mult - 1.0) * 100.0;
+    const finalVal = v * mult;
+    const profit = finalVal - v;
+
+    let days = 30;
+    if (d0 && d1) {
+      const diff = Math.round((new Date(d1 + "T00:00:00") - new Date(d0 + "T00:00:00")) / 86400000);
+      if (diff >= 1) days = diff;
+    } else if (dated.length >= 2) {
+      const diff = Math.round((new Date(dated[dated.length - 1].dt + "T00:00:00") - new Date(dated[0].dt + "T00:00:00")) / 86400000);
+      if (diff >= 1) days = diff;
+    }
+    const months = Math.max(1, days / 30.4375);
+    const years = Math.max(1 / 12, days / 365.25);
+    const mPct = sel.length > 0 && mult > 0 ? (Math.pow(mult, 1 / months) - 1) * 100 : 0;
+    const aPct = sel.length > 0 && mult > 0 ? (Math.pow(mult, 1 / years) - 1) * 100 : 0;
+
+    outPct.textContent = fmtPct(totalRet);
+    outM.textContent = `${fmtPct(mPct)} a.m.`;
+    outA.textContent = days >= 30 ? `${fmtPct(aPct)} a.a.` : "N/D (< 30d)";
+    outT.textContent = `${fmt(finalVal)} (${profit >= 0 ? "+" : ""}${fmt(profit)})`;
+  }
+
+  document.querySelectorAll(".sim-preset-v").forEach(btn => {
+    btn.addEventListener("click", () => {
+      elV.value = btn.dataset.val;
+      calc();
+    });
+  });
+  document.querySelectorAll(".sim-preset-p").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const p = btn.dataset.period;
+      if (p === "all") {
+        elS.value = dated.length > 0 ? dated[0].dt : "";
+        elE.value = dated.length > 0 ? dated[dated.length - 1].dt : todayIso;
+      } else {
+        const end = new Date(todayIso + "T00:00:00");
+        const start = new Date(end.getTime() - parseInt(p, 10) * 86400000);
+        elS.value = start.toISOString().slice(0, 10);
+        elE.value = todayIso;
+      }
+      calc();
+    });
+  });
+
+  elV.addEventListener("input", calc);
+  elS.addEventListener("change", calc);
+  elE.addEventListener("change", calc);
+  calc();
+})();
+</script>
+
 <!-- Fontes de Dados & Verificação Institucional -->
 <section class="sources-section reveal" id="fontes">
   <div class="container">
