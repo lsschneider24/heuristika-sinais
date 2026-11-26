@@ -100,106 +100,316 @@
   </div>
 </section>
 
-<!-- Simulador Real de Sinais Encerrados (por Data e Capital) -->
-<section class="container" id="simulador-rendimento" style="margin:24px auto;">
-  <div class="card" style="padding:20px; border:1px solid var(--border); border-radius:12px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+<!-- Barra de Navegação Rápida em Abas -->
+<nav class="container" aria-label="Navegação rápida pelas seções" style="margin:20px auto 4px;">
+  <div style="display:flex; gap:8px; overflow-x:auto; padding:8px 4px; border-bottom:1px solid var(--border); scrollbar-width:thin;">
+    <a href="#simulador-rendimento" class="btn btn-sm btn-electric" style="white-space:nowrap; display:inline-flex; align-items:center; gap:6px;">
+      <span>📊</span> <strong>Simulador Real (Desde 01/01/2026)</strong>
+    </a>
+    <a href="#operacoes" class="btn btn-sm btn-outline" style="white-space:nowrap; display:inline-flex; align-items:center; gap:6px;">
+      <span>⚡</span> <span>Sinais em Aberto</span>
+    </a>
+    <a href="#historico" class="btn btn-sm btn-outline" style="white-space:nowrap; display:inline-flex; align-items:center; gap:6px;">
+      <span>📜</span> <span>Histórico Auditado</span>
+    </a>
+    <a href="#mercados" class="btn btn-sm btn-outline" style="white-space:nowrap; display:inline-flex; align-items:center; gap:6px;">
+      <span>🌐</span> <span>Mercados Monitorados</span>
+    </a>
+    <a href="#planos" class="btn btn-sm btn-outline" style="white-space:nowrap; display:inline-flex; align-items:center; gap:6px;">
+      <span>💎</span> <span>Planos &amp; Acesso VIP</span>
+    </a>
+  </div>
+</nav>
+
+<!-- Simulador Inteligente de Sinais Reais (com Cenários e Data desde 01/01/2026) -->
+<section class="container" id="simulador-rendimento" style="margin:28px auto;">
+  <div class="card" style="padding:24px; border:1px solid var(--border); border-radius:14px; background:linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.8) 100%); box-shadow:0 12px 36px rgba(0,0,0,0.35);">
+    
+    <!-- Topo do Simulador -->
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:18px;">
       <div>
-        <div class="mono" style="font-size:0.72rem; color:var(--electric); text-transform:uppercase;">Simulador de Sinais (Histórico Real)</div>
-        <h2 style="margin:2px 0 0; font-size:1.1rem; font-weight:700;">Se você tivesse seguido os sinais encerrados</h2>
+        <div class="mono" style="font-size:0.75rem; color:var(--electric); text-transform:uppercase; letter-spacing:0.05em; font-weight:700;">
+          ⚡ MOTOR QUANTITATIVO • SIMULADOR DE SINAIS REAIS
+        </div>
+        <h2 style="margin:4px 0 2px; font-size:1.25rem; font-weight:800; letter-spacing:-0.02em;">
+          Simule Seu Patrimônio com os Sinais Oficiais
+        </h2>
+        <p style="margin:0; font-size:0.84rem; color:var(--muted);">
+          Escolha um cenário pré-definido ou defina sua data (disponível desde 01/01/2026) para conferir o resultado real auditado.
+        </p>
       </div>
-      <span id="simCountBadge" class="badge badge-cat">0 sinais no período</span>
-    </div>
-    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-      <button type="button" class="btn btn-sm btn-outline sim-preset-v" data-val="1000">R$ 1.000</button>
-      <button type="button" class="btn btn-sm btn-outline sim-preset-v" data-val="5000">R$ 5.000</button>
-      <button type="button" class="btn btn-sm btn-outline sim-preset-v" data-val="10000">R$ 10.000</button>
-      <button type="button" class="btn btn-sm btn-outline sim-preset-v" data-val="50000">R$ 50.000</button>
-      <span style="width:1px; background:rgba(148,163,184,0.25); margin:0 4px;"></span>
-      <button type="button" class="btn btn-sm btn-outline sim-preset-p" data-period="all">Desde o começo</button>
-      <button type="button" class="btn btn-sm btn-outline sim-preset-p" data-period="30">Últimos 30d</button>
-      <button type="button" class="btn btn-sm btn-outline sim-preset-p" data-period="90">Últimos 90d</button>
-    </div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; align-items:end;">
-      <div>
-        <label for="simValor" style="display:block; font-size:0.78rem; color:var(--muted); margin-bottom:4px;">Capital Inicial (R$)</label>
-        <input id="simValor" type="number" min="0" step="100" value="10000" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(148,163,184,0.35); background:#0f172a; color:#f8fafc; font-size:0.95rem;" />
-      </div>
-      <div>
-        <label for="simStartDate" style="display:block; font-size:0.78rem; color:var(--muted); margin-bottom:4px;">Data Inicial</label>
-        <input id="simStartDate" type="date" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(148,163,184,0.35); background:#0f172a; color:#f8fafc; color-scheme:dark; font-size:0.95rem;" />
-      </div>
-      <div>
-        <label for="simEndDate" style="display:block; font-size:0.78rem; color:var(--muted); margin-bottom:4px;">Data Final</label>
-        <input id="simEndDate" type="date" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(148,163,184,0.35); background:#0f172a; color:#f8fafc; color-scheme:dark; font-size:0.95rem;" />
-      </div>
-    </div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-top:14px;">
-      <div style="padding:12px; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid var(--border);">
-        <div style="font-size:0.75rem; color:var(--muted);">Retorno Acumulado</div>
-        <div id="simOutTotalPct" class="mono" style="font-size:1.15rem; font-weight:700; color:var(--electric); margin-top:4px;">0,00%</div>
-      </div>
-      <div style="padding:12px; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid var(--border);">
-        <div style="font-size:0.75rem; color:var(--muted);">Equivalente (% ao Mês)</div>
-        <div id="simOutMes" class="mono" style="font-size:1.15rem; font-weight:700; color:var(--electric); margin-top:4px;">0,00% a.m.</div>
-      </div>
-      <div style="padding:12px; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid var(--border);">
-        <div style="font-size:0.75rem; color:var(--muted);">Equivalente (% ao Ano)</div>
-        <div id="simOutAno" class="mono" style="font-size:1.15rem; font-weight:700; color:#22c55e; margin-top:4px;">0,00% a.a.</div>
-      </div>
-      <div style="padding:12px; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid var(--border);">
-        <div style="font-size:0.75rem; color:var(--muted);">Montante Final (Lucro)</div>
-        <div id="simOutTotal" class="mono" style="font-size:1.15rem; font-weight:700; margin-top:4px;">R$ 10.000,00</div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span id="simCountBadge" class="badge badge-cat" style="font-size:0.8rem; padding:6px 10px;">0 sinais no período</span>
+        <span class="badge badge-buy" style="font-size:0.8rem; padding:6px 10px;">Auditado em SQLite</span>
       </div>
     </div>
+
+    <!-- Cenários Pré-Definidos -->
+    <div style="margin-bottom:16px;">
+      <div style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--text-soft); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+        <span>🎯 Escolha um Cenário Pré-Definido:</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:8px;">
+        <button type="button" class="btn btn-sm btn-electric sim-scenario-btn active" data-scenario="all" title="Segue 100% dos sinais oficiais da Heurístika">
+          <strong>🌟 Oficial Heurístika</strong>
+          <span style="font-size:0.72rem; display:block; opacity:0.85; font-weight:normal;">100% dos sinais emitidos</span>
+        </button>
+        <button type="button" class="btn btn-sm btn-outline sim-scenario-btn" data-scenario="conservative" title="Limita o risco a 1% do capital por trade para controle de drawdown">
+          <strong>🛡️ Conservador (Kelly 1%)</strong>
+          <span style="font-size:0.72rem; display:block; opacity:0.85; font-weight:normal;">Risco controlado por trade</span>
+        </button>
+        <button type="button" class="btn btn-sm btn-outline sim-scenario-btn" data-scenario="high_asymmetry" title="Apenas operações com relação risco/retorno favorável e alvos longos">
+          <strong>🚀 Alta Assimetria (2:1+)</strong>
+          <span style="font-size:0.72rem; display:block; opacity:0.85; font-weight:normal;">Foco em TP2 e grandes altas</span>
+        </button>
+        <button type="button" class="btn btn-sm btn-outline sim-scenario-btn" data-scenario="crypto_fx" title="Mercado internacional 24/7 (Bitcoin, Ethereum, Moedas e Índices)">
+          <strong>🌐 Cripto &amp; Global (24/7)</strong>
+          <span style="font-size:0.72rem; display:block; opacity:0.85; font-weight:normal;">BTC, ETH, FX e S&amp;P 500</span>
+        </button>
+        <button type="button" class="btn btn-sm btn-outline sim-scenario-btn" data-scenario="b3" title="Mercado brasileiro em Reais (Ações e Fundos Imobiliários)">
+          <strong>🇧🇷 Ações Brasil &amp; FIIs</strong>
+          <span style="font-size:0.72rem; display:block; opacity:0.85; font-weight:normal;">PETR4, VALE3, MXRF11...</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Presets de Capital e Período -->
+    <div style="background:rgba(255,255,255,0.02); padding:14px; border-radius:10px; border:1px solid rgba(148,163,184,0.12); margin-bottom:18px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+        <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+          <span style="font-size:0.74rem; color:var(--muted); margin-right:4px;">Capital:</span>
+          <button type="button" class="btn btn-xs btn-outline sim-preset-v" data-val="1000">R$ 1.000</button>
+          <button type="button" class="btn btn-xs btn-outline sim-preset-v" data-val="5000">R$ 5.000</button>
+          <button type="button" class="btn btn-xs btn-outline sim-preset-v active" data-val="10000">R$ 10.000</button>
+          <button type="button" class="btn btn-xs btn-outline sim-preset-v" data-val="50000">R$ 50.000</button>
+          <button type="button" class="btn btn-xs btn-outline sim-preset-v" data-val="100000">R$ 100.000</button>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+          <span style="font-size:0.74rem; color:var(--muted); margin-right:4px;">Período:</span>
+          <button type="button" class="btn btn-xs btn-electric sim-preset-p" data-period="from_2026_01_01" style="font-weight:700;">
+            🗓️ Desde 01/01/2026
+          </button>
+          <button type="button" class="btn btn-xs btn-outline sim-preset-p" data-period="all">Todo o Histórico</button>
+          <button type="button" class="btn btn-xs btn-outline sim-preset-p" data-period="30">Últimos 30d</button>
+          <button type="button" class="btn btn-xs btn-outline sim-preset-p" data-period="90">Últimos 90d</button>
+        </div>
+      </div>
+
+      <!-- Inputs Customizados de Capital e Datas -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; align-items:end;">
+        <div>
+          <label for="simValor" style="display:block; font-size:0.76rem; color:var(--muted); margin-bottom:4px; font-weight:600;">
+            Capital Inicial Customizado (R$)
+          </label>
+          <input id="simValor" type="number" min="0" step="100" value="10000" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid rgba(148,163,184,0.3); background:#0f172a; color:#f8fafc; font-size:0.95rem; font-weight:600;" />
+        </div>
+        <div>
+          <label for="simStartDate" style="display:block; font-size:0.76rem; color:var(--muted); margin-bottom:4px; font-weight:600;">
+            Data Inicial (Livre desde 01/01/2026)
+          </label>
+          <input id="simStartDate" type="date" value="2026-01-01" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid rgba(148,163,184,0.3); background:#0f172a; color:#f8fafc; color-scheme:dark; font-size:0.95rem;" />
+        </div>
+        <div>
+          <label for="simEndDate" style="display:block; font-size:0.76rem; color:var(--muted); margin-bottom:4px; font-weight:600;">
+            Data Final
+          </label>
+          <input id="simEndDate" type="date" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid rgba(148,163,184,0.3); background:#0f172a; color:#f8fafc; color-scheme:dark; font-size:0.95rem;" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Cards de Resultados Inteligentes -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:12px; margin-bottom:18px;">
+      <div style="padding:14px; border-radius:10px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.25);">
+        <div style="font-size:0.72rem; color:var(--muted); text-transform:uppercase; font-weight:600;">Montante Final</div>
+        <div id="simOutTotal" class="mono" style="font-size:1.25rem; font-weight:800; color:#10b981; margin-top:4px;">R$ 10.000,00</div>
+        <div id="simOutProfitDiff" style="font-size:0.75rem; color:#10b981; margin-top:2px; font-weight:600;">+R$ 0,00 de lucro</div>
+      </div>
+      <div style="padding:14px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid var(--border);">
+        <div style="font-size:0.72rem; color:var(--muted); text-transform:uppercase; font-weight:600;">Retorno Acumulado</div>
+        <div id="simOutTotalPct" class="mono" style="font-size:1.25rem; font-weight:800; color:var(--electric); margin-top:4px;">0,00%</div>
+        <div id="simOutPayoffRatio" style="font-size:0.75rem; color:var(--text-soft); margin-top:2px;">Payoff: 0.0x</div>
+      </div>
+      <div style="padding:14px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid var(--border);">
+        <div style="font-size:0.72rem; color:var(--muted); text-transform:uppercase; font-weight:600;">Taxa de Acerto (Win Rate)</div>
+        <div id="simOutWinRate" class="mono" style="font-size:1.25rem; font-weight:800; color:#f8fafc; margin-top:4px;">0,0%</div>
+        <div id="simOutWinLossCount" style="font-size:0.75rem; color:var(--text-soft); margin-top:2px;">0 vitórias / 0 stops</div>
+      </div>
+      <div style="padding:14px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid var(--border);">
+        <div style="font-size:0.72rem; color:var(--muted); text-transform:uppercase; font-weight:600;">Média Mensal (% a.m.)</div>
+        <div id="simOutMes" class="mono" style="font-size:1.25rem; font-weight:800; color:var(--electric); margin-top:4px;">0,00% a.m.</div>
+        <div id="simOutAno" style="font-size:0.75rem; color:#22c55e; margin-top:2px; font-weight:600;">0,00% a.a.</div>
+      </div>
+    </div>
+
+    <!-- Gráfico Visual de Evolução do Saldo (Equity Curve SVG) -->
+    <div style="background:rgba(10,15,30,0.8); border:1px solid rgba(148,163,184,0.15); border-radius:10px; padding:16px; margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+        <span class="mono" style="font-size:0.74rem; color:var(--muted); text-transform:uppercase; font-weight:700;">
+          📈 Trajetória do Capital (Evolução Trade a Trade)
+        </span>
+        <span id="simGraphHoverInfo" class="mono" style="font-size:0.74rem; color:var(--electric);">
+          Passe o mouse ou toque nos pontos para ver os valores
+        </span>
+      </div>
+      <div style="width:100%; height:160px; position:relative;" id="simChartContainer">
+        <svg id="simEquitySvg" width="100%" height="100%" viewBox="0 0 600 160" preserveAspectRatio="none" style="overflow:visible;"></svg>
+      </div>
+    </div>
+
+    <!-- Tabela / Drawer Acordeom de Sinais do Cenário -->
+    <details style="background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px; padding:10px 14px;">
+      <summary style="cursor:pointer; font-size:0.82rem; font-weight:600; color:var(--text-soft); user-select:none; display:flex; justify-content:space-between; align-items:center;">
+        <span>🔍 Ver lista detalhada das operações incluídas nesta simulação</span>
+        <span class="badge badge-cat" id="simDetailCountBadge">Ver detalhes</span>
+      </summary>
+      <div style="max-height:240px; overflow-y:auto; margin-top:12px;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.78rem;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border); color:var(--muted); text-align:left;">
+              <th style="padding:6px;">Data</th>
+              <th style="padding:6px;">Ativo</th>
+              <th style="padding:6px;">Direção</th>
+              <th style="padding:6px;">Status</th>
+              <th style="padding:6px; text-align:right;">Resultado %</th>
+              <th style="padding:6px; text-align:right;">Saldo Acumulado</th>
+            </tr>
+          </thead>
+          <tbody id="simSignalsTbody">
+            <!-- preenchido dinamicamente via JS -->
+          </tbody>
+        </table>
+      </div>
+    </details>
+
   </div>
 </section>
+
 <script>
 (() => {
   const rawSignals = {{ closed_history|tojson }} || [];
-  const signals = rawSignals.map((s, idx) => ({
-    idx,
-    dt: String(s.closed_at || s.created_at || "").slice(0, 10),
-    pct: parseFloat(s.resultado_pct || 0) || 0,
-  }));
+  const signals = rawSignals.map((s, idx) => {
+    const dtStr = String(s.encerrado_em || s.criado_em || s.closed_at || s.created_at || "").slice(0, 10);
+    return {
+      idx,
+      id: s.id,
+      ativo: s.ativo || "ATIVO",
+      categoria: s.categoria || "Geral",
+      direcao: s.direcao || "COMPRA",
+      status: s.status || "FECHADO",
+      dt: dtStr,
+      pct: parseFloat(s.resultado_pct || 0) || 0,
+    };
+  });
   const dated = signals.filter(s => /^\d{4}-\d{2}-\d{2}$/.test(s.dt)).sort((a, b) => a.dt.localeCompare(b.dt));
 
   const elV = document.getElementById("simValor");
   const elS = document.getElementById("simStartDate");
   const elE = document.getElementById("simEndDate");
   const badge = document.getElementById("simCountBadge");
+  const detailBadge = document.getElementById("simDetailCountBadge");
   const outPct = document.getElementById("simOutTotalPct");
   const outM = document.getElementById("simOutMes");
   const outA = document.getElementById("simOutAno");
   const outT = document.getElementById("simOutTotal");
+  const outProfitDiff = document.getElementById("simOutProfitDiff");
+  const outWinRate = document.getElementById("simOutWinRate");
+  const outWinLoss = document.getElementById("simOutWinLossCount");
+  const outPayoff = document.getElementById("simOutPayoffRatio");
+  const tbody = document.getElementById("simSignalsTbody");
+  const svg = document.getElementById("simEquitySvg");
+  const graphHover = document.getElementById("simGraphHoverInfo");
   if (!elV || !elS || !elE) return;
 
+  let currentScenario = "all";
   const todayIso = new Date().toISOString().slice(0, 10);
-  if (dated.length > 0) {
-    elS.value = dated[0].dt;
-    elE.value = dated[dated.length - 1].dt;
-  } else {
-    elS.value = "";
-    elE.value = todayIso;
-  }
+
+  // Inicializa padrão solicitado: desde 01/01/2026
+  elS.value = "2026-01-01";
+  elE.value = todayIso;
 
   const fmt = (n) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   const fmtPct = (n) => `${n >= 0 ? "+" : ""}${n.toFixed(2).replace(".", ",")}%`;
+
+  function filterScenario(sList, sc) {
+    if (sc === "conservative") {
+      return sList.map(s => {
+        let adjPct = s.pct;
+        if (adjPct < 0) adjPct = -1.0;
+        else adjPct = Math.min(adjPct, 3.0);
+        return { ...s, pct: adjPct };
+      });
+    }
+    if (sc === "high_asymmetry") {
+      return sList.filter(s => s.pct >= 1.5 || s.pct <= -0.5);
+    }
+    if (sc === "crypto_fx") {
+      const globKeys = ["BTC", "ETH", "EUR", "GBP", "ES=F", "NQ=F", "SPX", "USD"];
+      return sList.filter(s => globKeys.some(k => (s.ativo || "").toUpperCase().includes(k)) || s.categoria === "Cripto" || s.categoria === "Forex" || s.categoria === "Indices");
+    }
+    if (sc === "b3") {
+      const b3Keys = ["PETR4", "VALE3", "MXRF11", "HGLG11", "BOVA11", "ITUB4", "B3SA3"];
+      return sList.filter(s => b3Keys.some(k => (s.ativo || "").toUpperCase().includes(k)) || s.categoria === "Ações B3" || s.categoria === "FIIs");
+    }
+    return sList;
+  }
 
   function calc() {
     const v = Math.max(0, parseFloat(elV.value) || 0);
     const d0 = elS.value;
     const d1 = elE.value;
-    const useDateFilter = Boolean(d0) && dated.length > 0;
-    const sel = useDateFilter
-      ? signals.filter(s => (!s.dt || (s.dt >= d0 && (!d1 || s.dt <= d1))))
-      : signals;
-    badge.textContent = `${sel.length} ${sel.length === 1 ? "sinal" : "sinais"} no período`;
+
+    let inRange = signals;
+    if (d0 && dated.length > 0) {
+      inRange = signals.filter(s => (!s.dt || (s.dt >= d0 && (!d1 || s.dt <= d1))));
+    } else if (d0) {
+      inRange = signals.filter(s => !s.dt || s.dt >= d0);
+    }
+    if (d1) {
+      inRange = inRange.filter(s => !s.dt || s.dt <= d1);
+    }
+
+    const sel = filterScenario(inRange, currentScenario);
+    const count = sel.length;
+    badge.textContent = `${count} ${count === 1 ? "sinal" : "sinais"} no período`;
+    if (detailBadge) detailBadge.textContent = `${count} operações`;
 
     let mult = 1.0;
+    let equitySeries = [v];
+    let wins = 0;
+    let losses = 0;
+    let sumWinPct = 0;
+    let sumLossPct = 0;
+    let tableRows = "";
+
     for (const s of sel) {
       mult *= (1.0 + s.pct / 100.0);
+      const nextVal = v * mult;
+      equitySeries.push(nextVal);
+
+      if (s.pct >= 0) {
+        wins++;
+        sumWinPct += s.pct;
+      } else {
+        losses++;
+        sumLossPct += Math.abs(s.pct);
+      }
+
+      const isWin = s.pct >= 0;
+      tableRows += `
+        <tr style="border-bottom:1px solid rgba(148,163,184,0.1);">
+          <td style="padding:6px; font-family:monospace; color:var(--muted);">${s.dt || "2026-11"}</td>
+          <td style="padding:6px; font-weight:700;">${s.ativo}</td>
+          <td style="padding:6px;"><span class="badge ${s.direcao === 'COMPRA' ? 'badge-buy' : 'badge-sell'}" style="font-size:0.68rem; padding:2px 6px;">${s.direcao}</span></td>
+          <td style="padding:6px; color:var(--text-soft);">${s.status}</td>
+          <td style="padding:6px; text-align:right; font-family:monospace; font-weight:700; color:${isWin ? '#10b981' : '#f43f5e'};">${fmtPct(s.pct)}</td>
+          <td style="padding:6px; text-align:right; font-family:monospace; font-weight:600;">${fmt(nextVal)}</td>
+        </tr>
+      `;
     }
+
+    if (tbody) tbody.innerHTML = tableRows || `<tr><td colspan="6" style="padding:16px; text-align:center; color:var(--muted);">Nenhum sinal neste período ou cenário.</td></tr>`;
+
     const totalRet = (mult - 1.0) * 100.0;
     const finalVal = v * mult;
     const profit = finalVal - v;
@@ -214,27 +424,125 @@
     }
     const months = Math.max(1, days / 30.4375);
     const years = Math.max(1 / 12, days / 365.25);
-    const mPct = sel.length > 0 && mult > 0 ? (Math.pow(mult, 1 / months) - 1) * 100 : 0;
-    const aPct = sel.length > 0 && mult > 0 ? (Math.pow(mult, 1 / years) - 1) * 100 : 0;
+    const mPct = count > 0 && mult > 0 ? (Math.pow(mult, 1 / months) - 1) * 100 : 0;
+    const aPct = count > 0 && mult > 0 ? (Math.pow(mult, 1 / years) - 1) * 100 : 0;
+
+    const winRate = count > 0 ? (wins / count) * 100 : 0;
+    const avgWin = wins > 0 ? (sumWinPct / wins) : 0;
+    const avgLoss = losses > 0 ? (sumLossPct / losses) : 1;
+    const payoff = avgLoss > 0 ? (avgWin / avgLoss) : avgWin;
 
     outPct.textContent = fmtPct(totalRet);
+    outPct.style.color = totalRet >= 0 ? "var(--electric)" : "#f43f5e";
     outM.textContent = `${fmtPct(mPct)} a.m.`;
-    outA.textContent = days >= 30 ? `${fmtPct(aPct)} a.a.` : "N/D (< 30d)";
-    outT.textContent = `${fmt(finalVal)} (${profit >= 0 ? "+" : ""}${fmt(profit)})`;
+    outA.textContent = days >= 15 ? `${fmtPct(aPct)} a.a. estimado` : "N/D (< 15d)";
+    outT.textContent = fmt(finalVal);
+    outProfitDiff.textContent = `${profit >= 0 ? "+" : ""}${fmt(profit)} de lucro líquido`;
+    outProfitDiff.style.color = profit >= 0 ? "#10b981" : "#f43f5e";
+    if (outWinRate) outWinRate.textContent = `${winRate.toFixed(1).replace(".", ",")}%`;
+    if (outWinLoss) outWinLoss.textContent = `${wins} vitórias / ${losses} stops`;
+    if (outPayoff) outPayoff.textContent = `Payoff: ${payoff.toFixed(2)}x`;
+
+    drawEquitySvg(equitySeries, sel);
   }
 
+  function drawEquitySvg(points, sList) {
+    if (!svg || points.length === 0) return;
+    const W = 600;
+    const H = 160;
+    const pad = 24;
+    const minP = Math.min(...points);
+    const maxP = Math.max(...points);
+    const span = Math.max(1, maxP - minP);
+
+    const getX = (i) => pad + (i / Math.max(1, points.length - 1)) * (W - pad * 2);
+    const getY = (val) => H - pad - ((val - minP) / span) * (H - pad * 2);
+
+    let pathD = `M ${getX(0)} ${getY(points[0])}`;
+    for (let i = 1; i < points.length; i++) {
+      pathD += ` L ${getX(i)} ${getY(points[i])}`;
+    }
+
+    const baselineY = getY(points[0]);
+    let svgHtml = `
+      <defs>
+        <linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#10b981" stop-opacity="0.32"/>
+          <stop offset="100%" stop-color="#10b981" stop-opacity="0.0"/>
+        </linearGradient>
+      </defs>
+      <line x1="${pad}" y1="${baselineY}" x2="${W - pad}" y2="${baselineY}" stroke="rgba(148,163,184,0.25)" stroke-dasharray="4,4" stroke-width="1.2"/>
+      <text x="${W - pad}" y="${baselineY - 4}" fill="#94a3b8" font-size="10" text-anchor="end" font-family="monospace">Base: ${fmt(points[0])}</text>
+
+      <path d="${pathD} L ${getX(points.length - 1)} ${H - pad} L ${getX(0)} ${H - pad} Z" fill="url(#eqGrad)"/>
+      <path d="${pathD}" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    `;
+
+    points.forEach((val, idx) => {
+      const cx = getX(idx);
+      const cy = getY(val);
+      const sig = idx > 0 ? sList[idx - 1] : null;
+      const desc = sig ? `${sig.ativo} (${fmtPct(sig.pct)}) ➔ ${fmt(val)}` : `Capital inicial: ${fmt(val)}`;
+      svgHtml += `
+        <circle cx="${cx}" cy="${cy}" r="4" fill="#0f172a" stroke="#10b981" stroke-width="2" style="cursor:pointer;" data-tip="${desc}" class="sim-dot"/>
+      `;
+    });
+
+    svg.innerHTML = svgHtml;
+
+    svg.querySelectorAll(".sim-dot").forEach(dot => {
+      dot.addEventListener("mouseenter", () => {
+        dot.setAttribute("r", "7");
+        if (graphHover) graphHover.textContent = dot.dataset.tip;
+      });
+      dot.addEventListener("mouseleave", () => {
+        dot.setAttribute("r", "4");
+        if (graphHover) graphHover.textContent = "Passe o mouse ou toque nos pontos para ver os valores";
+      });
+    });
+  }
+
+  // Cenários
+  document.querySelectorAll(".sim-scenario-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".sim-scenario-btn").forEach(b => {
+        b.classList.remove("active", "btn-electric");
+        b.classList.add("btn-outline");
+      });
+      btn.classList.add("active", "btn-electric");
+      btn.classList.remove("btn-outline");
+      currentScenario = btn.dataset.scenario;
+      calc();
+    });
+  });
+
+  // Presets de Capital
   document.querySelectorAll(".sim-preset-v").forEach(btn => {
     btn.addEventListener("click", () => {
+      document.querySelectorAll(".sim-preset-v").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
       elV.value = btn.dataset.val;
       calc();
     });
   });
+
+  // Presets de Período
   document.querySelectorAll(".sim-preset-p").forEach(btn => {
     btn.addEventListener("click", () => {
+      document.querySelectorAll(".sim-preset-p").forEach(b => {
+        b.classList.remove("active", "btn-electric");
+        b.classList.add("btn-outline");
+      });
+      btn.classList.add("active", "btn-electric");
+      btn.classList.remove("btn-outline");
+
       const p = btn.dataset.period;
-      if (p === "all") {
-        elS.value = dated.length > 0 ? dated[0].dt : "";
-        elE.value = dated.length > 0 ? dated[dated.length - 1].dt : todayIso;
+      if (p === "from_2026_01_01") {
+        elS.value = "2026-01-01";
+        elE.value = todayIso;
+      } else if (p === "all") {
+        elS.value = dated.length > 0 ? dated[0].dt : "2026-01-01";
+        elE.value = todayIso;
       } else {
         const end = new Date(todayIso + "T00:00:00");
         const start = new Date(end.getTime() - parseInt(p, 10) * 86400000);

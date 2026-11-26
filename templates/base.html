@@ -53,11 +53,11 @@
       </a>
 
       <nav class="nav-links" aria-label="Principal">
-        <a href="{{ url_for('index') }}#mercados" class="nav-item">{{ t.nav_markets }}</a>
         <a href="{{ url_for('index') }}#operacoes" class="nav-item">{{ t.nav_signals }}</a>
+        <a href="{{ url_for('index') }}#simulador-rendimento" class="nav-item">Simulador Real</a>
+        <a href="{{ url_for('index') }}#historico" class="nav-item">Resultados</a>
         <a href="{{ url_for('carteiras') }}" class="nav-item {% if request.endpoint == 'carteiras' %}active{% endif %}">{{ t.nav_portfolios }}</a>
         <a href="{{ url_for('academia') }}" class="nav-item {% if request.endpoint in ('academia', 'certificado') %}active{% endif %}">{{ t.nav_academy }}</a>
-        <a href="{{ url_for('index') }}#historico" class="nav-item">{{ t.nav_audit }}</a>
         <a href="{{ url_for('index') }}#planos" class="nav-item">{{ t.nav_plans }}</a>
       </nav>
 
