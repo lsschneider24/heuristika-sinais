@@ -89,6 +89,22 @@ def _build_static_runtime_script(
       a.classList.remove("btn-outline");
       a.classList.add("btn-electric");
     }});
+    if (PAGE_KIND === "home") {{
+      document.querySelectorAll(".vip-lock-overlay").forEach(ov => {{
+        const p = ov.querySelector("p");
+        if (p) p.textContent = "Seu acesso VIP está ativo! Abra o Terminal VIP para ver os parâmetros completos e o botão de compartilhar.";
+        const a = ov.querySelector("a.btn");
+        if (a) {{
+          a.textContent = "Ver Sinal Liberado no Terminal VIP →";
+          a.setAttribute("href", PREFIX + "/vip/");
+        }}
+      }});
+      const heroCta = document.querySelector('.hero-buttons a[href="#planos"]');
+      if (heroCta) {{
+        heroCta.textContent = "Abrir Terminal VIP (Sinais em Aberto) →";
+        heroCta.setAttribute("href", PREFIX + "/vip/");
+      }}
+    }}
   }}
 
   // Se estiver na página demo de carteiras mas já logado como VIP/Anual, abre a versão desbloqueada
