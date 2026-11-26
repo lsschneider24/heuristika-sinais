@@ -196,8 +196,70 @@ def calc_atr(highs: list, lows: list, closes: list, period: int = 14) -> float:
     return sum(trs[-period:]) / period
 
 
+def score_asset_setup(
+    direcao: str,
+    closes: list,
+    ema_fast: list,
+    ema_slow: list,
+    rsi: float,
+    atr: float,
+    rr_tp2: float,
+) -> int:
+    """Analista Quantitativo Avançado: pontua o setup de 0 a 100 combinando
+    momentum multi-candle, inclinação de médias, zona de RSI, regime de ATR% e assimetria R:R.
+    """
+    preco = closes[-1] if closes else 1.0
+    score = 0.0
+
+    # 1. Tendência & Momentum Multi-Candle (até 35 pts)
+    spread_pct = abs(ema_fast[-1] - ema_slow[-1]) / max(preco, 1e-6) * 100.0
+    slope_ok = (ema_fast[-1] > ema_fast[-2]) if direcao == "COMPRA" else (ema_fast[-1] < ema_fast[-2])
+    mom_5 = ((closes[-1] - closes[-6]) / max(closes[-6], 1e-6) * 100.0) if len(closes) >= 6 else 0.0
+    mom_aligned = (mom_5 > 0) if direcao == "COMPRA" else (mom_5 < 0)
+    score += min(15.0, spread_pct * 25.0)
+    if slope_ok:
+        score += 10.0
+    if mom_aligned:
+        score += 10.0
+
+    # 2. Zona Saudável de RSI (até 25 pts)
+    if direcao == "COMPRA":
+        if 50.0 <= rsi <= 64.0:
+            score += 25.0
+        elif 45.0 <= rsi < 69.0:
+            score += 16.0
+        else:
+            score += 8.0
+    else:
+        if 36.0 <= rsi <= 50.0:
+            score += 25.0
+        elif 31.0 < rsi <= 55.0:
+            score += 16.0
+        else:
+            score += 8.0
+
+    # 3. Regime de Volatilidade ATR% (até 20 pts — evita ativos travados ou em exaustão)
+    atr_pct = (atr / max(preco, 1e-6)) * 100.0
+    if 0.25 <= atr_pct <= 2.5:
+        score += 20.0
+    elif 0.10 <= atr_pct <= 4.5:
+        score += 12.0
+    else:
+        score += 5.0
+
+    # 4. Assimetria Risco/Retorno até TP2 (até 20 pts)
+    if rr_tp2 >= 2.0:
+        score += 20.0
+    elif rr_tp2 >= 1.5:
+        score += 12.0
+    else:
+        score += 4.0
+
+    return max(0, min(100, int(round(score))))
+
+
 def analyze_asset(categoria: str, asset: dict):
-    """Analisa um ativo com EMA9/EMA21 + RSI + ATR e retorna um dicionário de sinal ou None."""
+    """Analisa um ativo com EMA9/EMA21 + RSI + ATR + Score do Analista Avançado."""
     symbol = asset["symbol"]
     decimals = asset.get("decimals", 2)
 
@@ -241,6 +303,11 @@ def analyze_asset(categoria: str, asset: dict):
         tp1 = preco - (1.8 * atr_safe)
         tp2 = preco - (3.2 * atr_safe)
 
+    risk_dist = abs(preco - sl)
+    rr_tp2 = abs(tp2 - preco) / risk_dist if risk_dist > 0 else 0.0
+    score = score_asset_setup(direcao, closes, ema_fast, ema_slow, rsi, atr_safe, rr_tp2)
+    motivo = f"Score Analista: {score}/100 | {motivo}"
+
     return {
         "categoria": categoria,
         "ativo": symbol,
@@ -253,19 +320,21 @@ def analyze_asset(categoria: str, asset: dict):
         "destino": "VIP",
         "origem": "ROBO",
         "observacao": motivo,
+        "score": score,
     }
 
 
 def scan_and_generate_signals(max_new_per_run: int = 2) -> dict:
-    """Varre o catálogo respeitando anti-duplicidade e publica novos sinais."""
+    """Varre o catálogo com o Analista Avançado (ranqueamento por score + anti-correlação)
+    e publica os melhores sinais respeitando anti-duplicidade.
+    """
     created = []
     skipped_dup = 0
     checked = 0
+    candidates = []
 
     for categoria, ativos in config.CATALOGO_ATIVOS.items():
         for asset in ativos:
-            if len(created) >= max_new_per_run:
-                break
             checked += 1
             symbol = asset["symbol"]
             if database.has_recent_open_or_duplicate_signal(symbol, config.ANTI_DUPLICATE_MINUTES):
@@ -274,13 +343,28 @@ def scan_and_generate_signals(max_new_per_run: int = 2) -> dict:
 
             try:
                 sig_data = analyze_asset(categoria, asset)
-                if sig_data:
-                    sig_id = database.insert_signal(sig_data)
-                    full_sig = database.get_signal_by_id(sig_id)
-                    telegram_sender.publish_signal_to_telegram(full_sig)
-                    created.append(full_sig)
+                if sig_data and sig_data.get("score", 0) >= 60:
+                    candidates.append(sig_data)
             except Exception as exc:
                 logger.warning("Erro ao analisar %s: %s", symbol, exc)
+
+    # Ranqueia por Score do Analista Avançado (maior convicção primeiro)
+    candidates.sort(key=lambda item: item.get("score", 0), reverse=True)
+
+    # Filtro anti-correlação: no máximo 1 sinal novo por categoria por ciclo
+    used_categories = set()
+    for sig_data in candidates:
+        if len(created) >= max_new_per_run:
+            break
+        cat = sig_data["categoria"]
+        if cat in used_categories:
+            continue
+        payload = {k: v for k, v in sig_data.items() if k != "score"}
+        sig_id = database.insert_signal(payload)
+        full_sig = database.get_signal_by_id(sig_id)
+        telegram_sender.publish_signal_to_telegram(full_sig)
+        created.append(full_sig)
+        used_categories.add(cat)
 
     database.set_setting("last_scan_at", database.now_str())
     return {

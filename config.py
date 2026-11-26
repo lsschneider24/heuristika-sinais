@@ -48,7 +48,7 @@ PIX_RECEIVER = os.getenv("PIX_RECEIVER", "Heurístika Mesa Quantitativa").strip(
 PIX_INSTITUTION = os.getenv("PIX_INSTITUTION", "Transferência Pix Instantânea").strip()
 
 # Categorias suportadas
-CATEGORIAS = ["Ações", "Fundos", "Futuros", "Forex", "Cripto", "Índices"]
+CATEGORIAS = ["Ações", "ETFs", "Fundos", "Futuros", "Forex", "Cripto", "Índices"]
 
 # Catálogo inicial editável por categoria
 # Campos: symbol (nome exibido), binance (opcional), yahoo (opcional), stooq (opcional), fallback_price, decimals
@@ -82,6 +82,21 @@ CATALOGO_ATIVOS = {
         {"symbol": "VALE3", "binance": None, "yahoo": "VALE3.SA", "stooq": None, "fallback_price": 58.20, "decimals": 2},
         {"symbol": "AAPL", "binance": None, "yahoo": "AAPL", "stooq": "aapl.us", "fallback_price": 228.50, "decimals": 2},
         {"symbol": "NVDA", "binance": None, "yahoo": "NVDA", "stooq": "nvda.us", "fallback_price": 141.20, "decimals": 2},
+    ],
+    "ETFs": [
+        {"symbol": "IVVB11", "binance": None, "yahoo": "IVVB11.SA", "stooq": None, "fallback_price": 352.00, "decimals": 2},
+        {"symbol": "NASD11", "binance": None, "yahoo": "NASD11.SA", "stooq": None, "fallback_price": 17.50, "decimals": 2},
+        {"symbol": "BOVA11", "binance": None, "yahoo": "BOVA11.SA", "stooq": None, "fallback_price": 124.50, "decimals": 2},
+        {"symbol": "SMAL11", "binance": None, "yahoo": "SMAL11.SA", "stooq": None, "fallback_price": 98.00, "decimals": 2},
+        {"symbol": "DIVO11", "binance": None, "yahoo": "DIVO11.SA", "stooq": None, "fallback_price": 92.00, "decimals": 2},
+        {"symbol": "IMAB11", "binance": None, "yahoo": "IMAB11.SA", "stooq": None, "fallback_price": 102.00, "decimals": 2},
+        {"symbol": "GOLD11", "binance": None, "yahoo": "GOLD11.SA", "stooq": None, "fallback_price": 15.20, "decimals": 2},
+        {"symbol": "HASH11", "binance": None, "yahoo": "HASH11.SA", "stooq": None, "fallback_price": 68.00, "decimals": 2},
+        {"symbol": "SPY", "binance": None, "yahoo": "SPY", "stooq": "spy.us", "fallback_price": 590.00, "decimals": 2},
+        {"symbol": "QQQ", "binance": None, "yahoo": "QQQ", "stooq": "qqq.us", "fallback_price": 505.00, "decimals": 2},
+        {"symbol": "GLD", "binance": None, "yahoo": "GLD", "stooq": "gld.us", "fallback_price": 245.00, "decimals": 2},
+        {"symbol": "TLT", "binance": None, "yahoo": "TLT", "stooq": "tlt.us", "fallback_price": 92.00, "decimals": 2},
+        {"symbol": "EWZ", "binance": None, "yahoo": "EWZ", "stooq": "ewz.us", "fallback_price": 28.50, "decimals": 2},
     ],
     "Fundos": [
         {"symbol": "HGLG11", "binance": None, "yahoo": "HGLG11.SA", "stooq": None, "fallback_price": 156.80, "decimals": 2},
