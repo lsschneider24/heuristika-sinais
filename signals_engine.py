@@ -351,13 +351,13 @@ def scan_and_generate_signals(max_new_per_run: int = 2) -> dict:
     # Ranqueia por Score do Analista Avançado (maior convicção primeiro)
     candidates.sort(key=lambda item: item.get("score", 0), reverse=True)
 
-    # Filtro anti-correlação: no máximo 1 sinal novo por categoria por ciclo
+    # Filtro anti-correlação opcional (desabilitado por padrão em config.ENABLE_ANTI_CORRELATION_FILTER)
     used_categories = set()
     for sig_data in candidates:
         if len(created) >= max_new_per_run:
             break
         cat = sig_data["categoria"]
-        if cat in used_categories:
+        if config.ENABLE_ANTI_CORRELATION_FILTER and cat in used_categories:
             continue
         payload = {k: v for k, v in sig_data.items() if k != "score"}
         sig_id = database.insert_signal(payload)

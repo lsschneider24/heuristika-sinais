@@ -118,6 +118,7 @@ ANTI_DUPLICATE_MINUTES = int(os.getenv("ANTI_DUPLICATE_MINUTES", "60"))
 SCAN_INTERVAL_SECONDS = int(os.getenv("SCAN_INTERVAL_SECONDS", "60"))
 AUDIT_INTERVAL_SECONDS = int(os.getenv("AUDIT_INTERVAL_SECONDS", "30"))
 ENABLE_SIMULATION_FALLBACK = os.getenv("ENABLE_SIMULATION_FALLBACK", "false").lower() == "true"
+ENABLE_ANTI_CORRELATION_FILTER = os.getenv("ENABLE_ANTI_CORRELATION_FILTER", "false").lower() == "true"
 
 # Camada opcional de LLM do Gerente de Estratégias (desligada por padrão - Custo Zero)
 LLM_ENABLED = os.getenv("LLM_ENABLED", "false").lower() == "true"
