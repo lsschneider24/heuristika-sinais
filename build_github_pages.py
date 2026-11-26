@@ -518,6 +518,12 @@ def build_static_site(
 
         database.init_db()
         database.seed_initial_data(force=True)
+        if os.getenv("GITHUB_PAGES_SCAN", "false").lower() == "true":
+            try:
+                import signals_engine
+                signals_engine.scan_and_generate_signals(max_new_per_run=4)
+            except Exception as exc:
+                print(f"[build_github_pages] Aviso na varredura ao vivo: {exc}")
         client = flask_app.app.test_client()
 
         home_html = client.get("/").data.decode("utf-8")
