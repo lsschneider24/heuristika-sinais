@@ -134,6 +134,20 @@
       }
     };
 
+    document.addEventListener("click", (e) => {
+      const waBtn = e.target.closest(".hk-share-wa");
+      if (waBtn) {
+        const txt = waBtn.getAttribute("data-share") || "";
+        window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener");
+        return;
+      }
+      const tgBtn = e.target.closest(".hk-share-tg");
+      if (tgBtn) {
+        const txt = tgBtn.getAttribute("data-share") || "";
+        window.open("https://t.me/share/url?url=" + encodeURIComponent(window.location.href) + "&text=" + encodeURIComponent(txt), "_blank", "noopener");
+      }
+    });
+
     (function initSubtleCardGlow() {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       const spotlight = document.getElementById("cursorSpotlight");

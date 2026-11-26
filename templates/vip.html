@@ -259,7 +259,7 @@
             <span>{{ s.criado_em|fmt_dt }}</span>
           </div>
 
-          <div class="signal-actions">
+          <div class="signal-actions" style="flex-wrap:wrap;">
             <button type="button"
                     class="btn btn-xs btn-ghost copy-signal-btn"
                     style="flex:1;"
@@ -275,6 +275,18 @@
                     data-tp1="{{ s.tp1 }}"
                     data-tp2="{{ s.tp2 }}">
               Calcular Lote
+            </button>
+            <button type="button"
+                    class="btn btn-xs btn-outline hk-share-wa"
+                    title="Compartilhar no WhatsApp"
+                    data-share="HEURÍSTIKA VIP | #{{ s.id }} {{ s.ativo }} ({{ s.direcao }})&#10;Entrada: {{ s.entrada|fmt_price(s.categoria, s.ativo) }} | SL: {{ s.sl|fmt_price(s.categoria, s.ativo) }}&#10;TP1: {{ s.tp1|fmt_price(s.categoria, s.ativo) }} | TP2: {{ s.tp2|fmt_price(s.categoria, s.ativo) }} | R:R 1:{{ '%.1f'|format(rr_val) }}">
+              WhatsApp
+            </button>
+            <button type="button"
+                    class="btn btn-xs btn-outline hk-share-tg"
+                    title="Compartilhar no Telegram"
+                    data-share="HEURÍSTIKA VIP | #{{ s.id }} {{ s.ativo }} ({{ s.direcao }})&#10;Entrada: {{ s.entrada|fmt_price(s.categoria, s.ativo) }} | SL: {{ s.sl|fmt_price(s.categoria, s.ativo) }}&#10;TP1: {{ s.tp1|fmt_price(s.categoria, s.ativo) }} | TP2: {{ s.tp2|fmt_price(s.categoria, s.ativo) }} | R:R 1:{{ '%.1f'|format(rr_val) }}">
+              Telegram
             </button>
           </div>
         </article>

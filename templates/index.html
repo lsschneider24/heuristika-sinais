@@ -718,13 +718,27 @@
             <div class="ladder-labels"><span>SL</span><span>{{ t.entry }}</span><span>TP1</span><span>TP2</span></div>
           </div>
 
-          <div style="margin-top:12px; font-size:0.78rem; color:var(--muted); display:flex; justify-content:space-between; align-items:center;" class="mono">
+          <div style="margin-top:12px; font-size:0.78rem; color:var(--muted); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;" class="mono">
             <span>{{ s.criado_em|fmt_dt }}</span>
-            <button type="button"
-                    class="btn btn-xs btn-ghost home-copy-sig-btn"
-                    data-copy="HEURÍSTIKA | {{ s.ativo }} ({{ s.direcao }})&#10;{{ t.entry }}: {{ s.entrada|fmt_price(s.categoria, s.ativo) }} | SL: {{ s.sl|fmt_price(s.categoria, s.ativo) }} | TP1: {{ s.tp1|fmt_price(s.categoria, s.ativo) }} | TP2: {{ s.tp2|fmt_price(s.categoria, s.ativo) }}">
-              Copiar Sinal
-            </button>
+            <div style="display:flex; gap:4px; align-items:center;">
+              <button type="button"
+                      class="btn btn-xs btn-ghost home-copy-sig-btn"
+                      data-copy="HEURÍSTIKA | {{ s.ativo }} ({{ s.direcao }})&#10;{{ t.entry }}: {{ s.entrada|fmt_price(s.categoria, s.ativo) }} | SL: {{ s.sl|fmt_price(s.categoria, s.ativo) }} | TP1: {{ s.tp1|fmt_price(s.categoria, s.ativo) }} | TP2: {{ s.tp2|fmt_price(s.categoria, s.ativo) }}">
+                Copiar
+              </button>
+              <button type="button"
+                      class="btn btn-xs btn-outline hk-share-wa"
+                      title="Compartilhar no WhatsApp"
+                      data-share="HEURÍSTIKA | {{ s.ativo }} ({{ s.direcao }})&#10;{{ t.entry }}: {{ s.entrada|fmt_price(s.categoria, s.ativo) }} | SL: {{ s.sl|fmt_price(s.categoria, s.ativo) }} | TP1: {{ s.tp1|fmt_price(s.categoria, s.ativo) }} | TP2: {{ s.tp2|fmt_price(s.categoria, s.ativo) }}">
+                WhatsApp
+              </button>
+              <button type="button"
+                      class="btn btn-xs btn-outline hk-share-tg"
+                      title="Compartilhar no Telegram"
+                      data-share="HEURÍSTIKA | {{ s.ativo }} ({{ s.direcao }})&#10;{{ t.entry }}: {{ s.entrada|fmt_price(s.categoria, s.ativo) }} | SL: {{ s.sl|fmt_price(s.categoria, s.ativo) }} | TP1: {{ s.tp1|fmt_price(s.categoria, s.ativo) }} | TP2: {{ s.tp2|fmt_price(s.categoria, s.ativo) }}">
+                Telegram
+              </button>
+            </div>
           </div>
         </article>
       {% endfor %}
