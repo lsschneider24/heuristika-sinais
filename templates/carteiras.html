@@ -776,9 +776,11 @@
     });
   }
 
-  </div>
-  <!-- FIM TERMINAL/MATRIX -->
+  updateAll();
+})();
+</script>
 
+<section class="container section-wrap" style="padding-top:0;">
   <!-- LABORATÓRIO DE ESTRATÉGIAS, RADAR GLOBAL & AGENTE (FASES 3 & 4) -->
   <div id="strategyLabSection" class="term-panel" style="margin-top:28px;">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
@@ -851,11 +853,9 @@
       <div id="agentReplyBox" class="mono" style="padding:12px; border:1px solid var(--border); border-radius:10px; white-space:pre-wrap; font-size:0.82rem; min-height:60px;">Pronto para consultas determinísticas (custo zero).</div>
     </div>
   </div>
+</section>
 
 <script>
-  updateAll();
-})();
-
 // Script independente do Laboratório de Estratégias (/api/strategies/*)
 (function() {
   const labSec = document.getElementById("strategyLabSection");
