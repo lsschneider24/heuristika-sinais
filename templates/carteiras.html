@@ -53,55 +53,92 @@
     </div>
   {% endif %}
 
-  <!-- Formador de Carteira conforme o Perfil do Cliente -->
-  <div class="term-panel" id="portfolioBuilderPanel" style="margin-bottom:20px; border:1px solid rgba(16,185,129,0.28); background:linear-gradient(180deg, rgba(16,185,129,0.06) 0%, rgba(15,23,42,0.85) 100%);">
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+  <!-- Formador de Carteira Passo a Passo (Wizard 1 fase por vez) -->
+  <div class="term-panel" id="portfolioBuilderPanel" style="margin-bottom:20px; border:1px solid #cbd5e1; background:#ffffff;">
+    <!-- Estado inicial compacto -->
+    <div id="pbIntroView" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
       <div>
         <div class="term-kicker" style="color:var(--electric);">ASSISTENTE INTELIGENTE • FORMADOR DE CARTEIRA</div>
-        <h2 style="margin:4px 0 2px; font-size:1.2rem;">Monte Sua Carteira Conforme o Seu Perfil</h2>
-        <p style="margin:0; font-size:0.84rem; color:var(--text-soft);">Responda 3 perguntas rápidas para descobrir a alocação modelo mais adequada ao seu prazo e tolerância a risco.</p>
+        <h2 style="margin:4px 0 2px; font-size:1.2rem;">Não sabe qual carteira escolher?</h2>
+        <p style="margin:0; font-size:0.86rem; color:var(--text-soft);">Responda 3 perguntas rápidas (uma por vez) e montamos a alocação modelo ideal para o seu perfil.</p>
       </div>
-      <span id="builderResultBadge" class="badge badge-cat" style="display:none; font-size:0.8rem; padding:6px 10px;">Perfil calculado</span>
+      <button type="button" id="pbStartBtn" class="btn btn-electric">🎯 Descobrir Minha Carteira Ideal →</button>
     </div>
 
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:14px;">
-      <div>
-        <label for="pbHorizon" style="display:block; font-size:0.76rem; color:var(--muted); margin-bottom:5px; font-weight:600;">1. Quando pretende usar este dinheiro?</label>
-        <select id="pbHorizon" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(148,163,184,0.3); background:#0f172a; color:#f8fafc; font-size:0.86rem;">
-          <option value="Curto (2 anos)">Curto prazo (até 2 anos — reserva / meta próxima)</option>
-          <option value="Médio (5 anos)" selected>Médio prazo (3 a 6 anos — crescimento equilibrado)</option>
-          <option value="Longo (10+ anos)">Longo prazo (7 a 10+ anos — multiplicação patrimonial)</option>
-        </select>
+    <!-- Wizard interativo (oculto até clicar) -->
+    <div id="pbWizardView" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span id="pbStepLabel" class="badge badge-vip">Passo 1 de 3</span>
+        <button type="button" id="pbCancelBtn" class="btn btn-xs btn-ghost">Fechar ✕</button>
       </div>
-      <div>
-        <label for="pbDrawdown" style="display:block; font-size:0.76rem; color:var(--muted); margin-bottom:5px; font-weight:600;">2. Se a carteira cair 15% num mês ruim, você:</label>
-        <select id="pbDrawdown" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(148,163,184,0.3); background:#0f172a; color:#f8fafc; font-size:0.86rem;">
-          <option value="0">Fico desconfortável e prefiro máxima segurança</option>
-          <option value="1" selected>Mantenho a calma buscando superar o CDI no prazo</option>
-          <option value="2">Aproveito a queda para aportar e comprar mais barato</option>
-        </select>
+      <div style="height:6px; background:#e2e8f0; border-radius:99px; overflow:hidden; margin-bottom:18px;">
+        <div id="pbProgressFill" style="height:100%; width:33%; background:#1669f2; transition:width 0.25s ease;"></div>
       </div>
-      <div>
-        <label for="pbExp" style="display:block; font-size:0.76rem; color:var(--muted); margin-bottom:5px; font-weight:600;">3. Experiência com Ações, FIIs e Cripto:</label>
-        <select id="pbExp" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(148,163,184,0.3); background:#0f172a; color:#f8fafc; font-size:0.86rem;">
-          <option value="0">Iniciante — prefiro foco maior em Renda Fixa</option>
-          <option value="1" selected>Intermediário — já invisto em Ações ou FIIs</option>
-          <option value="2">Experiente — aceito volatilidade global e cripto</option>
-        </select>
+
+      <!-- Fase 1 -->
+      <div class="pb-step" data-step="1">
+        <h3 style="margin:0 0 12px; font-size:1.08rem;">1. Quando você pretende usar este dinheiro?</h3>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:10px;">
+          <button type="button" class="btn btn-outline pb-opt-btn" data-step="1" data-val="Curto (2 anos)" style="text-align:left; padding:14px; height:auto;">
+            <strong>Curto prazo (até 2 anos)</strong><br/><span style="font-size:0.78rem; color:var(--muted); font-weight:400;">Reserva, meta próxima ou liquidez</span>
+          </button>
+          <button type="button" class="btn btn-outline pb-opt-btn" data-step="1" data-val="Médio (5 anos)" style="text-align:left; padding:14px; height:auto;">
+            <strong>Médio prazo (3 a 6 anos)</strong><br/><span style="font-size:0.78rem; color:var(--muted); font-weight:400;">Crescimento equilibrado acima do CDI</span>
+          </button>
+          <button type="button" class="btn btn-outline pb-opt-btn" data-step="1" data-val="Longo (10+ anos)" style="text-align:left; padding:14px; height:auto;">
+            <strong>Longo prazo (7 a 10+ anos)</strong><br/><span style="font-size:0.78rem; color:var(--muted); font-weight:400;">Multiplicação patrimonial no composto</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Fase 2 -->
+      <div class="pb-step" data-step="2" style="display:none;">
+        <h3 style="margin:0 0 12px; font-size:1.08rem;">2. Se sua carteira cair 15% em um mês ruim, você:</h3>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:10px;">
+          <button type="button" class="btn btn-outline pb-opt-btn" data-step="2" data-val="0" style="text-align:left; padding:14px; height:auto;">
+            <strong>Prefiro máxima segurança</strong><br/><span style="font-size:0.78rem; color:var(--muted); font-weight:400;">Fico desconfortável com quedas fortes</span>
+          </button>
+          <button type="button" class="btn btn-outline pb-opt-btn" data-step="2" data-val="1" style="text-align:left; padding:14px; height:auto;">
+            <strong>Mantenho a calma</strong><br/><span style="font-size:0.78rem; color:var(--muted); font-weight:400;">Aceito oscilações buscando superar o CDI</span>
+          </button>
+          <button type="button" class="btn btn-outline pb-opt-btn" data-step="2" data-val="2" style="text-align:left; padding:14px; height:auto;">
+            <strong>Aproveito para comprar mais</strong><br/><span style="font-size:0.78rem; color:var(--muted); font-weight:400;">Vejo quedas como oportunidade</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Fase 3 -->
+      <div class="pb-step" data-step="3" style="display:none;">
+        <h3 style="margin:0 0 12px; font-size:1.08rem;">3. Qual é a sua experiência com Ações, FIIs e Cripto?</h3>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:10px;">
+          <button type="button" class="btn btn-outline pb-opt-btn" data-step="3" data-val="0" style="text-align:left; padding:14px; height:auto;">
+            <strong>Iniciante</strong><br/><span style="font-size:0.78rem; color:var(--muted); font-weight:400;">Prefiro foco maior em Renda Fixa</span>
+          </button>
+          <button type="button" class="btn btn-outline pb-opt-btn" data-step="3" data-val="1" style="text-align:left; padding:14px; height:auto;">
+            <strong>Intermediário</strong><br/><span style="font-size:0.78rem; color:var(--muted); font-weight:400;">Já invisto em Ações ou Fundos Imobiliários</span>
+          </button>
+          <button type="button" class="btn btn-outline pb-opt-btn" data-step="3" data-val="2" style="text-align:left; padding:14px; height:auto;">
+            <strong>Experiente</strong><br/><span style="font-size:0.78rem; color:var(--muted); font-weight:400;">Aceito volatilidade global e cripto</span>
+          </button>
+        </div>
       </div>
     </div>
 
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-      <div id="builderExplanation" style="font-size:0.82rem; color:var(--text-soft); flex:1; min-width:240px;">
-        Ajuste o capital e aporte abaixo ou clique em <strong>Montar Minha Carteira</strong> para aplicar automaticamente.
+    <!-- Resultado final do Wizard -->
+    <div id="pbResultView" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div>
+          <span id="builderResultBadge" class="badge badge-buy" style="margin-bottom:6px;">Perfil calculado</span>
+          <div id="builderExplanation" style="font-size:0.88rem; color:var(--text);"></div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" id="pbRestartBtn" class="btn btn-sm btn-ghost">Refazer perguntas</button>
+          <button type="button" id="sharePortfolioWaBtn" class="btn btn-sm btn-electric">Compartilhar no WhatsApp</button>
+        </div>
       </div>
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" id="runPortfolioBuilderBtn" class="btn btn-sm btn-electric">Montar Minha Carteira →</button>
-        <button type="button" id="sharePortfolioWaBtn" class="btn btn-sm btn-outline">Compartilhar no WhatsApp</button>
+      <div style="margin-top:8px; font-size:0.72rem; color:var(--muted);">
+        Aviso educativo: enquadramento em carteiras modelo simuladas; não constitui recomendação personalizada.
       </div>
-    </div>
-    <div style="margin-top:8px; font-size:0.72rem; color:var(--muted);">
-      Aviso educativo: ferramenta de enquadramento em carteiras modelo simuladas; não constitui recomendação personalizada de investimento.
     </div>
   </div>
 
@@ -828,42 +865,77 @@
     });
   }
 
-  // Formador de Carteira conforme o Perfil do Cliente
-  const runBuilderBtn = document.getElementById("runPortfolioBuilderBtn");
-  if (runBuilderBtn) {
-    runBuilderBtn.addEventListener("click", () => {
-      const hVal = document.getElementById("pbHorizon")?.value || "Médio (5 anos)";
-      const score = (parseInt(document.getElementById("pbDrawdown")?.value || "1", 10) || 0)
-                  + (parseInt(document.getElementById("pbExp")?.value || "1", 10) || 0);
-      let prof = "Moderado";
-      let motivo = "Equilíbrio entre proteção em Renda Fixa/IPCA+ e crescimento com Ações, FIIs e Global.";
-      if (score <= 1) {
-        prof = "Conservador";
-        motivo = "Foco em preservação de capital, alta liquidez e baixa volatilidade.";
-      } else if (score >= 3) {
-        prof = "Agressivo";
-        motivo = "Maior exposição a crescimento global, ações e ativos assimétricos para maximizar retorno composto.";
-      }
-      activeHorizon = hVal;
-      activeProfile = prof;
-      projectionYears = QUANT_META[`${activeHorizon}||${activeProfile}`]?.yrs || 5;
-      updateUrlState();
-      updateAll();
+  // Formador de Carteira Passo a Passo (1 fase por vez)
+  const pbIntro = document.getElementById("pbIntroView");
+  const pbWiz = document.getElementById("pbWizardView");
+  const pbRes = document.getElementById("pbResultView");
+  const pbStepLbl = document.getElementById("pbStepLabel");
+  const pbFill = document.getElementById("pbProgressFill");
+  const pbAnswers = { horizon: "Médio (5 anos)", dd: 1, exp: 1 };
 
-      const badge = document.getElementById("builderResultBadge");
-      if (badge) {
-        badge.textContent = `${activeHorizon} • ${activeProfile}`;
-        badge.className = "badge badge-buy";
-        badge.style.display = "inline-flex";
-      }
-      const exp = document.getElementById("builderExplanation");
-      if (exp) {
-        exp.innerHTML = `<strong class="text-green">Carteira montada: ${escHtml(activeHorizon)} • ${escHtml(activeProfile)}.</strong> ${escHtml(motivo)}`;
-      }
-      if (window.hkToast) window.hkToast(`Carteira ${activeHorizon} • ${activeProfile} aplicada!`, "success");
-      document.querySelector(".wealth-dock")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  function showPbStep(stepNum) {
+    document.querySelectorAll(".pb-step").forEach(el => {
+      el.style.display = (parseInt(el.dataset.step, 10) === stepNum) ? "block" : "none";
     });
+    if (pbStepLbl) pbStepLbl.textContent = `Passo ${stepNum} de 3`;
+    if (pbFill) pbFill.style.width = `${Math.round((stepNum / 3) * 100)}%`;
   }
+
+  document.getElementById("pbStartBtn")?.addEventListener("click", () => {
+    if (pbIntro) pbIntro.style.display = "none";
+    if (pbRes) pbRes.style.display = "none";
+    if (pbWiz) pbWiz.style.display = "block";
+    showPbStep(1);
+  });
+
+  document.getElementById("pbCancelBtn")?.addEventListener("click", () => {
+    if (pbWiz) pbWiz.style.display = "none";
+    if (pbIntro) pbIntro.style.display = "flex";
+  });
+
+  document.getElementById("pbRestartBtn")?.addEventListener("click", () => {
+    if (pbRes) pbRes.style.display = "none";
+    if (pbWiz) pbWiz.style.display = "block";
+    showPbStep(1);
+  });
+
+  document.querySelectorAll(".pb-opt-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const step = parseInt(btn.dataset.step, 10);
+      if (step === 1) {
+        pbAnswers.horizon = btn.dataset.val;
+        showPbStep(2);
+      } else if (step === 2) {
+        pbAnswers.dd = parseInt(btn.dataset.val, 10) || 0;
+        showPbStep(3);
+      } else if (step === 3) {
+        pbAnswers.exp = parseInt(btn.dataset.val, 10) || 0;
+        const score = pbAnswers.dd + pbAnswers.exp;
+        let prof = "Moderado";
+        let motivo = "Equilíbrio entre proteção em Renda Fixa/IPCA+ e crescimento com Ações, FIIs e Global.";
+        if (score <= 1) {
+          prof = "Conservador";
+          motivo = "Foco em preservação de capital, alta liquidez e baixa volatilidade.";
+        } else if (score >= 3) {
+          prof = "Agressivo";
+          motivo = "Maior exposição a crescimento global, ações e ativos assimétricos para maximizar retorno composto.";
+        }
+        activeHorizon = pbAnswers.horizon;
+        activeProfile = prof;
+        projectionYears = QUANT_META[`${activeHorizon}||${activeProfile}`]?.yrs || 5;
+        updateUrlState();
+        updateAll();
+
+        if (pbWiz) pbWiz.style.display = "none";
+        if (pbRes) pbRes.style.display = "block";
+        const badge = document.getElementById("builderResultBadge");
+        if (badge) badge.textContent = `Carteira Ideal: ${activeHorizon} • ${activeProfile}`;
+        const exp = document.getElementById("builderExplanation");
+        if (exp) exp.innerHTML = `<strong>${escHtml(activeHorizon)} • ${escHtml(activeProfile)}:</strong> ${escHtml(motivo)}`;
+        if (window.hkToast) window.hkToast(`Carteira ${activeHorizon} • ${activeProfile} aplicada!`, "success");
+      }
+    });
+  });
 
   const shareWaBtn = document.getElementById("sharePortfolioWaBtn");
   if (shareWaBtn) {

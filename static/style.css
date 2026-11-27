@@ -2496,3 +2496,20 @@ details summary { color: #0e1629 !important; }
   border-top: 1px solid #dbe2ec !important;
   color: #475569 !important;
 }
+
+/* Fix money-input-wrap in XM Light Mode */
+.money-input-wrap {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+}
+.money-prefix {
+  color: #64748b !important;
+  background: #f8fafc !important;
+  border-right: 1px solid #e2e8f0 !important;
+  padding: 0 10px;
+}
+.money-input-wrap input {
+  border: none !important;
+  box-shadow: none !important;
+}
