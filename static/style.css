@@ -2260,3 +2260,239 @@ button.pill {
   .cert-print-card h1, .cert-print-card strong, .cert-print-card .kpi-value { color: #0f172a !important; }
   .cert-print-card .kpi-card { background: #f8fafc !important; border-color: #cbd5e1 !important; }
 }
+
+
+/* ============================================================================
+   XM.COM INSPIRED THEME (OPÇÃO A — LIGHT MODE + MIDNIGHT NAVY BANDS)
+   ============================================================================ */
+:root {
+  --bg: #f4f6fa;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --surface-3: #eef2f7;
+  --border: #e2e8f0;
+  --border-bright: #cbd5e1;
+  --text: #0e1629;
+  --text-soft: #475569;
+  --muted: #64748b;
+  --electric: #1669f2;
+  --electric-hover: #0f56cc;
+  --electric-soft: #3b82f6;
+  --electric-dark: #ffffff;
+  --green: #059669;
+  --green-bg: rgba(5, 150, 105, 0.1);
+  --red: #e11d48;
+  --red-bg: rgba(225, 29, 72, 0.1);
+  --amber: #d97706;
+  --amber-bg: rgba(217, 119, 6, 0.12);
+  --blue: #1669f2;
+  --blue-bg: rgba(22, 105, 242, 0.1);
+  --radius: 20px;
+}
+
+body {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+.cursor-spotlight { display: none !important; }
+
+/* Sticky White XM Navbar */
+.navbar {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 12px rgba(14, 22, 41, 0.04);
+}
+.brand-name { color: #0e1629 !important; font-weight: 800; }
+.nav-item { color: #334155 !important; font-weight: 600; }
+.nav-item:hover, .nav-item.active { color: #1669f2 !important; }
+
+/* Dark Midnight Navy Hero (XM Signature Contrast) */
+.broker-hero {
+  background: radial-gradient(circle at 70% 20%, rgba(22, 105, 242, 0.22), transparent 55%),
+              linear-gradient(180deg, #080c17 0%, #0e1629 100%) !important;
+  color: #ffffff !important;
+}
+.broker-hero .hero-headline,
+.broker-hero .metric-val,
+.broker-hero .terminal-window,
+.broker-hero .terminal-window * { color: #ffffff; }
+.broker-hero .hero-desc,
+.broker-hero .metric-lbl { color: #cbd5e1 !important; }
+.broker-hero .hero-pill {
+  background: rgba(22, 105, 242, 0.18) !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+  color: #93c5fd !important;
+}
+.broker-hero .broker-metrics-bar {
+  background: rgba(8, 12, 23, 0.72) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+.broker-hero .terminal-window {
+  background: rgba(15, 23, 42, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 20px !important;
+}
+.broker-hero .floating-ticker-chip {
+  background: rgba(15, 23, 42, 0.92) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: #f8fafc !important;
+}
+.broker-hero .btn-outline {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+.broker-hero .btn-outline:hover {
+  background: rgba(255, 255, 255, 0.14) !important;
+}
+
+/* Primary & Secondary Buttons (XM Royal Blue) */
+.btn-electric {
+  background: #1669f2 !important;
+  color: #ffffff !important;
+  border: 1px solid #1669f2 !important;
+  border-radius: 10px !important;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(22, 105, 242, 0.22);
+}
+.btn-electric:hover {
+  background: #0f56cc !important;
+  border-color: #0f56cc !important;
+}
+.btn-outline {
+  background: #ffffff !important;
+  color: #0e1629 !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+}
+.btn-outline:hover {
+  background: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+}
+.btn-ghost {
+  background: #f1f5f9 !important;
+  color: #0e1629 !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+}
+.btn-ghost:hover { background: #e2e8f0 !important; }
+
+/* Crisp White Cards & Panels across VIP, Carteiras, Academia, Home */
+.signal-card,
+.kpi-card,
+.term-panel,
+.panel,
+.plan-card,
+.source-card,
+.card,
+.auth-card,
+.academy-progress-wrap {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 24px rgba(14, 22, 41, 0.05) !important;
+  color: #0e1629 !important;
+}
+.signal-card:hover,
+.plan-card:hover {
+  border-color: #93c5fd !important;
+  box-shadow: 0 12px 30px rgba(22, 105, 242, 0.08) !important;
+}
+
+.level-box,
+.kpi-sub,
+.table-wrap,
+.pix-key-box {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #0e1629 !important;
+}
+.level-box span { color: #64748b !important; }
+
+/* Inputs, Selects & Segmented Controls */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+select,
+textarea {
+  background: #ffffff !important;
+  color: #0e1629 !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+  color-scheme: light !important;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: #1669f2 !important;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(22, 105, 242, 0.14);
+}
+.seg-group {
+  background: #eef2f7 !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+}
+.seg-btn { color: #475569 !important; }
+.seg-btn.active {
+  background: #1669f2 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+}
+.pill {
+  background: #ffffff !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+.pill.active {
+  background: #1669f2 !important;
+  color: #ffffff !important;
+  border-color: #1669f2 !important;
+}
+
+/* Badges */
+.badge-cat { background: #eef2f7 !important; color: #334155 !important; border: 1px solid #e2e8f0 !important; }
+.badge-buy { background: rgba(5, 150, 105, 0.12) !important; color: #047857 !important; border-color: rgba(5, 150, 105, 0.25) !important; }
+.badge-sell { background: rgba(225, 29, 72, 0.1) !important; color: #be123c !important; border-color: rgba(225, 29, 72, 0.22) !important; }
+.badge-vip { background: rgba(22, 105, 242, 0.12) !important; color: #1669f2 !important; border-color: rgba(22, 105, 242, 0.28) !important; }
+.badge-open { background: rgba(217, 119, 6, 0.12) !important; color: #b45309 !important; }
+
+/* Tables */
+table thead th { color: #64748b !important; border-bottom: 1px solid #e2e8f0 !important; }
+table tbody td { color: #0e1629 !important; border-bottom: 1px solid #f1f5f9 !important; }
+
+/* Accordions / Details */
+details {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+}
+details summary { color: #0e1629 !important; }
+
+/* XM Split Section (Beginner vs Experienced) */
+.xm-split-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin: 28px auto;
+}
+.xm-split-light {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 8px 24px rgba(14, 22, 41, 0.05);
+}
+.xm-split-dark {
+  background: linear-gradient(145deg, #080c17 0%, #0e1629 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 28px;
+  color: #ffffff;
+  box-shadow: 0 12px 32px rgba(8, 12, 23, 0.18);
+}
+.xm-split-dark p { color: #cbd5e1; }
+
+/* Footer XM Cool Gray */
+.site-footer {
+  background: #eaeef4 !important;
+  border-top: 1px solid #dbe2ec !important;
+  color: #475569 !important;
+}

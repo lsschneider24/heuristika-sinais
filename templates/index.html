@@ -100,6 +100,34 @@
   </div>
 </section>
 
+<!-- XM-Style Split: Iniciante vs. Experiente -->
+<section class="container" aria-label="Escolha seu caminho">
+  <div class="xm-split-grid">
+    <div class="xm-split-light">
+      <div class="mono" style="font-size:0.74rem; color:#1669f2; font-weight:700; text-transform:uppercase; margin-bottom:6px;">Para quem está começando</div>
+      <h2 style="margin:0 0 8px; font-size:1.35rem; color:#0e1629;">Novo no mercado financeiro?</h2>
+      <p style="margin:0 0 18px; font-size:0.9rem; color:#475569; line-height:1.55;">
+        Aprenda em linguagem simples como seguir os sinais passo a passo, proteger seu dinheiro com Stop Loss e montar sua carteira ideal em 3 perguntas.
+      </p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a href="{{ url_for('academia') }}" class="btn btn-sm btn-electric">Começar na Academia ↗</a>
+        <a href="{{ url_for('carteiras') }}" class="btn btn-sm btn-outline">Montar Minha Carteira</a>
+      </div>
+    </div>
+    <div class="xm-split-dark">
+      <div class="mono" style="font-size:0.74rem; color:#60a5fa; font-weight:700; text-transform:uppercase; margin-bottom:6px;">Para quem já opera</div>
+      <h2 style="margin:0 0 8px; font-size:1.35rem; color:#ffffff;">Já investe ou é assinante VIP?</h2>
+      <p style="margin:0 0 18px; font-size:0.9rem; color:#cbd5e1; line-height:1.55;">
+        Acesse direto os sinais selecionados pelo Analista Avançado (Score 0–100), com entrada, alvos, stop e compartilhamento em 1 clique no WhatsApp.
+      </p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a href="{{ url_for('vip_area') if is_vip else url_for('login') }}" class="btn btn-sm btn-electric">Abrir Sinais VIP ↗</a>
+        <a href="#simulador-rendimento" class="btn btn-sm btn-outline" style="background:rgba(255,255,255,0.08)!important; color:#fff!important; border-color:rgba(255,255,255,0.28)!important;">Simular desde 01/01/2026</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Barra de Navegação Rápida em Abas -->
 <nav class="container" aria-label="Navegação rápida pelas seções" style="margin:20px auto 4px;">
   <div style="display:flex; gap:8px; overflow-x:auto; padding:8px 4px; border-bottom:1px solid var(--border); scrollbar-width:thin;">
