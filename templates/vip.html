@@ -55,8 +55,13 @@
     </div>
   </section>
 
-  <!-- Calculadora Interativa de Lote & Gestão de Risco -->
-  <div class="term-panel calc-grid" id="riskCalcSection">
+  <!-- Calculadora Recolhível para Iniciantes (não polui o topo) -->
+  <details id="riskCalcAccordion" style="margin:20px 0 28px; border:1px solid var(--border); border-radius:12px; background:rgba(15,23,42,0.6); padding:12px 16px;">
+    <summary style="cursor:pointer; font-weight:700; font-size:0.95rem; color:var(--text); display:flex; justify-content:space-between; align-items:center; list-style:none;">
+      <span>🧮 Calculadora: Quanto investir em cada sinal? (clique para abrir)</span>
+      <span class="badge badge-cat">Opcional</span>
+    </summary>
+    <div class="term-panel calc-grid" id="riskCalcSection" style="margin-top:14px; margin-bottom:0; border:none; padding:8px 0 0;">
     <div>
       <div class="term-panel-head" style="margin-bottom:12px;">
         <div>
@@ -157,7 +162,8 @@
         Fórmula: <span style="color:var(--text-soft);">Posição = (Banca × Risco%) ÷ |Entrada - SL| / Entrada</span>. Limite de ruína protegido.
       </div>
     </div>
-  </div>
+    </div>
+  </details>
 
   <!-- Sinais em Aberto 100% Liberados -->
   <div class="filter-toolbar">
@@ -222,10 +228,10 @@
           </div>
 
           <div class="levels-grid">
-            <div class="level-box"><span>Entrada</span>{{ s.entrada|fmt_price(s.categoria, s.ativo) }}</div>
-            <div class="level-box"><span>Stop Loss</span><strong class="text-red">{{ s.sl|fmt_price(s.categoria, s.ativo) }}</strong></div>
-            <div class="level-box"><span>Alvo 1 (TP1)</span><strong class="text-green">{{ s.tp1|fmt_price(s.categoria, s.ativo) }}</strong></div>
-            <div class="level-box"><span>Alvo 2 (TP2)</span><strong class="text-green">{{ s.tp2|fmt_price(s.categoria, s.ativo) }}</strong></div>
+            <div class="level-box"><span>Preço de Entrada</span>{{ s.entrada|fmt_price(s.categoria, s.ativo) }}</div>
+            <div class="level-box"><span>Limite de Perda (Stop)</span><strong class="text-red">{{ s.sl|fmt_price(s.categoria, s.ativo) }}</strong></div>
+            <div class="level-box"><span>1º Alvo (Lucro Parcial)</span><strong class="text-green">{{ s.tp1|fmt_price(s.categoria, s.ativo) }}</strong></div>
+            <div class="level-box"><span>2º Alvo (Lucro Cheio)</span><strong class="text-green">{{ s.tp2|fmt_price(s.categoria, s.ativo) }}</strong></div>
           </div>
 
           <!-- Visual Risk/Reward Ladder -->
@@ -447,11 +453,13 @@
 
   document.querySelectorAll(".load-calc-btn").forEach(btn => {
     btn.addEventListener("click", () => {
+      const acc = document.getElementById("riskCalcAccordion");
+      if (acc) acc.open = true;
       sigSelect.value = btn.dataset.id;
       loadSignalIntoInputs(sigSelect.selectedOptions[0]);
       computeRisk();
       document.getElementById("riskCalcSection").scrollIntoView({ behavior: "smooth", block: "center" });
-      window.hkToast("Sinal carregado na calculadora de risco!", "success");
+      window.hkToast("Sinal carregado na calculadora!", "success");
     });
   });
 

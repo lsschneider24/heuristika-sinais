@@ -13,33 +13,9 @@
   <div id="cursorSpotlight" class="cursor-spotlight" aria-hidden="true"></div>
   <div id="hkToastContainer" class="toast-container" aria-live="polite"></div>
 
-  <!-- Top Utility Bar -->
-  <div class="utility-bar no-print">
-    <div class="container utility-inner">
-      <div class="utility-left">
-        <span class="util-tag">{{ t.util_desk }}</span>
-        <span class="util-sep">|</span>
-        <span>{{ t.util_audit }}</span>
-        <span class="util-sep">|</span>
-        <span>{{ t.util_tg }}</span>
-      </div>
-      <div class="utility-right">
-        <span class="util-badge">LIVE</span>
-        <span>{{ t.util_mon }}</span>
-        <span class="util-sep">|</span>
-        <a href="{{ url_for('admin_panel') }}">{{ t.util_admin }}</a>
-        <span class="util-sep">|</span>
-        <div class="lang-switch" aria-label="Language">
-          <a href="{{ url_for('set_language', lang='pt') }}" class="{% if lang == 'pt' %}active{% endif %}">PT</a>
-          <a href="{{ url_for('set_language', lang='en') }}" class="{% if lang == 'en' %}active{% endif %}">EN</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Header -->
-  <header class="navbar no-print">
-    <div class="container nav-inner">
+  <!-- Main Header (Clean Fintech Navbar) -->
+  <header class="navbar no-print" style="border-bottom:1px solid rgba(148,163,184,0.12); background:rgba(8,13,24,0.92); backdrop-filter:blur(12px);">
+    <div class="container nav-inner" style="padding-top:12px; padding-bottom:12px;">
       <a href="{{ url_for('index') }}" class="brand">
         <span class="brand-hex" aria-hidden="true">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -49,13 +25,10 @@
           </svg>
         </span>
         <span class="brand-name">Heurístika</span>
-        <span class="brand-sub">{{ t.brand_sub1 }}<br/>{{ t.brand_sub2 }}</span>
       </a>
 
-      <nav class="nav-links" aria-label="Principal">
-        <a href="{{ url_for('index') }}#operacoes" class="nav-item">{{ t.nav_signals }}</a>
-        <a href="{{ url_for('index') }}#simulador-rendimento" class="nav-item">Simulador Real</a>
-        <a href="{{ url_for('index') }}#historico" class="nav-item">Resultados</a>
+      <nav class="nav-links" aria-label="Principal" style="gap:24px;">
+        <a href="{{ url_for('index') }}" class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">Início</a>
         <a href="{{ url_for('carteiras') }}" class="nav-item {% if request.endpoint == 'carteiras' %}active{% endif %}">{{ t.nav_portfolios }}</a>
         <a href="{{ url_for('academia') }}" class="nav-item {% if request.endpoint in ('academia', 'certificado') %}active{% endif %}">{{ t.nav_academy }}</a>
         <a href="{{ url_for('index') }}#planos" class="nav-item">{{ t.nav_plans }}</a>
@@ -63,7 +36,7 @@
 
       <div class="nav-cta">
         {% if session.get('vip_subscriber_id') %}
-          <a href="{{ url_for('vip_area') }}" class="btn btn-sm btn-electric {% if request.endpoint == 'vip_area' %}nav-btn-active{% endif %}">{{ t.nav_vip_panel }}</a>
+          <a href="{{ url_for('vip_area') }}" class="btn btn-sm btn-electric {% if request.endpoint == 'vip_area' %}nav-btn-active{% endif %}">Sinais VIP</a>
           <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline">{{ t.nav_logout }}</a>
         {% else %}
           <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline {% if request.endpoint == 'login' %}nav-btn-active{% endif %}">{{ t.nav_login }}</a>
@@ -90,9 +63,13 @@
   </main>
 
   <footer class="site-footer no-print">
-    <div class="container footer-inner">
+    <div class="container footer-inner" style="flex-wrap:wrap; gap:12px;">
       <span>{{ t.footer_text }}</span>
-      <span class="mono" style="font-size:0.75rem;">SQLITE VERIFIED LEDGER • INSTITUTIONAL TERMINAL</span>
+      <div style="display:flex; gap:14px; align-items:center; font-size:0.78rem;">
+        <a href="{{ url_for('admin_panel') }}" style="color:var(--muted);">{{ t.util_admin }}</a>
+        <a href="{{ url_for('set_language', lang='pt') }}" style="color:var(--muted);">PT</a>
+        <a href="{{ url_for('set_language', lang='en') }}" style="color:var(--muted);">EN</a>
+      </div>
     </div>
   </footer>
 
