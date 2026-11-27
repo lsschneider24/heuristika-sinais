@@ -1,7 +1,7 @@
 {
   "schema_version": "1.1.0",
-  "reference_date": "2026-11-25",
-  "collected_at": "2026-11-25T08:48:20",
+  "reference_date": "2026-11-26",
+  "collected_at": "2026-11-26T13:40:09",
   "max_age_days": 90,
   "origin_type": "automated_public_collector",
   "schedule_cadence": "monthly",
@@ -52,42 +52,42 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 4.52,
-          "source": "Yahoo Finance (div 12m / preço R$ 14.49 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 4.19,
+          "source": "Yahoo Finance (div 12m / preço R$ 15.64 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 24.8,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 001023, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 11,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": null,
           "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "verified": true
         },
         "roe_pct": {
           "value": 7.37,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 001023, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true,
-      "corporate_event_reason": "Queda YoY de proventos 12m: -62.0% (Yahoo Finance) | Comunicado CVM IPE (90d): 2026-11-11: Remuneração aos acionistas para 2026 e 2027 | Redução anunciada do payout de 2026 para 25% e cancelamento de proventos intermediários em 10/11/2026 (RI Banco do Brasil)."
+      "corporate_event_reason": "Queda YoY de proventos 12m: -47.3% (Yahoo Finance) | Comunicado CVM IPE (90d): 2026-11-11: Remuneração aos acionistas para 2026 e 2027 | Redução anunciada do payout de 2026 para 25% e cancelamento de proventos intermediários em 10/11/2026 (RI Banco do Brasil)."
     },
     {
       "symbol": "ITUB4",
@@ -99,40 +99,40 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 0.05,
-          "source": "Yahoo Finance (div 12m / preço R$ 40.11 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 7.8% @ R$ 39.73 em 23/11/2026]",
-          "date": "2026-11-25",
+          "value": 0.04,
+          "source": "Yahoo Finance (div 12m / preço R$ 41.56 em 2026-11-26; JCP bruto) [divergente vs Fundamentus 7.8% @ R$ 40.01 em 25/11/2026]",
+          "date": "2026-11-26",
           "verified": false
         },
         "payout_pct": {
           "value": 70.59,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 019348, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 10,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": null,
           "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "verified": true
         },
         "roe_pct": {
           "value": 20.32,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 019348, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": false
     },
     {
@@ -145,40 +145,40 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 7.81,
-          "source": "Yahoo Finance (div 12m / preço R$ 27.83 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 7.93,
+          "source": "Yahoo Finance (div 12m / preço R$ 27.39 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": null,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 020532, base 2026-09-30]: indisponível (distorção por resultado não recorrente (payout 12m=105.65%, payout DFP 2025=98.46%, diferença=7.2 pp; lucro 12m=13,029,825 mil vs DFP 2025=12,965,123 mil))",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": false
         },
         "years_paying": {
           "value": 10,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": null,
           "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "verified": true
         },
         "roe_pct": {
           "value": 10.0,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 020532, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": false
     },
     {
@@ -191,40 +191,40 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 0.14,
-          "source": "Yahoo Finance (div 12m / preço R$ 13.83 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 11.1% @ R$ 13.71 em 23/11/2026]",
-          "date": "2026-11-25",
+          "value": 0.13,
+          "source": "Yahoo Finance (div 12m / preço R$ 15.11 em 2026-11-26; JCP bruto) [divergente vs Fundamentus 10.8% @ R$ 14.19 em 25/11/2026]",
+          "date": "2026-11-26",
           "verified": false
         },
         "payout_pct": {
           "value": 60.26,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 000906, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 11,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": null,
           "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "verified": true
         },
         "roe_pct": {
           "value": 13.46,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 000906, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": false,
       "corporate_event_reason": "Queda YoY de proventos 12m: -96.8% (Yahoo Finance)"
     },
@@ -238,40 +238,40 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 11.34,
-          "source": "Yahoo Finance (div 12m / preço R$ 23.71 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 11.25,
+          "source": "Yahoo Finance (div 12m / preço R$ 23.89 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 65.84,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 020958, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 10,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": null,
           "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "verified": true
         },
         "roe_pct": {
           "value": 13.79,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 020958, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -284,41 +284,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 7.79,
-          "source": "Yahoo Finance (div 12m / preço R$ 40.12 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 7.54,
+          "source": "Yahoo Finance (div 12m / preço R$ 41.44 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 62.55,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 020257, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
-          "value": 11,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "value": 10,
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 4.32,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 020257, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 20.13,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -331,41 +331,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 4.53,
-          "source": "Yahoo Finance (div 12m / preço R$ 24.63 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 4.29,
+          "source": "Yahoo Finance (div 12m / preço R$ 26.0 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 34.07,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 017329, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 10,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 3.08,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 017329, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 18.66,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -378,41 +378,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 6.42,
-          "source": "Yahoo Finance (div 12m / preço R$ 43.93 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 8.6% @ R$ 43.28 em 23/11/2026]",
-          "date": "2026-11-25",
+          "value": 6.3,
+          "source": "Yahoo Finance (div 12m / preço R$ 44.8 em 2026-11-26; JCP bruto) [divergente vs Fundamentus 8.7% @ R$ 42.89 em 25/11/2026]",
+          "date": "2026-11-26",
           "verified": false
         },
         "payout_pct": {
           "value": 70.63,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 018660, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 8,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 1.13,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 018660, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 24.87,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": false
     },
     {
@@ -425,41 +425,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 10.54,
-          "source": "Yahoo Finance (div 12m / preço R$ 10.81 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 10.19,
+          "source": "Yahoo Finance (div 12m / preço R$ 11.18 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 59.08,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 002453, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 11,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 2.04,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 002453, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 17.96,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -472,41 +472,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 7.64,
-          "source": "Yahoo Finance (div 12m / preço R$ 26.21 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 7.39,
+          "source": "Yahoo Finance (div 12m / preço R$ 26.64 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 29.84,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 018376, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 10,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 3.16,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 018376, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 12.46,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -519,41 +519,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 7.05,
-          "source": "Yahoo Finance (div 12m / preço R$ 15.08 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 6.8,
+          "source": "Yahoo Finance (div 12m / preço R$ 15.63 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 31.46,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 014311, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 9,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 1.97,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 014311, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 14.07,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -567,40 +567,40 @@
       "fields": {
         "dy_12m_pct": {
           "value": 0.0,
-          "source": "Yahoo Finance (div 12m / preço R$ 46.07 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance (div 12m / preço R$ 48.09 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": null,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 002437, base 2026-09-30]: indisponível (distorção por resultado não recorrente (payout 12m=33.46%, payout DFP 2025=94.98%, diferença=61.5 pp; lucro 12m=18,620,753 mil vs DFP 2025=6,559,659 mil))",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": false
         },
         "years_paying": {
           "value": 7,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 2.18,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 002437, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 15.74,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": false,
       "corporate_event_reason": "Queda YoY de proventos 12m: -100.0% (Yahoo Finance)"
     },
@@ -615,40 +615,40 @@
       "fields": {
         "dy_12m_pct": {
           "value": 0.0,
-          "source": "Yahoo Finance (div 12m / preço R$ 11.88 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance (div 12m / preço R$ 12.55 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": null,
           "source": "Dado ausente/indisponível na CVM (nunca convertido em zero)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": false
         },
         "years_paying": {
           "value": 4,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 5.19,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 026620, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": -3.7,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": false,
       "corporate_event_reason": "Queda YoY de proventos 12m: -100.0% (Yahoo Finance)"
     },
@@ -662,40 +662,40 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 12.57,
-          "source": "Yahoo Finance (div 12m / preço R$ 36.52 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 12.26,
+          "source": "Yahoo Finance (div 12m / preço R$ 37.44 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 95.77,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 023159, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 10,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": null,
           "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "verified": true
         },
         "roe_pct": {
           "value": 68.17,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 023159, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -708,40 +708,40 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 6.79,
-          "source": "Yahoo Finance (div 12m / preço R$ 20.36 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 6.66,
+          "source": "Yahoo Finance (div 12m / preço R$ 20.75 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 69.05,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 023795, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 6,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": null,
           "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "verified": true
         },
         "roe_pct": {
           "value": 32.56,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 023795, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -754,40 +754,40 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 7.08,
-          "source": "Yahoo Finance (div 12m / preço R$ 42.39 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 6.98,
+          "source": "Yahoo Finance (div 12m / preço R$ 42.98 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 46.68,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 016659, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 11,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": null,
           "source": "Dispensado para Financeiras (Bancos/Seguros usam ROE >= 12%)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "verified": true
         },
         "roe_pct": {
           "value": 22.13,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 016659, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -800,41 +800,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 1.61,
-          "source": "Yahoo Finance (div 12m / preço R$ 34.39 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 1.56,
+          "source": "Yahoo Finance (div 12m / preço R$ 35.45 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 32.25,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 018627, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 9,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 0.67,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 018627, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 4.12,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true,
       "corporate_event_reason": "Queda YoY de proventos 12m: -75.0% (Yahoo Finance)"
     },
@@ -848,41 +848,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 3.42,
-          "source": "Yahoo Finance (div 12m / preço R$ 58.26 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 3.25,
+          "source": "Yahoo Finance (div 12m / preço R$ 61.42 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 43.83,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 019445, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 10,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 2.13,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 019445, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 13.95,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true,
       "corporate_event_reason": "Comunicado CVM IPE (90d): 2026-09-10: Remuneração aos acionistas 3T26"
     },
@@ -896,41 +896,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 5.18,
-          "source": "Yahoo Finance (div 12m / preço R$ 27.88 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 4.9,
+          "source": "Yahoo Finance (div 12m / preço R$ 29.49 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 32.68,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 014443, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 10,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 1.45,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 014443, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 15.6,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -943,41 +943,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 7.24,
-          "source": "Yahoo Finance (div 12m / preço R$ 35.46 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 6.89,
+          "source": "Yahoo Finance (div 12m / preço R$ 35.72 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 57.69,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 017671, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 10,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 0.52,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 017671, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 10.74,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -990,41 +990,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 6.64,
-          "source": "Yahoo Finance (div 12m / preço R$ 22.19 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 6.52,
+          "source": "Yahoo Finance (div 12m / preço R$ 22.57 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 46.99,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 024929, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 10,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": -0.27,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 024929, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 11.0,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -1037,41 +1037,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 8.84,
-          "source": "Yahoo Finance (div 12m / preço R$ 41.43 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 8.57,
+          "source": "Yahoo Finance (div 12m / preço R$ 42.75 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 33.57,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 009512, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 9,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 0.77,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 009512, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 27.83,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true,
       "corporate_event_reason": "Comunicado CVM IPE (90d): 2026-11-10: Petrobras informa sobre remuneração aos acionistas"
     },
@@ -1086,40 +1086,40 @@
       "fields": {
         "dy_12m_pct": {
           "value": 0.0,
-          "source": "Yahoo Finance (div 12m / preço R$ 59.44 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance (div 12m / preço R$ 61.7 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": null,
           "source": "Dado ausente/indisponível na CVM (nunca convertido em zero)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": false
         },
         "years_paying": {
           "value": 1,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 1.11,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 022187, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 19.95,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": false
     },
     {
@@ -1132,41 +1132,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 10.17,
-          "source": "Yahoo Finance (div 12m / preço R$ 55.17 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 9.61,
+          "source": "Yahoo Finance (div 12m / preço R$ 58.39 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": null,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 004170, base 2026-09-30]: indisponível (distorção por resultado não recorrente (payout 12m=4245.5%, payout DFP 2025=169.09%, diferença=4076.4 pp; lucro 12m=556,000 mil vs DFP 2025=11,811,000 mil))",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": false
         },
         "years_paying": {
           "value": 11,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 1.55,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 004170, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 0.28,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": false
     },
     {
@@ -1179,41 +1179,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 4.54,
-          "source": "Yahoo Finance (div 12m / preço R$ 4.83 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 18.7% @ R$ 4.94 em 23/11/2026]",
-          "date": "2026-11-25",
+          "value": 4.36,
+          "source": "Yahoo Finance (div 12m / preço R$ 5.04 em 2026-11-26; JCP bruto) [divergente vs Fundamentus 19.0% @ R$ 4.85 em 25/11/2026]",
+          "date": "2026-11-26",
           "verified": false
         },
         "payout_pct": {
           "value": null,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 025585, base 2026-09-30]: indisponível (distorção por resultado não recorrente (payout 12m=108.44%, payout DFP 2025=84.14%, diferença=24.3 pp; lucro 12m=1,279,614 mil vs DFP 2025=1,649,159 mil))",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": false
         },
         "years_paying": {
           "value": 6,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 0.63,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 025585, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 19.23,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": false,
       "corporate_event_reason": "Queda YoY de proventos 12m: -50.6% (Yahoo Finance)"
     },
@@ -1227,41 +1227,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 3.45,
-          "source": "Yahoo Finance (div 12m / preço R$ 24.63 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 3.23,
+          "source": "Yahoo Finance (div 12m / preço R$ 26.32 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": null,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 003980, base 2026-09-30]: indisponível (distorção por resultado não recorrente (payout 12m=11.82%, payout DFP 2025=90.64%, diferença=78.8 pp; lucro 12m=2,748,755 mil vs DFP 2025=1,418,438 mil))",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": false
         },
         "years_paying": {
           "value": 10,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 0.79,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 003980, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 5.01,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": false
     },
     {
@@ -1274,41 +1274,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 5.43,
-          "source": "Yahoo Finance (div 12m / preço R$ 16.64 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 5.27,
+          "source": "Yahoo Finance (div 12m / preço R$ 17.12 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": null,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 012653, base 2026-09-30]: indisponível (distorção por resultado não recorrente (payout 12m=261.21%, payout DFP 2025=8.41%, diferença=252.8 pp; lucro 12m=451,225 mil vs DFP 2025=1,678,211 mil))",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": false
         },
         "years_paying": {
           "value": 9,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 2.98,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 012653, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 2.73,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": false
     },
     {
@@ -1322,40 +1322,40 @@
       "fields": {
         "dy_12m_pct": {
           "value": 2.02,
-          "source": "Yahoo Finance (div 12m / preço R$ 55.56 em 2026-11-24; JCP bruto) [divergente vs Fundamentus 0.0% @ R$ 55.19 em 23/11/2026]",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance (div 12m / preço R$ 55.54 em 2026-11-26; JCP bruto) [divergente vs Fundamentus 0.0% @ R$ 55.4 em 25/11/2026]",
+          "date": "2026-11-26",
           "verified": false
         },
         "payout_pct": {
           "value": 16.66,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 013986, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 8,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 3.39,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 013986, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 14.48,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": false,
       "corporate_event_reason": "Queda YoY de proventos 12m: -44.4% (Yahoo Finance)"
     },
@@ -1369,41 +1369,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 5.35,
-          "source": "Yahoo Finance (div 12m / preço R$ 7.83 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 5.14,
+          "source": "Yahoo Finance (div 12m / preço R$ 8.15 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 22.77,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 002429, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 9,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 1.74,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 002429, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 9.82,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true,
       "corporate_event_reason": "Queda YoY de proventos 12m: -42.9% (Yahoo Finance)"
     },
@@ -1417,41 +1417,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 4.0,
-          "source": "Yahoo Finance (div 12m / preço R$ 50.03 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 3.96,
+          "source": "Yahoo Finance (div 12m / preço R$ 50.64 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 47.96,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 005410, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 11,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": -0.29,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 005410, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 31.31,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -1464,41 +1464,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 9.85,
-          "source": "Yahoo Finance (div 12m / preço R$ 30.55 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 9.4,
+          "source": "Yahoo Finance (div 12m / preço R$ 32.02 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 16.55,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 008575, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 10,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 0.53,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 008575, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 59.81,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -1511,41 +1511,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 5.23,
-          "source": "Yahoo Finance (div 12m / preço R$ 16.17 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 5.21,
+          "source": "Yahoo Finance (div 12m / preço R$ 16.25 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 44.26,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 023264, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 11,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": -0.64,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 023264, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 17.78,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -1558,41 +1558,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 6.26,
-          "source": "Yahoo Finance (div 12m / preço R$ 14.42 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 5.83,
+          "source": "Yahoo Finance (div 12m / preço R$ 15.48 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 79.17,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 021610, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 11,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": -0.3,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 021610, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 30.21,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -1605,41 +1605,41 @@
       "data_base_cvm": "2026-09-30",
       "fields": {
         "dy_12m_pct": {
-          "value": 3.1,
-          "source": "Yahoo Finance (div 12m / preço R$ 14.55 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "value": 2.82,
+          "source": "Yahoo Finance (div 12m / preço R$ 15.96 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": 57.72,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 005258, método DVA, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "years_paying": {
           "value": 11,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 0.56,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 005258, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": 16.98,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": true
     },
     {
@@ -1653,40 +1653,40 @@
       "fields": {
         "dy_12m_pct": {
           "value": 0.0,
-          "source": "Yahoo Finance (div 12m / preço R$ 3.26 em 2026-11-24; JCP bruto)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance (div 12m / preço R$ 3.66 em 2026-11-26; JCP bruto)",
+          "date": "2026-11-26",
           "verified": true
         },
         "payout_pct": {
           "value": null,
           "source": "Dado ausente/indisponível na CVM (nunca convertido em zero)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": false
         },
         "years_paying": {
           "value": 9,
-          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-24)",
-          "date": "2026-11-25",
+          "source": "Yahoo Finance eventos de dividendos (janela 10a até 2026-11-26)",
+          "date": "2026-11-26",
           "verified": true
         },
         "net_debt_ebitda": {
           "value": 2.39,
           "source": "CVM LTM (DFP 2025 + ITR 9M26) [CD_CVM 019836, base 2026-09-30]",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         },
         "roe_pct": {
           "value": -22.07,
           "source": "CVM LTM (DFP 2025 + ITR 9M26)",
-          "date": "2026-11-25",
+          "date": "2026-11-26",
           "data_base": "2026-09-30",
           "verified": true
         }
       },
       "origin_type": "automated_public_collector",
-      "collected_at": "2026-11-25",
+      "collected_at": "2026-11-26",
       "verified": false
     }
   ]
