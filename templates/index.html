@@ -128,27 +128,6 @@
   </div>
 </section>
 
-<!-- Barra de Navegação Rápida em Abas -->
-<nav class="container" aria-label="Navegação rápida pelas seções" style="margin:20px auto 4px;">
-  <div style="display:flex; gap:8px; overflow-x:auto; padding:8px 4px; border-bottom:1px solid var(--border); scrollbar-width:thin;">
-    <a href="#simulador-rendimento" class="btn btn-sm btn-electric" style="white-space:nowrap; display:inline-flex; align-items:center; gap:6px;">
-      <span>📊</span> <strong>Simulador Real (Desde 01/01/2026)</strong>
-    </a>
-    <a href="#operacoes" class="btn btn-sm btn-outline" style="white-space:nowrap; display:inline-flex; align-items:center; gap:6px;">
-      <span>⚡</span> <span>Sinais em Aberto</span>
-    </a>
-    <a href="#historico" class="btn btn-sm btn-outline" style="white-space:nowrap; display:inline-flex; align-items:center; gap:6px;">
-      <span>📜</span> <span>Histórico Auditado</span>
-    </a>
-    <a href="#mercados" class="btn btn-sm btn-outline" style="white-space:nowrap; display:inline-flex; align-items:center; gap:6px;">
-      <span>🌐</span> <span>Mercados Monitorados</span>
-    </a>
-    <a href="#planos" class="btn btn-sm btn-outline" style="white-space:nowrap; display:inline-flex; align-items:center; gap:6px;">
-      <span>💎</span> <span>Planos &amp; Acesso VIP</span>
-    </a>
-  </div>
-</nav>
-
 <!-- Simulador Inteligente de Sinais Reais (com Cenários e Data desde 01/01/2026) -->
 <section class="container" id="simulador-rendimento" style="margin:28px auto;">
   <div class="card" style="padding:24px; border:1px solid var(--border); border-radius:14px; background:linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.8) 100%); box-shadow:0 12px 36px rgba(0,0,0,0.35);">
@@ -588,6 +567,13 @@
 })();
 </script>
 
+<!-- Divulgação Progressiva XM: Fontes e Mercados recolhidos para não poluir a Home -->
+<div class="container" style="margin:18px auto;">
+  <details style="padding:14px 18px;">
+    <summary style="cursor:pointer; font-weight:700; font-size:0.9rem; display:flex; justify-content:space-between; align-items:center;">
+      <span>🔍 Ver fontes de dados oficiais (Binance, Yahoo, CVM) e mercados monitorados</span>
+      <span class="badge badge-cat">Mostrar mais</span>
+    </summary>
 <!-- Fontes de Dados & Verificação Institucional -->
 <section class="sources-section reveal" id="fontes">
   <div class="container">
@@ -676,6 +662,8 @@
     </div>
   </div>
 </section>
+  </details>
+</div>
 
 <!-- Sinais em Aberto -->
 <section class="container section-wrap reveal" id="operacoes">
@@ -817,8 +805,14 @@
   {% endif %}
 </section>
 
-<!-- Histórico Auditado -->
+<!-- Histórico Auditado (Recolhido estilo XM para manter a Home limpa) -->
 <section class="container section-wrap reveal" style="padding-top:0;" id="historico">
+  <details style="padding:14px 18px;">
+    <summary style="cursor:pointer; font-weight:700; font-size:0.95rem; display:flex; justify-content:space-between; align-items:center;">
+      <span>📜 Ver tabela completa do histórico auditado de sinais encerrados ({{ closed_history|length }})</span>
+      <span class="badge badge-cat">Mostrar mais</span>
+    </summary>
+    <div style="margin-top:16px;">
   <div class="filter-toolbar">
     <div>
       <h2 style="margin:0; font-size:1.4rem; font-weight:800; letter-spacing:-0.02em;">{{ t.hist_title }}</h2>
@@ -877,6 +871,8 @@
       </tbody>
     </table>
   </div>
+    </div>
+  </details>
 </section>
 
 <!-- Planos VIP -->

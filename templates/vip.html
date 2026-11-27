@@ -300,7 +300,13 @@
     </div>
   {% endif %}
 
-  <!-- Histórico Completo -->
+  <!-- Histórico Completo (Recolhido estilo XM para focar nos Sinais Ativos) -->
+  <details style="margin-top:16px; padding:14px 18px;">
+    <summary style="cursor:pointer; font-weight:700; font-size:0.95rem; display:flex; justify-content:space-between; align-items:center;">
+      <span>📜 Ver histórico completo de acertos e erros ({{ closed_history|length }} sinais)</span>
+      <span class="badge badge-cat">Mostrar mais</span>
+    </summary>
+    <div style="margin-top:14px;">
   <div class="filter-toolbar" style="margin-top:10px;">
     <div>
       <h2 style="margin:0; font-size:1.35rem; letter-spacing:-0.02em;">Histórico Completo de Acertos e Erros</h2>
@@ -359,6 +365,8 @@
       </tbody>
     </table>
   </div>
+    </div>
+  </details>
 </section>
 
 <script>
